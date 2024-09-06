@@ -11,5 +11,4 @@ public record DimensionDto(
     string? FullNativeName,
     int? Value,
     string Type,
-    Guid? FatherId,
-    string? FatherName);
+    Guid? FatherId);

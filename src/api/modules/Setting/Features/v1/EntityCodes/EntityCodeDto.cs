@@ -1,6 +1,4 @@
-﻿using FSH.Starter.WebApi.Setting.Domain;
-
-namespace FSH.Starter.WebApi.Setting.Features.v1.EntityCodes;
+﻿namespace FSH.Starter.WebApi.Setting.Features.v1.EntityCodes;
 public record EntityCodeDto(
     Guid Id,
     int? Order,    
@@ -10,4 +8,4 @@ public record EntityCodeDto(
     bool IsActive,
     string? Separator,
     int? Value,
-    CodeType Type);
+    string Type);
