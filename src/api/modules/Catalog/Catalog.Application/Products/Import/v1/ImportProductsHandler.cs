@@ -1,4 +1,5 @@
 using FSH.Framework.Core.DataIO;
+using FSH.Framework.Core.Exceptions;
 using FSH.Framework.Core.Persistence;
 using FSH.Framework.Core.Storage.File;
 using FSH.Starter.WebApi.Catalog.Domain;
@@ -8,47 +9,26 @@ using Microsoft.Extensions.DependencyInjection;
 namespace FSH.Starter.WebApi.Catalog.Application.Products.Import.v1;
 
 public class ImportProductsHandler(
-    [FromKeyedServices("catalog:products")]  IRepository<Product> repository, IDataImport dataImport)
-    : IRequestHandler<ImportProductsCommand, ImportResponse>
+    [FromKeyedServices("catalog:products")]  IRepository<Product> repository, IExcelReader excelReader)
+    : IRequestHandler<ImportProductsCommand, int>
 {
-    public async Task<ImportResponse> Handle(ImportProductsCommand request, CancellationToken cancellationToken)
+    public async Task<int> Handle(ImportProductsCommand request, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
         
-        var items = await dataImport.ToListAsync<Product>(request.UploadFile, FileType.Excel);
-        
-        ImportResponse response = new()
-        {
-            TotalRecords = items.Count, 
-            Message = ""
-    
-        };
+        var items = await excelReader.ToListAsync<Product>(request.UploadFile, FileType.Excel);
 
-        if (response.TotalRecords <= 0)
-        {
-            response.Message = "File is empty or Invalid format";
-            return response;
-        }
-            
+        if (items == null || items.Count == 0) throw new CustomException("Excel file error or empty!");
+
         try
         {
-            if (request.IsUpdate)
-            {
-                await repository.UpdateRangeAsync(items, cancellationToken);
-                response.Message = " Updated successful";
-            }
-            else
-            {
-                await repository.AddRangeAsync (items, cancellationToken);
-                response.Message = "Added successful";
-            }
+            await repository.UpdateRangeAsync(items, cancellationToken);
         }
         catch (Exception)
         {
-            response.Message = "Internal error!";
-            // throw new CustomException("Internal error!")
+            throw new CustomException("Internal error!");
         }
 
-        return response;
+        return items.Count;
     }
 }

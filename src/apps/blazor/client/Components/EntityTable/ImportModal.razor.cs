@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
 using FSH.Starter.Blazor.Infrastructure.Api;
 using FSH.Starter.Blazor.Shared;
-using MudBlazor.Services;
 
 namespace FSH.Starter.Blazor.Client.Components.EntityTable;
 
@@ -19,11 +18,10 @@ public partial class ImportModal
 
     [Parameter]
     public FileUploadCommand RequestModel { get; set; } = new();
-    public bool IsUpdate { get; set; }
 
     [Parameter]
     [EditorRequired]
-    public Func<FileUploadCommand, bool, Task> ImportFunc { get; set; } = default!;
+    public Func<FileUploadCommand, Task> ImportFunc { get; set; } = default!;
 
     public string? SuccessMessage { get; set; }
     private FshValidation? _customValidation;
@@ -33,13 +31,12 @@ public partial class ImportModal
 
     private IBrowserFile? _file;
     private bool _uploading;
-    
+
     protected override Task OnInitializedAsync() =>
         OnInitializedFunc is not null
             ? OnInitializedFunc()
             : Task.CompletedTask;
 
-    
     private async Task SaveAsync()
     {
         Stopwatch stopwatch = new();
@@ -47,7 +44,7 @@ public partial class ImportModal
         
         _uploading = true;
         if (await ApiHelper.ExecuteCallGuardedAsync(
-                () => ImportFunc(RequestModel, IsUpdate), Toast, _customValidation, SuccessMessage))
+                () => ImportFunc(RequestModel), Toast, _customValidation, SuccessMessage))
         {
             _uploading = false;
             MudDialog.Close();

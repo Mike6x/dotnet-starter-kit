@@ -1,19 +1,19 @@
 ﻿using FSH.Starter.Blazor.Client.Components.EntityTable;
 using FSH.Starter.Blazor.Infrastructure.Api;
-using FSH.Starter.Shared.Authorization;
+using FSH.Starter.Blazor.Shared;
 using Mapster;
 using Microsoft.AspNetCore.Components;
 
 namespace FSH.Starter.Blazor.Client.Pages.Catalog;
 
-public partial class Products
+public partial class Products : ComponentBase
 {
     [Inject]
-    protected IApiClient ApiClient { get; set; } = default!;
+    protected IApiClient _client { get; set; } = default!;
 
-    protected EntityServerTableContext<ProductDto, Guid, ProductViewModel> Context { get; set; } = default!;
+    protected EntityServerTableContext<ProductResponse, Guid, ProductViewModel> Context { get; set; } = default!;
 
-    private EntityTable<ProductDto, Guid, ProductViewModel> _table = default!;
+    private EntityTable<ProductResponse, Guid, ProductViewModel> _table = default!;
 
     protected override void OnInitialized() =>
         Context = new(
@@ -31,31 +31,33 @@ public partial class Products
             idFunc: prod => prod.Id!.Value,
             exportFunc: async filter =>
             {
-                var dataFilter = filter.Adapt<ExportProductsRequest>();
-                dataFilter.MinimumRate = Convert.ToDouble(SearchMinimumRate);
-                dataFilter.MaximumRate = Convert.ToDouble(SearchMaximumRate);
+                var exportFilter = filter.Adapt<BaseFilter>();
                 
-                return await ApiClient.ExportProductsEndpointAsync("1", dataFilter);
-
+                return await _client.ExportProductsEndpointAsync("1", exportFilter);
+           
             },
-            importFunc: async (fileUploadModel, isUpdate) => await ApiClient.ImportProductsEndpointAsync("1", isUpdate, fileUploadModel),
+            importFunc: async fileUploadModel =>
+            {
+               // var request = new FileUploadCommand(){ uploadFile = FileUploadRequest };
+                await _client.ImportProductsEndpointAsync("1", fileUploadModel);
+            },
             searchFunc: async filter =>
             {
-                var dataFilter = filter.Adapt<SearchProductsRequest>();
-                dataFilter.MinimumRate = Convert.ToDouble(SearchMinimumRate);
-                dataFilter.MaximumRate = Convert.ToDouble(SearchMaximumRate);
-                var result = await ApiClient.SearchProductsEndpointAsync("1", dataFilter);
-                return result.Adapt<PaginationResponse<ProductDto>>();
+                var searchFilter = filter.Adapt<PaginationFilter>();
+
+                var result = await _client.SearchProductsEndpointAsync("1", searchFilter);
+                return result.Adapt<PaginationResponse<ProductResponse>>();
             },
             createFunc: async prod =>
             {
-                await ApiClient.CreateProductEndpointAsync("1", prod.Adapt<CreateProductCommand>());
+                await _client.CreateProductEndpointAsync("1", prod.Adapt<CreateProductCommand>());
             },
             updateFunc: async (id, prod) =>
             {
-                await ApiClient.UpdateProductEndpointAsync("1", id, prod.Adapt<UpdateProductCommand>());
+                await _client.UpdateProductEndpointAsync("1", id, prod.Adapt<UpdateProductCommand>());
             },
-            deleteFunc: async id => await ApiClient.DeleteProductEndpointAsync("1", id));
+            deleteFunc: async id => await _client.DeleteProductEndpointAsync("1", id)
+        );
 
     // Advanced Search
 

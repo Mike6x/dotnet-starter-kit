@@ -1,22 +1,25 @@
+﻿using FSH.Framework.Core.Paging;
 using FSH.Framework.Core.Persistence;
 using FSH.Framework.Core.Specifications;
 using FSH.Starter.WebApi.Todo.Domain;
-using FSH.Starter.WebApi.Todo.Features.Search.v1;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FSH.Starter.WebApi.Todo.Features.GetList.v1;
 
-public class GetTodoListHandler(
+public sealed class GetTodoListHandler(
     [FromKeyedServices("todo")] IReadRepository<TodoItem> repository)
-    : IRequestHandler<GetTodoListRequest, List<TodoDto>>
+    : IRequestHandler<GetTodoListRequest, PagedList<TodoDto>>
 {
-    public async Task<List<TodoDto>> Handle(GetTodoListRequest request, CancellationToken cancellationToken)
+    public async Task<PagedList<TodoDto>> Handle(GetTodoListRequest request, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        var spec = new EntitiesByBaseFilterSpec<TodoItem, TodoDto>(request.Filter);
+        var spec = new EntitiesByPaginationFilterSpec<TodoItem, TodoDto>(request.Filter);
 
-        return await repository.ListAsync(spec, cancellationToken);
+        var items = await repository.ListAsync(spec, cancellationToken).ConfigureAwait(false);
+        var totalCount = await repository.CountAsync(spec, cancellationToken).ConfigureAwait(false);
+
+        return new PagedList<TodoDto>(items, request.Filter.PageNumber, request.Filter.PageSize, totalCount);
     }
 }

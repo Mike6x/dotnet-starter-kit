@@ -1,4 +1,3 @@
-using FSH.Framework.Core.DataIO;
 using FSH.Framework.Core.Storage.File.Features;
 using FSH.Framework.Infrastructure.Auth.Policy;
 using FSH.Starter.WebApi.Catalog.Application.Products.Import.v1;
@@ -14,16 +13,16 @@ public static class ImportProductsEndpoint
     internal static RouteHandlerBuilder MapImportProductsEndpoint(this IEndpointRouteBuilder endpoints)
     {
         return endpoints
-            .MapPost("/Import", async (FileUploadCommand uploadFile, bool isUpdate, ISender mediator) =>
+            .MapPost("/Import", async (FileUploadCommand uploadFile, ISender mediator) =>
             {
-                var response = await mediator.Send(new ImportProductsCommand(uploadFile, isUpdate));
-                return Results.Ok(response);
+                await mediator.Send(new ImportProductsCommand(uploadFile));
+                return Results.NoContent();
              
             })
             .WithName(nameof(ImportProductsEndpoint))
-            .WithSummary("Imports a list of products")
+            .WithSummary("Imports a list of entities")
             .WithDescription("Imports a list of entities from excel files")
-            .Produces<ImportResponse>()
+            .Produces(StatusCodes.Status200OK)
             .RequirePermission("Permissions.Products.Import")
             .MapToApiVersion(1);
     }
