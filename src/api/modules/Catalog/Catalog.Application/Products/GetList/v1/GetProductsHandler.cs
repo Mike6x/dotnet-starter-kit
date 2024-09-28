@@ -1,7 +1,6 @@
 using FSH.Framework.Core.Persistence;
 using FSH.Framework.Core.Specifications;
 using FSH.Starter.WebApi.Catalog.Application.Products.Get.v1;
-using FSH.Starter.WebApi.Catalog.Application.Products.Search.v1;
 using FSH.Starter.WebApi.Catalog.Domain;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,14 +9,14 @@ namespace FSH.Starter.WebApi.Catalog.Application.Products.GetList.v1;
 
 public class GetProductsHandler(
     [FromKeyedServices("catalog:products")]  IReadRepository<Product> repository)
-    : IRequestHandler<GetProductsRequest, List<ProductDto>>
+    : IRequestHandler<GetProductsCommand, List<ProductResponse>>
 {
-    public async Task<List<ProductDto>> Handle(GetProductsRequest request, CancellationToken cancellationToken)
+    public async Task<List<ProductResponse>> Handle(GetProductsCommand request, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
         
-        var spec = new GetProductsSpecs(request);
+        var spec = new EntitiesByBaseFilterSpec<Product, ProductResponse>(request.Filter);
         
-        return await repository.ListAsync(spec, cancellationToken).ConfigureAwait(false);
+        return await repository.ListAsync(spec, cancellationToken);
     }
 }
