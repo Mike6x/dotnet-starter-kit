@@ -1,5 +1,4 @@
 using FSH.Framework.Core.DataIO;
-using FSH.Framework.Core.Exceptions;
 using FSH.Framework.Core.Persistence;
 using FSH.Framework.Core.Storage.File;
 using FSH.Starter.WebApi.Catalog.Domain;
@@ -10,25 +9,46 @@ namespace FSH.Starter.WebApi.Catalog.Application.Products.Import.v1;
 
 public class ImportProductsHandler(
     [FromKeyedServices("catalog:products")]  IRepository<Product> repository, IDataImport dataImport)
-    : IRequestHandler<ImportProductsCommand, int>
+    : IRequestHandler<ImportProductsCommand, ImportResponse>
 {
-    public async Task<int> Handle(ImportProductsCommand request, CancellationToken cancellationToken)
+    public async Task<ImportResponse> Handle(ImportProductsCommand request, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
         
         var items = await dataImport.ToListAsync<Product>(request.UploadFile, FileType.Excel);
+        
+        ImportResponse response = new()
+        {
+            TotalRecords = items.Count, 
+            Message = ""
+    
+        };
 
-        if (items == null || items.Count == 0) throw new CustomException("Excel file error or empty!");
-
+        if (response.TotalRecords <= 0)
+        {
+            response.Message = "File is empty or Invalid format";
+            return response;
+        }
+            
         try
         {
-            await repository.UpdateRangeAsync(items, cancellationToken);
+            if (request.IsUpdate)
+            {
+                await repository.UpdateRangeAsync(items, cancellationToken);
+                response.Message = " Updated successful";
+            }
+            else
+            {
+                await repository.AddRangeAsync (items, cancellationToken);
+                response.Message = "Added successful";
+            }
         }
         catch (Exception)
         {
-            throw new CustomException("Internal error!");
+            response.Message = "Internal error!";
+            // throw new CustomException("Internal error!")
         }
 
-        return items.Count;
+        return response;
     }
 }
