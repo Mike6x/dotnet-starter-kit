@@ -1,4 +1,3 @@
-using FSH.Framework.Core.Paging;
 using FSH.Framework.Infrastructure.Auth.Policy;
 using FSH.Starter.WebApi.Catalog.Application.Products.Export.v1;
 using MediatR;
@@ -28,4 +27,3 @@ public static class ExportProductsEndpoint
             .MapToApiVersion(1);
     }
 }
-
