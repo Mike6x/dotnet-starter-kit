@@ -10,7 +10,7 @@ namespace FSH.Starter.WebApi.Todo.Features.Import.v1;
 
 public static class ImportTodolistEndpoint
 {
-    internal static RouteHandlerBuilder MapImportTodoListEndpoint(this IEndpointRouteBuilder endpoints)
+    internal static RouteHandlerBuilder MapImportTodoItemsEndpoint(this IEndpointRouteBuilder endpoints)
     {
         return endpoints
             .MapPost("/Import", async (FileUploadCommand uploadFile, bool isUpdate, ISender mediator) =>
