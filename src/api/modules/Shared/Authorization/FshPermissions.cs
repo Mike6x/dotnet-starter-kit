@@ -33,6 +33,9 @@ public static class FshResource
     public const string Menus = nameof(Menus);
     public const string Dimensions = nameof(Dimensions);
     public const string EntityCodes = nameof(EntityCodes);
+    
+    public const string Quizs = nameof(Quizs);
+    public const string QuizResults = nameof(QuizResults);
 }
 
 public static class FshPermissions
@@ -123,6 +126,25 @@ public static class FshPermissions
         new("Delete EntityCodes", FshAction.Delete, FshResource.EntityCodes),
         new("Export EntityCodes", FshAction.Export, FshResource.EntityCodes),
         new("Import EntityCodes", FshAction.Import, FshResource.EntityCodes),
+
+        #endregion
+        
+        #region Elearning
+        new("View Quizs", FshAction.View, FshResource.Quizs, IsBasic: true),
+        new("Search Quizs", FshAction.Search, FshResource.Quizs, IsBasic: true),
+        new("Create Quizs", FshAction.Create, FshResource.Quizs),
+        new("Update Quizs", FshAction.Update, FshResource.Quizs),
+        new("Delete Quizs", FshAction.Delete, FshResource.Quizs),
+        new("Export Quizs", FshAction.Export, FshResource.Quizs),
+        new("Import Quizs", FshAction.Import, FshResource.Quizs),
+
+        new("View QuizResults", FshAction.View, FshResource.QuizResults, IsBasic: true),
+        new("Search QuizResults", FshAction.Search, FshResource.QuizResults, IsBasic: true),
+        new("Create QuizResults", FshAction.Create, FshResource.QuizResults),
+        new("Update QuizResults", FshAction.Update, FshResource.QuizResults),
+        new("Delete QuizResults", FshAction.Delete, FshResource.QuizResults),
+        new("Export QuizResults", FshAction.Export, FshResource.QuizResults),
+        new("Import QuizResults", FshAction.Import, FshResource.QuizResults),
 
         #endregion
    };

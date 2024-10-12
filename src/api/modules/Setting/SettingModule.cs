@@ -54,6 +54,7 @@ public static class SettingModule
         
         return builder;
     }
+    
     public static WebApplication UseSettingModule(this WebApplication app)
     {
         return app;

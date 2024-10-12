@@ -4,6 +4,7 @@ using Carter;
 using FluentValidation;
 using FSH.Starter.WebApi.Catalog.Application;
 using FSH.Starter.WebApi.Catalog.Infrastructure;
+using FSH.Starter.WebApi.Elearning;
 using FSH.Starter.WebApi.Todo;
 using FSH.Starter.WebApi.Setting;
 
@@ -22,6 +23,7 @@ public static class Extensions
             typeof(TodoModule).Assembly,
             
             typeof(SettingModule).Assembly,
+            typeof(ElearningModule).Assembly,
 
         };
 
@@ -47,6 +49,7 @@ public static class Extensions
             config.WithModule<TodoModule.Endpoints>();
             
             config.WithModule<SettingModule.Endpoints>();
+            config.WithModule<ElearningModule.Endpoints>();
 
         });
 
@@ -62,6 +65,7 @@ public static class Extensions
         app.UseTodoModule();
 
         app.UseSettingModule();
+        app.UseElearningModule();
 
         //register api versions
         var versions = app.NewApiVersionSet()
