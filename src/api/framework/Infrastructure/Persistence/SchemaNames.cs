@@ -6,4 +6,5 @@ public static class SchemaNames
     public const string Tenant = "tenant";
     
     public const string Setting = "setting";
+    public const string Elearning = "elearning";
 }

@@ -4,6 +4,7 @@ using Carter;
 using FluentValidation;
 using FSH.Starter.WebApi.Catalog.Application;
 using FSH.Starter.WebApi.Catalog.Infrastructure;
+using FSH.Starter.WebApi.Elearning;
 using FSH.Starter.WebApi.Todo;
 using FSH.Starter.WebApi.Setting;
 
@@ -22,9 +23,8 @@ public static class Extensions
             typeof(TodoModule).Assembly,
             
             typeof(SettingModule).Assembly,
-            
-            // typeof(DimensionModule).Assembly,
-            // typeof(EntityCodeModule).Assembly
+            typeof(ElearningModule).Assembly,
+
         };
 
         //register validators
@@ -42,9 +42,6 @@ public static class Extensions
 
         builder.RegisterSettingServices();
         
-        // builder.RegisterDimensionServices();
-        // builder.RegisterEntityCodeServices();
-
         //add carter endpoint modules
         builder.Services.AddCarter(configurator: config =>
         {
@@ -52,8 +49,8 @@ public static class Extensions
             config.WithModule<TodoModule.Endpoints>();
             
             config.WithModule<SettingModule.Endpoints>();
-            // config.WithModule<DimensionModule.Endpoints>();
-            // config.WithModule<EntityCodeModule.Endpoints>();
+            config.WithModule<ElearningModule.Endpoints>();
+
         });
 
         return builder;
@@ -68,7 +65,7 @@ public static class Extensions
         app.UseTodoModule();
 
         app.UseSettingModule();
-        // app.UseEntityCodeModule();
+        app.UseElearningModule();
 
         //register api versions
         var versions = app.NewApiVersionSet()

@@ -81,7 +81,9 @@ public class Dimension : AuditableEntity, IAggregateRoot
             FatherId = fatherId == Guid.Empty ? null : fatherId,
         };
 
-        item.QueueDomainEvent(new DimensionCreated(item.Id, item.Order, item.Code, item.Name, item.Description, item.IsActive, item.FullName, item.NativeName, item.FullNativeName, item.Value, item.Type, item.FatherId));
+        item.QueueDomainEvent(
+            new DimensionCreated(item.Id, item.Order, item.Code, item.Name, item.Description, item.IsActive, 
+            item.FullName, item.NativeName, item.FullNativeName, item.Value, item.Type, item.FatherId));
 
         DimensionMetrics.Created.Add(1);
 
@@ -106,7 +108,6 @@ public class Dimension : AuditableEntity, IAggregateRoot
         if (code is not null && Code?.Equals(code, StringComparison.Ordinal) is not true) Code = code;
         if (name is not null && Name?.Equals(name, StringComparison.Ordinal) is not true) Name = name;
         if (description is not null && Description?.Equals(description, StringComparison.OrdinalIgnoreCase) is not true) Description = description;
-
         if (isActive is not null && !IsActive.Equals(isActive)) IsActive = (bool)isActive;
 
         if (fullName is not null && FullName?.Equals(fullName, StringComparison.OrdinalIgnoreCase) is not true) FullName = fullName;
