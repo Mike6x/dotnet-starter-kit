@@ -21,22 +21,22 @@ public class ExportQuizsRequest : BaseFilter, IRequest<byte[]>
     public bool? IsActive { get; set; }
 }
 
-// public class ExportQuizsHandler(
-//     [FromKeyedServices("elearning:quiz")]  IReadRepository<Quiz> repository, IDataExport dataExport)
-//     : IRequestHandler<ExportQuizsRequest, byte[]>
-// {
-//     public async Task<byte[]> Handle(ExportQuizsRequest request, CancellationToken cancellationToken)
-//     {
-//         ArgumentNullException.ThrowIfNull(request);
-//         var spec = new ExportQuizsSpecs(request);
-//
-//         var items = await repository.ListAsync(spec, cancellationToken).ConfigureAwait(false);
-//         
-//         return dataExport.ListToByteArray(items);
-//     }
-// }
+public class ExportQuizsHandler(
+    [FromKeyedServices("elearning:quizs")]  IReadRepository<Quiz> repository, IDataExport dataExport)
+    : IRequestHandler<ExportQuizsRequest, byte[]>
+{
+    public async Task<byte[]> Handle(ExportQuizsRequest request, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        var spec = new ExportQuizsSpecs(request);
 
-public sealed class ExportQuizsSpecs : EntitiesByBaseFilterSpec<Quiz, QuizDto>
+        var items = await repository.ListAsync(spec, cancellationToken).ConfigureAwait(false);
+        
+        return dataExport.ListToByteArray(items);
+    }
+}
+
+public sealed class ExportQuizsSpecs : EntitiesByBaseFilterSpec<Quiz, QuizExportDto>
 {
     public ExportQuizsSpecs(ExportQuizsRequest request)
         : base(request) =>

@@ -17,7 +17,7 @@ public partial class EntityCodes : ComponentBase
 
     protected override void OnInitialized() =>
         Context = new(
-            entityName: "EntityCodes",
+            entityName: "EntityCode",
             entityNamePlural: "EntityCodes",
             entityResource: FshResources.EntityCodes,
             fields: new()

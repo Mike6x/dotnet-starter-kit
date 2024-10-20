@@ -1,4 +1,5 @@
-﻿using FSH.Framework.Core.Persistence;
+﻿using FSH.Framework.Core.Exceptions;
+using FSH.Framework.Core.Persistence;
 using FSH.Starter.WebApi.Elearning.Domain;
 using FSH.Starter.WebApi.Elearning.Exceptions;
 using MediatR;
@@ -17,8 +18,9 @@ public sealed class DeleteQuizResultHandler(
     public async Task Handle(DeleteQuizResultCommand request, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
-        var item = await repository.GetByIdAsync(request.Id, cancellationToken);
-        _ = item ?? throw new QuizResultNotFoundException(request.Id);
+        var item = await repository.GetByIdAsync(request.Id, cancellationToken)
+            ?? throw new QuizResultNotFoundException(request.Id);
+
         await repository.DeleteAsync(item, cancellationToken);
         logger.LogInformation("QuizResult item with id : {ItemId} deleted", item.Id);
     }

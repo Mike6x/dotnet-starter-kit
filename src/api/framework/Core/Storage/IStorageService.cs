@@ -9,4 +9,10 @@ public interface IStorageService
     where T : class;
 
     public void Remove(Uri? path);
+    
+    public Uri? UnZip(Uri zipPath);
+
+    public void RemoveFolder(string fullPath);
+
+    public string GetLocalPathFromUri (Uri? path, bool isFullPath);
 }

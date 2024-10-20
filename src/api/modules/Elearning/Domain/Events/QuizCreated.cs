@@ -13,7 +13,7 @@ public record QuizCreated(
     string? Description,
     bool IsActive,
         
-    string QuizPath,
+    Uri? QuizUrl,
     DateTime? FromDate,
     DateTime? ToDate,
         
@@ -42,7 +42,7 @@ public class QuizCreatedEventHandler(
             notification.Name,
             notification.Description,
             notification.IsActive,
-            notification.QuizPath,
+            notification.QuizUrl,
             notification.FromDate,
             notification.ToDate,
             notification.QuizTypeId,

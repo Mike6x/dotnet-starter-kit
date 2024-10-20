@@ -72,10 +72,13 @@ public partial class EntityTable<TEntity, TId, TRequest>
         await LocalLoadDataAsync();
     }
 
-    public Task ReloadDataAsync() =>
-        Context.IsClientContext
+    public Task ReloadDataAsync()
+    {
+        _selectedItems = [];
+        return Context.IsClientContext
             ? LocalLoadDataAsync()
             : ServerLoadDataAsync();
+    }
 
     private async Task<bool> CanDoActionAsync(string? action, AuthenticationState state) =>
         !string.IsNullOrWhiteSpace(action) &&
@@ -327,7 +330,7 @@ public partial class EntityTable<TEntity, TId, TRequest>
                 // Export as Excel Workbook via JavaScript
                 await Js.InvokeAsync<object>(
                     "DownloadFile",
-                    $"{Context.EntityNamePlural}{'_'}{DateTime.Now:yyyyMMdd_HH-mm-ss}.xlsx",
+                    $"{Context.EntityNamePlural}{'_'}{DateTime.Now:yyyyMMdd_HH-mm}.xlsx",
                     AppConstants.ExcelMineType,
                     Convert.ToBase64String(result)
                 );
@@ -341,7 +344,7 @@ public partial class EntityTable<TEntity, TId, TRequest>
         {
             await Js.InvokeAsync<object>(
                 "DownloadFile",
-                $"{Context.EntityNamePlural}{'_'}{DateTime.Now:yyyyMMdd_HH-mm-ss}.xlsx",
+                $"{Context.EntityNamePlural}{'_'}{DateTime.Now:yyyyMMdd_HH-mm}.xlsx",
                 AppConstants.ExcelMineType,
                 Convert.ToBase64String(result)
             );
@@ -436,7 +439,7 @@ public partial class EntityTable<TEntity, TId, TRequest>
         {
             var parameters = new DialogParameters
                     {
-                        { "ContentText", "You have selected atleast one item!" },
+                        { "ContentText", "You have selected at least one item!" },
                         { "ButtonText", " OK " },
                         { "ButtonColor", Color.Error},
                         { "titleIcon", Icons.Material.Filled.Warning},
@@ -453,7 +456,7 @@ public partial class EntityTable<TEntity, TId, TRequest>
                         { "ButtonText", "Delete" },
                         { "ButtonColor", Color.Error},
                         { "titleIcon", Icons.Material.Filled.Delete},
-                        { "titleText", "Delete Comfirmation"}
+                        { "titleText", "Delete Confirmation"}
                     };
             var dialog = DialogService.Show<DialogComfirmation>("Delete", parameters, options);
 

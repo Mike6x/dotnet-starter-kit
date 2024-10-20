@@ -17,7 +17,7 @@ public partial class Dimensions : ComponentBase
 
     protected override void OnInitialized() =>
         Context = new(
-            entityName: "Dimensions",
+            entityName: "Dimension",
             entityNamePlural: "Dimensions",
             entityResource: FshResources.Dimensions,
             fields: new()
@@ -39,23 +39,25 @@ public partial class Dimensions : ComponentBase
                 
                 new(item => item.IsActive,  "Active", Type: typeof(bool)),
             },
-            enableAdvancedSearch: false,
+            enableAdvancedSearch: true,
             idFunc: item => item.Id,
             exportFunc: async filter =>
             {
                 var dataFilter = filter.Adapt<ExportDimensionsRequest>();
-                dataFilter.Type = SearchTypeString;
-                
+
                 return await ApiClient.ExportDimensionsEndpointAsync("1", dataFilter);
             },
             importFunc: async (fileUploadModel, isUpdate) => await ApiClient.ImportDimensionsEndpointAsync("1", isUpdate, fileUploadModel),
             searchFunc: async filter =>
             {
                 var dataFilter = filter.Adapt<SearchDimensionsRequest>();
+
                 dataFilter.Type = SearchTypeString;
-                
+                dataFilter.FatherId = SearchFatherId == Guid.Empty ? null : SearchFatherId;
+                dataFilter.IsActive = SearchIsActive;
+
                 var result = await ApiClient.SearchDimensionsEndpointAsync("1", dataFilter);
-                
+
                 return result.Adapt<PaginationResponse<DimensionDto>>();
             },
             createFunc: async item =>
@@ -67,16 +69,15 @@ public partial class Dimensions : ComponentBase
                 await ApiClient.UpdateDimensionEndpointAsync("1", id, item.Adapt<UpdateDimensionCommand>());
             },
             deleteFunc: async id => await ApiClient.DeleteDimensionEndpointAsync("1", id));
-    
-    
+
     #region Advanced Search
-    
+
     private string? SearchTypeString { get; set; }
     private void OnTypeStringChanged()
     {
         _ = _table?.ReloadDataAsync();
     }
-    
+
     private Guid _searchFatherId;
     private Guid SearchFatherId
     {
@@ -84,10 +85,22 @@ public partial class Dimensions : ComponentBase
         set
         {
             _searchFatherId = value;
+            _ = _table?.ReloadDataAsync();
         }
     }
 
+    private bool? _searchIsActive;
+    private bool? SearchIsActive
+    {
+        get => _searchIsActive;
+        set
+        {
+            _searchIsActive = value;
+            _ = _table?.ReloadDataAsync();
+        }
+    }
     #endregion
+
 }
 
 public class DimensionViewModel : UpdateDimensionCommand

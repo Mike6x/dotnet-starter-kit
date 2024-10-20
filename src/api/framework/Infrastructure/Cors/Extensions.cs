@@ -11,11 +11,17 @@ public static class Extensions
         var corsOptions = config.GetSection(nameof(CorsOptions)).Get<CorsOptions>();
         if (corsOptions == null) { return services; }
         return services.AddCors(opt =>
+        // opt.AddPolicy(CorsPolicy, policy =>
+        //     policy.AllowAnyHeader()
+        //         .AllowAnyMethod()
+        //         .AllowCredentials()
+        //         .WithOrigins(corsOptions.AllowedOrigins.ToArray())));
+        
+        // for Blazor debug
         opt.AddPolicy(CorsPolicy, policy =>
-            policy.AllowAnyHeader()
-                .AllowAnyMethod()
-                .AllowCredentials()
-                .WithOrigins(corsOptions.AllowedOrigins.ToArray())));
+        policy.AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowAnyOrigin()));
     }
 
     internal static IApplicationBuilder UseCorsPolicy(this IApplicationBuilder app)

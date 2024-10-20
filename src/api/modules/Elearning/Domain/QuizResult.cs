@@ -1,5 +1,6 @@
 ﻿using FSH.Framework.Core.Domain;
 using FSH.Framework.Core.Domain.Contracts;
+using FSH.Starter.WebApi.Elearning.Domain.Events;
 
 namespace FSH.Starter.WebApi.Elearning.Domain;
 public class QuizResult : AuditableEntity, IAggregateRoot
@@ -30,7 +31,6 @@ public class QuizResult : AuditableEntity, IAggregateRoot
     public virtual Quiz Quiz { get; set; } = default!;
 
     public QuizResult(
-        Guid quizId,
         DateTime startTime,
         DateTime endTime,
         string? userId,
@@ -44,11 +44,10 @@ public class QuizResult : AuditableEntity, IAggregateRoot
         decimal timeLimit,
         string quizVersion,
         string quizType,
+        bool isPass,
         decimal? rating,
-        bool isPass)
+        Guid quizId)
     {
-        QuizId = quizId;
-
         StartTime = startTime;
         EndTime = endTime;
 
@@ -65,17 +64,89 @@ public class QuizResult : AuditableEntity, IAggregateRoot
 
         V = quizVersion;
         T = quizType;
-        Rating = rating;
+        
         IsPass = isPass;
+        Rating = rating;
+        QuizId = quizId;
     }
 
     public QuizResult()
-        : this(Guid.Empty, DateTime.UtcNow, DateTime.UtcNow, string.Empty, 0, 0, string.Empty,  string.Empty, 0, 0, 0, 0, string.Empty, string.Empty, null, false)
+        : this(DateTime.UtcNow, DateTime.UtcNow, string.Empty, 0, 0, string.Empty,  string.Empty, 0, 0, 0, 0, string.Empty, string.Empty,  false,null, Guid.Empty)
     {
     }
 
+      
+    public static QuizResult Create(
+        DateTime startTime,
+        DateTime endTime,
+        string? userId,
+        decimal earnedPoints,
+        decimal userTimeSpend,
+        string timeTakingQuiz,
+        string quizTitle,
+        decimal gainedScore,
+        decimal passingScore,
+        decimal passingScoreInPercent,
+        decimal timeLimit,
+        string quizVersion,
+        string quizType,
+        decimal? rating,
+        Guid quizId)
+        {
+            var item = new QuizResult
+            {
+                StartTime = startTime,
+                EndTime = endTime,
+
+                SId = userId,
+                Sp = earnedPoints,
+                Ut = userTimeSpend,
+                Fut = timeTakingQuiz,
+
+                Qt = quizTitle,
+                Tp = gainedScore,
+                Ps = passingScore,
+                Psp = passingScoreInPercent,
+                Tl = timeLimit,
+
+                V = quizVersion,
+                T = quizType,
+                
+                IsPass = earnedPoints >= passingScore,
+                Rating = rating,
+                QuizId = quizId,
+            };
+        
+            item.QueueDomainEvent(
+                new QuizResultCreated(
+                    item.Id,
+                    item.StartTime,
+                    item.EndTime,
+
+                    item.SId,
+                    item.Sp,
+                    item.Ut,
+                    item.Fut,
+
+                    item.Qt,
+                    item.Tp,
+                    item.Ps,
+                    item.Psp,
+                    item.Tl,
+
+                    item.V,
+                    item.T,
+                    item.IsPass,
+                    item.Rating,
+                    item.QuizId
+                    ));
+
+            QuizResultMetrics.Created.Add(1);
+
+            return item;
+        }
+
     public QuizResult Update(
-        Guid? quizId,
         DateTime? startTime,
         DateTime? endTime,
         string? userId,
@@ -89,9 +160,10 @@ public class QuizResult : AuditableEntity, IAggregateRoot
         decimal? timeLimit,
         string? quizVersion,
         string? quizType,
-        decimal? rating)
+        decimal? rating,
+        Guid? quizId)
     {
-        if (quizId.HasValue && quizId.Value != Guid.Empty && !QuizId.Equals(quizId.Value)) QuizId = quizId.Value;
+
         if (startTime.HasValue && startTime.Value != DateTime.MinValue && !StartTime.Equals(startTime.Value)) StartTime = startTime.Value;
         if (endTime.HasValue && endTime.Value != DateTime.MinValue && !EndTime.Equals(endTime.Value)) EndTime = endTime.Value;
 
@@ -108,10 +180,11 @@ public class QuizResult : AuditableEntity, IAggregateRoot
 
         if (quizVersion is not null && V?.Equals(quizVersion) is not true) V = quizVersion;
         if (quizType is not null && T?.Equals(quizType) is not true) T = quizType;
-
-        if (rating.HasValue && rating != Rating) Rating = rating;
-
+        
         IsPass = Sp >= Ps;
+        if (rating.HasValue && rating != Rating) Rating = rating;
+        if (quizId.HasValue && quizId.Value != Guid.Empty && !QuizId.Equals(quizId.Value)) QuizId = quizId.Value;
+        
         return this;
     }
 }

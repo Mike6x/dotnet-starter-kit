@@ -14,5 +14,5 @@ public enum FileType
     QuizMedia,
     
     [Description(".pdf,.doc,.zip,.rar")]
-    Doc
+    Document
 }

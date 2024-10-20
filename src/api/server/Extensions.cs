@@ -41,6 +41,7 @@ public static class Extensions
         builder.RegisterTodoServices();
 
         builder.RegisterSettingServices();
+        builder.RegisterElearningServices();
         
         //add carter endpoint modules
         builder.Services.AddCarter(configurator: config =>

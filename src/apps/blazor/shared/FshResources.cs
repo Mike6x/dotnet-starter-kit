@@ -15,4 +15,8 @@ public static class FshResources
     public const string Menus = nameof(Menus);
     public const string Dimensions = nameof(Dimensions);
     public const string EntityCodes = nameof(EntityCodes);
+    
+    public const string Quizs = nameof(Quizs);
+    public const string QuizResults = nameof(QuizResults);
+    
 }

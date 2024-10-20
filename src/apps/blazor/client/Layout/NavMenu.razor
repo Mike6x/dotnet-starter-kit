@@ -21,14 +21,30 @@
         </MudNavGroup>
     }
 
+    @if (CanViewElearningGroup)
+    {
+
+    <MudDivider Class="my-2" />
+    <MudNavGroup Title="ELearning" Icon="@Icons.Material.Outlined.School" Class="mt-2 mb-n2" Expanded="false">
+        @if (_canViewQuizs)
+        {
+        <MudNavLink Href="/Elearning/Quizs" Icon="@Icons.Material.Outlined.LibraryBooks" Class="fsh-nav-child">Quizs</MudNavLink>
+        }
+        @if (_canViewQuizResults)
+        {
+        <MudNavLink Href="/Elearning/QuizResults" Icon="@Icons.Material.Outlined.Info" Class="fsh-nav-child">QuizResults </MudNavLink>
+        }
+    </MudNavGroup>
+    }
+
     @if (CanViewUserGroup || CanViewSettingGroup)
     {
         <MudDivider Class="my-2"/>
-        <MudText Typo="Typo.subtitle2" Color="Color.Surface" Class="ml-4 my-3">ADMIN</MudText>
+        <MudText Typo="Typo.subtitle2" Color="Color.Surface" Class="ml-4 my-3">SETUP</MudText>
 
         @if (CanViewUserGroup)
         {
-            <MudNavGroup Title="User Management" Icon="@Icons.Material.Filled.Security" Class="mt-2 mb-n2" Expanded="false">
+            <MudNavGroup Title="Admin" Icon="@Icons.Material.Filled.Security" Class="mt-2 mb-n2" Expanded="false">
                 @if (_canViewUsers)
                 {
                     <MudNavLink Match="NavLinkMatch.Prefix" Href="/identity/users" Icon="@Icons.Material.Filled.PeopleAlt">Users</MudNavLink>
@@ -47,7 +63,7 @@
 
         @if (CanViewSettingGroup)
         {
-            <MudNavGroup Title="App Setting" Icon="@Icons.Material.Outlined.Settings" Class="mt-2 mb-n2" Expanded="false">
+            <MudNavGroup Title="Setting" Icon="@Icons.Material.Outlined.Settings" Class="mt-2 mb-n2" Expanded="false">
                 @if (_canViewDimensions)
                 {
                     <MudNavLink Href="/setting/dimensions" Icon="@Icons.Material.Filled.Rule" Class="fsh-nav-child">Dimensions</MudNavLink>
