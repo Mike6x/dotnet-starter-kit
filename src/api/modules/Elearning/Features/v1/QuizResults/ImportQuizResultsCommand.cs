@@ -6,20 +6,20 @@ using FSH.Starter.WebApi.Elearning.Domain;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace FSH.Starter.WebApi.Elearning.Features.v1.Quizs;
+namespace FSH.Starter.WebApi.Elearning.Features.v1.QuizResults;
 
-public record ImportQuizsCommand(FileUploadCommand UploadFile, bool IsUpdate ) : IRequest<ImportResponse>;
+public record ImportQuizResultsCommand(FileUploadCommand UploadFile, bool IsUpdate ) : IRequest<ImportResponse>;
 
 
-public class ImportQuizsHandler(
-    [FromKeyedServices("elearning:quizs")]  IRepository<Quiz> repository, IDataImport dataImport)
-    : IRequestHandler<ImportQuizsCommand, ImportResponse>
+public class ImportQuizResultsHandler(
+    [FromKeyedServices("elearning:quizresults")]  IRepository<QuizResult> repository, IDataImport dataImport)
+    : IRequestHandler<ImportQuizResultsCommand, ImportResponse>
 {
-    public async Task<ImportResponse> Handle(ImportQuizsCommand request, CancellationToken cancellationToken)
+    public async Task<ImportResponse> Handle(ImportQuizResultsCommand request, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
         
-        var items = await dataImport.ToListAsync<Quiz>(request.UploadFile, FileType.Excel);
+        var items = await dataImport.ToListAsync<QuizResult>(request.UploadFile, FileType.Excel);
         
         ImportResponse response = new()
         {

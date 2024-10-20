@@ -11,8 +11,12 @@ namespace FSH.Starter.WebApi.Elearning.Persistence;
 
 public class ElearningDbContext : FshDbContext
 {
-    public ElearningDbContext(IMultiTenantContextAccessor<FshTenantInfo> multiTenantContextAccessor, DbContextOptions<ElearningDbContext> options, IPublisher publisher, IOptions<DatabaseOptions> elearnings)
-        : base(multiTenantContextAccessor, options, publisher, elearnings)
+    public ElearningDbContext(
+        IMultiTenantContextAccessor<FshTenantInfo> multiTenantContextAccessor, 
+        DbContextOptions<ElearningDbContext> options, 
+        IPublisher publisher, 
+        IOptions<DatabaseOptions> settings)
+        : base(multiTenantContextAccessor, options, publisher, settings)
     {
     }
 

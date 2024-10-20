@@ -17,7 +17,7 @@ public partial class Todos : ComponentBase
 
     protected override void OnInitialized() =>
         Context = new(
-            entityName: "Todos",
+            entityName: "Todo",
             entityNamePlural: "Todos",
             entityResource: FshResources.Todos,
             fields: new()

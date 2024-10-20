@@ -2,14 +2,13 @@ using Ardalis.Specification;
 using Ardalis.Specification.EntityFrameworkCore;
 using FSH.Framework.Core.Domain.Contracts;
 using FSH.Framework.Core.Persistence;
-using FSH.Starter.WebApi.Setting.Persistence;
 using Mapster;
 
 namespace FSH.Starter.WebApi.Elearning.Persistence;
 internal sealed class ElearningRepository<T> : RepositoryBase<T>, IReadRepository<T>, IRepository<T>
     where T : class, IAggregateRoot
 {
-    public ElearningRepository(SettingDbContext context)
+    public ElearningRepository(ElearningDbContext context)
         : base(context)
     {
     }

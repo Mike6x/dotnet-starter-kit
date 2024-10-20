@@ -23,7 +23,7 @@ public class QuizUpdatedEventHandler(
              notification.Item.Name,
              notification.Item.Description,
              notification.Item.IsActive,
-             notification.Item.QuizPath,
+             notification.Item.QuizUrl,
              notification.Item.FromDate,
              notification.Item.ToDate,
              notification.Item.QuizTypeId,

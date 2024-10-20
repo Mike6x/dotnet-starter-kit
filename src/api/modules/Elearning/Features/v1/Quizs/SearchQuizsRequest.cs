@@ -7,7 +7,7 @@ using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FSH.Starter.WebApi.Elearning.Features.v1.Quizs;
-public class SearchQuizsRequest : PaginationFilter, IRequest<PagedList<Elearning.Features.v1.Quizs.QuizDto>>
+public class SearchQuizsRequest : PaginationFilter, IRequest<PagedList<QuizDto>>
 {
     public Guid? QuizTypeId { get; set; }
     public Guid? QuizTopicId { get; set; }
@@ -19,26 +19,26 @@ public class SearchQuizsRequest : PaginationFilter, IRequest<PagedList<Elearning
     public bool? IsActive { get; set; }
 }
 
-// public sealed class SearchQuizsHandler(
-//     [FromKeyedServices("elearning:quiz")] IReadRepository<Quiz> repository)
-//     : IRequestHandler<SearchQuizsRequest, PagedList<QuizDto>>
-// {
-//     public async Task<PagedList<QuizDto>> Handle(SearchQuizsRequest request, CancellationToken cancellationToken)
-//     {
-//         ArgumentNullException.ThrowIfNull(request);
-//
-//         var spec = new SearchQuizsSpecs(request);
-//
-//         var items = await repository.ListAsync(spec, cancellationToken).ConfigureAwait(false);
-//         var totalCount = await repository.CountAsync(spec, cancellationToken).ConfigureAwait(false);
-//
-//         return new PagedList<QuizDto>(items, request!.PageNumber, request!.PageSize, totalCount);
-//     }
-// }
+public sealed class SearchQuizsHandler(
+    [FromKeyedServices("elearning:quizs")] IReadRepository<Quiz> repository)
+    : IRequestHandler<SearchQuizsRequest, PagedList<QuizDto>>
+{
+    public async Task<PagedList<QuizDto>> Handle(SearchQuizsRequest request, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        var spec = new SearchQuizsSpecs(request);
+
+        var items = await repository.ListAsync(spec, cancellationToken).ConfigureAwait(false) ?? [];
+        var totalCount = await repository.CountAsync(spec, cancellationToken).ConfigureAwait(false);
+
+        return new PagedList<QuizDto>(items, request!.PageNumber, request!.PageSize, totalCount);
+    }
+}
 
 public sealed class SearchQuizsSpecs : EntitiesByPaginationFilterSpec<Quiz, QuizDto>
 {
-    public SearchQuizsSpecs(Elearning.Features.v1.Quizs.SearchQuizsRequest request)
+    public SearchQuizsSpecs(SearchQuizsRequest request)
         : base(request) =>
         Query
             .Where(e => e.IsActive.Equals(request.IsActive!), request.IsActive.HasValue)

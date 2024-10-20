@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.IO.Compression;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using FSH.Framework.Core.Origin;
 using FSH.Framework.Core.Storage;
@@ -23,7 +24,8 @@ namespace FSH.Framework.Infrastructure.Storage.Files
             if (request.Name is null)
                 throw new InvalidOperationException("Name is required.");
 
-            string base64Data = Regex.Match(request.Data, "data:image/(?<type>.+?),(?<data>.+)").Groups["data"].Value;
+            // string base64Data = Regex.Match(request.Data, "data:image/(?<type>.+?),(?<data>.+)").Groups["data"].Value
+            string base64Data = Regex.Match(request.Data, string.Format("data:{0}/(?<type>.+?),(?<data>.+)", supportedFileType.ToString().ToLower())).Groups["data"].Value;
 
             var streamData = new MemoryStream(Convert.FromBase64String(base64Data));
             if (streamData.Length > 0)
@@ -37,6 +39,8 @@ namespace FSH.Framework.Infrastructure.Storage.Files
                 string folderName = supportedFileType switch
                 {
                     FileType.Image => Path.Combine("assets", "images", folder),
+                    FileType.QuizMedia => Path.Combine("assets", "quizs", folder),
+                    FileType.Document => Path.Combine("assets", "documents", folder),
                     _ => Path.Combine("assets", "others", folder),
                 };
                 string pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
@@ -73,7 +77,8 @@ namespace FSH.Framework.Infrastructure.Storage.Files
 
         public void Remove(Uri? path)
         {
-            var pathString = path!.ToString();
+            // var pathString = path!.ToString()
+            var pathString = GetLocalPathFromUri (path!, true);  
             if (File.Exists(pathString))
             {
                 File.Delete(pathString);
@@ -129,5 +134,47 @@ namespace FSH.Framework.Infrastructure.Storage.Files
 
             return string.Format(pattern, max);
         }
+        
+        public void RemoveFolder(string fullPath)
+        {
+
+            if (Directory.Exists(fullPath))
+                Directory.Delete(fullPath, true);
+        }
+        
+        public Uri? UnZip(Uri? zipPath)
+        {
+            if (zipPath == null) return null;
+
+            var zipFullPath = GetLocalPathFromUri(zipPath, true);
+
+            if (!File.Exists(zipFullPath)) return null;
+
+            string unzipFullPath = Regex.Replace(zipFullPath, ".zip", string.Empty);
+
+            ZipFile.ExtractToDirectory(zipFullPath, unzipFullPath, true);
+
+            string unzipRelativePath= Regex.Replace(GetLocalPathFromUri(zipPath, false), ".zip", string.Empty);
+
+            return new Uri(originSettings.Value.OriginUrl!, unzipRelativePath);
+        }
+
+        /// <summary>
+        /// isFullPass = true, return full local path
+        /// isFullPass = false, return relative Path
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="isFullPath"></param>
+        /// <returns></returns>
+        public string GetLocalPathFromUri (Uri? path, bool isFullPath)
+        {
+            if(path == null) return string.Empty;
+
+            string relativePath = Regex.Replace(path.AbsolutePath , "/assets/", "assets/");
+
+            return isFullPath ? Path.Combine(Directory.GetCurrentDirectory(),relativePath ) : relativePath;
+        }
+
+
     }
 }

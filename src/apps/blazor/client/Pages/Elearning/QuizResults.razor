@@ -1,0 +1,87 @@
+@page "/elearning/quizresults"
+
+<PageHeader Title="QuizResults" Header="QuizResults" SubHeader="Manage your QuizResults." />
+
+<EntityTable @ref="_table" TEntity="QuizResultDto" TId="Guid" TRequest="QuizResultViewModel" Context="@Context">
+    <AdvancedSearchContent>
+
+        <MudTextField Placeholder="Filter by Student Id" Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.FilterAlt" IconSize="Size.Medium"
+                      Style="flex:none!important;margin:5!important"
+                      @bind-Value="SearchUserString" TextChanged="OnUserStringChanged" Immediate="false" />
+
+        <MudCheckBox @bind-Value="SearchIsPass"  Label="IsPass"></MudCheckBox>
+
+        <QuizAutocomplete For="@(() => SearchQuizId)" @bind-Value="SearchQuizId" 
+                          AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" />
+        
+
+
+    </AdvancedSearchContent>
+    
+    <ExtraActions>
+        @if (!string.IsNullOrEmpty(context.SId))
+        {
+        <MudMenuItem OnClick="(() => ViewProfile(context.SId))">Student Info</MudMenuItem>
+        }
+    </ExtraActions>
+    
+    <EditFormContent>
+        @if (!Context.AddEditModal.IsCreate)
+        {
+        <MudItem xs="12" md="12">
+            <MudTextField Value="context.Id" Underline=false ReadOnly Label="Item Id" />
+        </MudItem>
+        }
+        <MudItem xs="12" md="6">
+            <MudTextField Label="Student Id" For="@(() => context.SId)" @bind-Value="context.SId" />
+        </MudItem>
+        <MudItem xs="12" md="3">
+            <MudTextField Label="Exam Title" For="@(() => context.Qt)" @bind-Value="context.Qt" />
+        </MudItem>
+        <MudItem xs="12" md="3">
+            <MudTextField Label="Student Point" For="@(() => context.Sp)" @bind-Value="context.Sp" />
+        </MudItem>
+
+        <MudItem xs="12" md="3">
+            <MudDatePicker Label="Start Time" Editable="true" @bind-Date="context.StartTime" DateFormat="dd.MM.yyyy" DisableToolbar="true" />
+        </MudItem>
+        <MudItem xs="12" md="3">
+            <MudDatePicker Label="End Time" Editable="true" @bind-Date="context.EndTime" DateFormat="dd.MM.yyyy" DisableToolbar="true" />
+        </MudItem>
+        <MudItem xs="12" md="3">
+            <MudTextField Label="Used Time" For="@(() => context.Ut)" @bind-Value="context.Ut" />
+        </MudItem>
+        <MudItem xs="12" md="3">
+            <MudTextField Label="Time Spent" For="@(() => context.Fut)" @bind-Value="context.Fut" />
+        </MudItem>
+
+        <MudItem xs="12" md="3">
+            <MudTextField Label="Total score" For="@(() => context.Tp)" @bind-Value="context.Tp" />
+        </MudItem>
+        <MudItem xs="12" md="3">
+            <MudTextField Label="Passing score" For="@(() => context.Ps)" @bind-Value="context.Ps" />
+        </MudItem>
+        <MudItem xs="12" md="3">
+            <MudTextField Label="Passing in percent" For="@(() => context.Psp)" @bind-Value="context.Psp" />
+        </MudItem>
+        <MudItem xs="12" md="3">
+            <MudTextField Label="Time Limit" For="@(() => context.Tl)" @bind-Value="context.Tl" />
+        </MudItem>
+
+        <MudItem xs="12" md="3">
+            <QuizAutocomplete For="@(() => context.QuizId)" @bind-Value="context.QuizId" 
+                AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" />
+        </MudItem>
+        <MudItem xs="12" md="3">
+            <MudTextField Label="Quiz Type" For="@(() => context.T)" @bind-Value="context.T" ReadOnly="true"/>
+        </MudItem>
+        <MudItem xs="12" md="3">
+            <MudTextField Label="Quiz Version" For="@(() => context.V)" @bind-Value="context.V" />
+        </MudItem>
+        <MudItem xs="12" md="3">
+            <MudTextField Label="Rating" For="@(() => context.Rating)" @bind-Value="context.Rating" />
+        </MudItem>
+        
+    </EditFormContent>
+</EntityTable>

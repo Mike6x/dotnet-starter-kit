@@ -11,7 +11,8 @@ public sealed class SearchDimensionsSpecs : EntitiesByPaginationFilterSpec<Dimen
         : base(request) =>
             Query
                 .Where(e => e.IsActive.Equals(request.IsActive!), request.IsActive.HasValue)
-                .Where(e => string.IsNullOrEmpty(request.Type) || e.Type.Equals(request.Type, StringComparison.Ordinal))
+                .Where(e => e.Type.Equals(request.Type), !string.IsNullOrEmpty(request.Type))
                 .Where(e => e.FatherId.Equals(request.FatherId!.Value), request.FatherId.HasValue)
                     .OrderBy(e => e.Order, !request.HasOrderBy());
 }
+

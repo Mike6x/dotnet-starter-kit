@@ -19,20 +19,20 @@ public class GetQuizsRequest : BaseFilter, IRequest<List<QuizDto>>
 
     public bool? IsActive { get; set; }
 }
-//
-// public class GetQuizsHandler(
-//     [FromKeyedServices("elearning:quiz")] IReadRepository<Quiz> repository)
-//     : IRequestHandler<GetQuizsRequest, List<QuizDto>>
-// {
-//     public async Task<List<QuizDto>> Handle(GetQuizsRequest request, CancellationToken cancellationToken)
-//     {
-//         ArgumentNullException.ThrowIfNull(request);
-//         
-//         var spec = new GetQuizsSpecs(request);
-//         
-//         return await repository.ListAsync(spec, cancellationToken).ConfigureAwait(false);
-//     }
-// }
+
+public class GetQuizsHandler(
+    [FromKeyedServices("elearning:quizs")] IReadRepository<Quiz> repository)
+    : IRequestHandler<GetQuizsRequest, List<QuizDto>>
+{
+    public async Task<List<QuizDto>> Handle(GetQuizsRequest request, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        
+        var spec = new GetQuizsSpecs(request);
+        
+        return await repository.ListAsync(spec, cancellationToken).ConfigureAwait(false);
+    }
+}
 
 public sealed class GetQuizsSpecs : EntitiesByBaseFilterSpec<Quiz, QuizDto>
 {

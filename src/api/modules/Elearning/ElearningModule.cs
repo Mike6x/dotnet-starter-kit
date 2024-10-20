@@ -30,15 +30,18 @@ public static class ElearningModule
             quizGroup.MapImportQuizsEndpoint();
             
             var quizResultGroup = app.MapGroup("quizresults").WithTags("quizresults");
-            // quizResultGroup.MapCreateQuizResultEndpoint();
-            // quizResultGroup.MapGetQuizResultEndpoint();
-            // quizResultGroup.MapGetQuizResultsEndpoint();
-            // quizResultGroup.MapSearchQuizResultEndpoint();
-            // quizResultGroup.MapUpdateQuizResultEndpoint();
+            quizResultGroup.MapCreateQuizResultEndpoint();
+            quizResultGroup.MapGetQuizResultEndpoint();
+            quizResultGroup.MapGetQuizResultsEndpoint();
+            quizResultGroup.MapSearchQuizResultsEndpoint();
+            quizResultGroup.MapUpdateQuizResultEndpoint();
             quizResultGroup.MapDeleteQuizResultEndpoint();
-            // quizResultGroup.MapExportQuizResultsEndpoint();
-            // quizResultGroup.MapImportQuizResultsEndpoint();
-            //
+            quizResultGroup.MapExportQuizResultsEndpoint();
+            quizResultGroup.MapImportQuizResultsEndpoint();
+            
+            quizResultGroup.MapMobileCreateQuizResultEndpoint();
+            
+
         }
     }
     

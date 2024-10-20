@@ -2,7 +2,20 @@
 
 <PageHeader Title="Dimensions" Header="Dimensions" SubHeader="Manage your Dimensions." />
 
-<EntityTable @ref="_table" TEntity="GetDimensionResponse" TId="Guid" TRequest="DimensionViewModel" Context="@Context">
+<EntityTable @ref="_table" TEntity="DimensionDto" TId="Guid" TRequest="DimensionViewModel" Context="@Context">
+    <AdvancedSearchContent>
+        <MudTextField Placeholder="Type Filter" Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.FilterAlt" IconSize="Size.Medium"
+                      Style="flex:none!important;margin:0!important"
+                      @bind-Value="SearchTypeString" TextChanged="OnTypeStringChanged" Immediate="false" />
+       
+        <DimensionAutocomplete @bind-Value="SearchFatherId"
+                               AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" />
+
+        <MudCheckBox @bind-Value="SearchIsActive"  Label="IsActive"></MudCheckBox>
+        
+    </AdvancedSearchContent>
+    
     <EditFormContent>
         @if (!Context.AddEditModal.IsCreate)
         {
@@ -15,10 +28,10 @@
             <MudTextField Label="Order" For="@(() => context.Order)" @bind-Value="context.Order" />
         </MudItem>
         <MudItem xs="12" md="3">
-            <MudTextField Label="Code" For="@(() => context.Code)" @bind-Value="context.Code" />
+            <MudTextField Label="Code(*)" For="@(() => context.Code)" @bind-Value="context.Code" />
         </MudItem>
         <MudItem xs="12" md="3">
-            <MudTextField Label="Name" For="@(() => context.Name)" @bind-Value="context.Name" T="string" />
+            <MudTextField Label="Name(*)" For="@(() => context.Name)" @bind-Value="context.Name" T="string" />
         </MudItem>
         <MudItem xs="12" md="3">
             <MudTextField Label="Value" For="@(() => context.Value)" @bind-Value="context.Value" />
@@ -34,16 +47,21 @@
             <MudTextField Label="Full Native Name" For="@(() => context.FullNativeName)" @bind-Value="context.FullNativeName" T="string" />
         </MudItem>
         <MudItem xs="12" md="3">
-            <MudTextField Label="Type" For="@(() => context.Type)" @bind-Value="context.Type" T="string" />
-        </MudItem>
-        <MudItem xs="12" md="9">
-            <MudTextField Label="Description" For="@(() => context.Description)" @bind-Value="context.Description" />
+            <MudTextField Label="Type(*)" For="@(() => context.Type)" @bind-Value="context.Type" T="string" />
         </MudItem>
 
-        <MudItem xs="12" md="9">
+        <MudItem xs="12" md="3">
+            <DimensionAutocomplete For="@(() => context.FatherId)" @bind-Value="context.FatherId"
+                                   AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" />
+        </MudItem>
+        <MudItem xs="12" md="6">
         </MudItem>
         <MudItem xs="12" md="3">
             <MudCheckBox @bind-Value="context.IsActive" For="@(() => context.IsActive)" Label="Active"></MudCheckBox>
+        </MudItem>
+
+        <MudItem xs="12" md="12">
+            <MudTextField Label="Description" For="@(() => context.Description)" @bind-Value="context.Description" />
         </MudItem>
     </EditFormContent>
 </EntityTable>
