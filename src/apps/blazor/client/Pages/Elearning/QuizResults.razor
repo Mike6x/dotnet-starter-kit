@@ -37,7 +37,7 @@
             <MudTextField Label="Student Id" For="@(() => context.SId)" @bind-Value="context.SId" />
         </MudItem>
         <MudItem xs="12" md="3">
-            <MudTextField Label="Exam Title" For="@(() => context.Qt)" @bind-Value="context.Qt" />
+            <MudTextField Label="Exam Title" For="@(() => context.Qt)" @bind-Value="context.Qt" Required/>
         </MudItem>
         <MudItem xs="12" md="3">
             <MudTextField Label="Student Point" For="@(() => context.Sp)" @bind-Value="context.Sp" />
@@ -70,8 +70,8 @@
         </MudItem>
 
         <MudItem xs="12" md="3">
-            <QuizAutocomplete For="@(() => context.QuizId)" @bind-Value="context.QuizId" 
-                AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" />
+            <QuizAutocomplete Label="Quiz" For="@(() => context.QuizId)" @bind-Value="context.QuizId" 
+                AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" Required/>
         </MudItem>
         <MudItem xs="12" md="3">
             <MudTextField Label="Quiz Type" For="@(() => context.T)" @bind-Value="context.T" ReadOnly="true"/>

@@ -79,7 +79,7 @@ public class CreateQuizResultValidator : AbstractValidator<CreateQuizResultComma
         RuleFor(e => e.QuizId)
             .NotEmpty()
             .MustAsync(async (id, ct) => await context.Quizs.FindAsync([id], cancellationToken: ct) is not null)
-                .WithMessage((_, id) => $"Quiz with {id} existed.");
+                .WithMessage((_, id) => $"Quiz with {id} not existed.");
         RuleFor(e => e.Qt).NotEmpty();
         RuleFor(e => e.Sp).GreaterThanOrEqualTo(0);
         RuleFor(e => e.Ps).GreaterThanOrEqualTo(0);

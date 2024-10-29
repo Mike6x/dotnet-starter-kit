@@ -51,7 +51,12 @@ public record QuizResultExportDto(
     
     Guid QuizId,
     string QuizCode,
-    string QuizName
+    string QuizName,
+    
+    Guid CreatedBy,
+    DateTimeOffset Created,
+    Guid? LastModifiedBy,
+    DateTimeOffset? LastModified
 );
 
 

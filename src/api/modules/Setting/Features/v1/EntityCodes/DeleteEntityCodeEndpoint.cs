@@ -22,6 +22,5 @@ public static class DeleteEntityCodeEndpoint
             .Produces(StatusCodes.Status204NoContent)
             .RequirePermission("Permissions.EntityCodes.Delete")
             .MapToApiVersion(new ApiVersion(1, 0));
-
     }
 }

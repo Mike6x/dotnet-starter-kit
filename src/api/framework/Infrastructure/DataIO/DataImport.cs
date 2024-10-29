@@ -35,6 +35,7 @@ public class DataImport : IDataImport
             // Skip first row which is used for column header texts
             foreach (IXLRow row in worksheet.RowsUsed().Skip(1))
             {
+                // T need contractor
                 T item = (T)Activator.CreateInstance(typeOfObject)!;
 
                 foreach (var prop in properties)
@@ -49,7 +50,7 @@ public class DataImport : IDataImport
                         
                         if(obj != null) prop.SetValue(item, obj);
                     }
-                    catch
+                    catch(Exception)
                     {
                         // if any error
                         // return await Task.FromResult(new List<T>())
