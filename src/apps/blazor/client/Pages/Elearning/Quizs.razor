@@ -41,10 +41,10 @@
             <MudTextField Label="Order" For="@(() => context.Order)" @bind-Value="context.Order" />
         </MudItem>
         <MudItem xs="12" md="3">
-            <MudTextField Label="Code" For="@(() => context.Code)" @bind-Value="context.Code" />
+            <MudTextField Label="Code" For="@(() => context.Code)" @bind-Value="context.Code" Required/>
         </MudItem>
         <MudItem xs="12" md="6">
-            <MudTextField Label="Name" For="@(() => context.Name)" @bind-Value="context.Name" T="string" />
+            <MudTextField Label="Name" For="@(() => context.Name)" @bind-Value="context.Name" T="string" Required/>
         </MudItem>
          
         <MudItem xs="12" md="3">
@@ -76,17 +76,17 @@
         <MudItem xs="12" md="3">
             <DimensionAutocomplete For="@(() => context.QuizTopicId)" @bind-Value="context.QuizTopicId"
                                    Label="QuizTopic" DimensionType="QuizTopic"
-                                   AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" />
+                                   AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter"Required/>
         </MudItem>
         <MudItem xs="12" md="3">
             <DimensionAutocomplete For="@(() => context.QuizModeId)" @bind-Value="context.QuizModeId"
                                    Label="QuizMode" DimensionType="QuizMode"
-                                   AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" />
+                                   AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" Required />
         </MudItem>
         <MudItem xs="12" md="3">
             <DimensionAutocomplete For="@(() => context.QuizTypeId)" @bind-Value="context.QuizTypeId"
                                    Label="QuizType" DimensionType="QuizType"
-                                   AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" />
+                                   AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" Required/>
         </MudItem>
         <MudItem xs="12" md="3">
             <MudCheckBox @bind-Value="context.IsActive" For="@(() => context.IsActive)" Label="Active"></MudCheckBox>

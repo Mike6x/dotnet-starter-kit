@@ -770,9 +770,9 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         /// Creates a QuizResult item
         /// </remarks>
         /// <param name="version">The requested API version</param>
-        /// <returns>Created</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<CreateQuizResultResponse> MobileCreateQuizResultEndpointAsync(string version, CreateQuizResultCommand body);
+        System.Threading.Tasks.Task MobileCreateQuizResultEndpointAsync(string version, string tenant, MobileCreateQuizResultCommand? request);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -782,9 +782,9 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         /// Creates a QuizResult item
         /// </remarks>
         /// <param name="version">The requested API version</param>
-        /// <returns>Created</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<CreateQuizResultResponse> MobileCreateQuizResultEndpointAsync(string version, CreateQuizResultCommand body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task MobileCreateQuizResultEndpointAsync(string version, string tenant, MobileCreateQuizResultCommand? request, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Creates a Quiz item
@@ -5124,11 +5124,11 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         /// Creates a QuizResult item
         /// </remarks>
         /// <param name="version">The requested API version</param>
-        /// <returns>Created</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<CreateQuizResultResponse> MobileCreateQuizResultEndpointAsync(string version, CreateQuizResultCommand body)
+        public virtual System.Threading.Tasks.Task MobileCreateQuizResultEndpointAsync(string version, string tenant, MobileCreateQuizResultCommand? request)
         {
-            return MobileCreateQuizResultEndpointAsync(version, body, System.Threading.CancellationToken.None);
+            return MobileCreateQuizResultEndpointAsync(version, tenant, request, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -5139,15 +5139,15 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         /// Creates a QuizResult item
         /// </remarks>
         /// <param name="version">The requested API version</param>
-        /// <returns>Created</returns>
+        /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<CreateQuizResultResponse> MobileCreateQuizResultEndpointAsync(string version, CreateQuizResultCommand body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task MobileCreateQuizResultEndpointAsync(string version, string tenant, MobileCreateQuizResultCommand? request, System.Threading.CancellationToken cancellationToken)
         {
             if (version == null)
                 throw new System.ArgumentNullException("version");
 
-            if (body == null)
-                throw new System.ArgumentNullException("body");
+            if (tenant == null)
+                throw new System.ArgumentNullException("tenant");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -5155,12 +5155,13 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
-                    var content_ = new System.Net.Http.ByteArrayContent(json_);
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
-                    request_.Content = content_;
+                    var keyValues_ = new System.Collections.Generic.List<System.Collections.Generic.KeyValuePair<string, string>>();
+                    if (request == null)
+                        throw new System.ArgumentNullException("request");
+                    else
+                        keyValues_.Add(new System.Collections.Generic.KeyValuePair<string, string>("request", ConvertToString(request, System.Globalization.CultureInfo.InvariantCulture)));
+                    request_.Content = new System.Net.Http.FormUrlEncodedContent(keyValues_);
                     request_.Method = new System.Net.Http.HttpMethod("POST");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
@@ -5168,6 +5169,9 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
                     urlBuilder_.Append("api/v");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(version, System.Globalization.CultureInfo.InvariantCulture)));
                     urlBuilder_.Append("/elearning/quizresults/mobile-create");
+                    urlBuilder_.Append('?');
+                    urlBuilder_.Append(System.Uri.EscapeDataString("tenant")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(tenant, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    urlBuilder_.Length--;
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -5192,14 +5196,9 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
                         ProcessResponse(client_, response_);
 
                         var status_ = (int)response_.StatusCode;
-                        if (status_ == 201)
+                        if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<CreateQuizResultResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
+                            return;
                         }
                         else
                         {
@@ -10780,6 +10779,48 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
         public string? Message { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class MobileCreateQuizResultCommand
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("sId")]
+        public string? SId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("sp")]
+        public double Sp { get; set; } = 0D;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ut")]
+        public double Ut { get; set; } = 0D;
+
+        [System.Text.Json.Serialization.JsonPropertyName("fut")]
+        public string Fut { get; set; } = "string.Empty";
+
+        [System.Text.Json.Serialization.JsonPropertyName("qt")]
+        public string Qt { get; set; } = "string.Empty";
+
+        [System.Text.Json.Serialization.JsonPropertyName("tp")]
+        public double Tp { get; set; } = 100D;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ps")]
+        public double Ps { get; set; } = 100D;
+
+        [System.Text.Json.Serialization.JsonPropertyName("psp")]
+        public double Psp { get; set; } = 100D;
+
+        [System.Text.Json.Serialization.JsonPropertyName("tl")]
+        public double Tl { get; set; } = 0D;
+
+        [System.Text.Json.Serialization.JsonPropertyName("v")]
+        public string V { get; set; } = "9.0";
+
+        [System.Text.Json.Serialization.JsonPropertyName("t")]
+        public string T { get; set; } = "Graded";
+
+        [System.Text.Json.Serialization.JsonPropertyName("quizId")]
+        public System.Guid QuizId { get; set; } = default!;
 
     }
 

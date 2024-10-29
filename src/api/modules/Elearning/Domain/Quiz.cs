@@ -1,14 +1,13 @@
 ﻿using FSH.Framework.Core.Domain;
 using FSH.Framework.Core.Domain.Contracts;
 using FSH.Starter.WebApi.Elearning.Domain.Events;
-using FSH.Starter.WebApi.Setting.Domain;
 
 namespace FSH.Starter.WebApi.Elearning.Domain;
 public class Quiz :  AuditableEntity, IAggregateRoot
 {
     public int Order { get; private set; }
-    public string Code { get; private set; }
-    public string Name { get; private set; }
+    public string Code { get; private set; } = "";
+    public string Name { get; private set; } = "";
     public string? Description { get; private set; }
     public bool IsActive { get; private set; }
     
@@ -19,7 +18,7 @@ public class Quiz :  AuditableEntity, IAggregateRoot
     /// <summary>
     /// Type = Quiz, content only have video
     /// Type = ELeaning, Content have MP4 video and quiz
-    /// Type = Servey
+    /// Type = Survey
     /// </summary>
     public Guid QuizTypeId { get; private set; }
     // public virtual Dimension QuizType { get; private set; } = default
@@ -41,66 +40,7 @@ public class Quiz :  AuditableEntity, IAggregateRoot
     public int? RatingCount { get; private set; }
     public decimal? Rating { get; private set; }
 
-    public Quiz(
-        int order,
-        string code,
-        string name,
-        string? description,
-        bool isActive,
-        
-        Uri? quizUrl,
-        DateTime? fromDate,
-        DateTime? toDate,
-        
-        Guid quizTypeId,
-        Guid quizTopicId,
-        Guid quizModeId,
-        
-        decimal? price,
-        int? sale,
-        int? ratingCount,
-        decimal? rating)
-    {
-        Order = order;
-        Code = code;
-        Name = name;
-        Description = description;
-        IsActive = toDate >= DateTime.Today && isActive;
-        
-        QuizUrl = quizUrl;
-        FromDate = fromDate ?? DateTime.MinValue;
-        ToDate = toDate ?? DateTime.UtcNow;
-       
-        QuizTypeId = quizTypeId;
-        QuizTopicId = quizTopicId;
-        QuizModeId = quizModeId;
-        
-        Sale = sale;
-        Price = price;
-        RatingCount = ratingCount;
-        Rating = rating;
-    }
-
-    public Quiz()
-    : this(
-        0, 
-        string.Empty, 
-        string.Empty, 
-        string.Empty, 
-        false,
-        null, 
-        DateTime.MinValue, 
-        DateTime.UtcNow, 
-        Guid.Empty, 
-        Guid.Empty, 
-        Guid.Empty, 
-        null, 
-        null, 
-        null, 
-        null)
-    {
-    }
-    
+ 
     public static Quiz Create(
         int? order,
         string code,
@@ -195,11 +135,64 @@ public class Quiz :  AuditableEntity, IAggregateRoot
         return this;
     }
     
-    //
-    // public Quiz ClearQuizUrl()
+       // public Quiz(
+    //     int order,
+    //     string code,
+    //     string name,
+    //     string? description,
+    //     bool isActive,
+        
+    //     Uri? quizUrl,
+    //     DateTime? fromDate,
+    //     DateTime? toDate,
+        
+    //     Guid quizTypeId,
+    //     Guid quizTopicId,
+    //     Guid quizModeId,
+        
+    //     decimal? price,
+    //     int? sale,
+    //     int? ratingCount,
+    //     decimal? rating)
     // {
-    //     QuizUrl = null;
-    //     return this;
+    //     Order = order;
+    //     Code = code;
+    //     Name = name;
+    //     Description = description;
+    //     IsActive = toDate >= DateTime.Today && isActive;
+        
+    //     QuizUrl = quizUrl;
+    //     FromDate = fromDate ?? DateTime.MinValue;
+    //     ToDate = toDate ?? DateTime.UtcNow;
+       
+    //     QuizTypeId = quizTypeId;
+    //     QuizTopicId = quizTopicId;
+    //     QuizModeId = quizModeId;
+        
+    //     Sale = sale;
+    //     Price = price;
+    //     RatingCount = ratingCount;
+    //     Rating = rating;
+    // }
+
+    // public Quiz()
+    // : this(
+    //     0, 
+    //     string.Empty, 
+    //     string.Empty, 
+    //     string.Empty, 
+    //     false,
+    //     null, 
+    //     DateTime.MinValue, 
+    //     DateTime.UtcNow, 
+    //     Guid.Empty, 
+    //     Guid.Empty, 
+    //     Guid.Empty, 
+    //     null, 
+    //     null, 
+    //     null, 
+    //     null)
+    // {
     // }
     
 }

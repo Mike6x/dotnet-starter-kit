@@ -36,7 +36,13 @@ public record QuizExportDto(
     decimal? Price,
     int? Sale,
     int? RatingCount,
-    decimal? Rating);
+    decimal? Rating,
+    
+    Guid CreatedBy,
+    DateTimeOffset Created,
+    Guid? LastModifiedBy,
+    DateTimeOffset? LastModified
+    );
 
 public record GetQuizResponse(
     Guid Id,

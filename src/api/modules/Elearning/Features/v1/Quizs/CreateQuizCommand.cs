@@ -5,7 +5,6 @@ using FSH.Framework.Core.Storage;
 using FSH.Framework.Core.Storage.File;
 using FSH.Framework.Core.Storage.File.Features;
 using FSH.Starter.WebApi.Elearning.Domain;
-using FSH.Starter.WebApi.Elearning.Persistence;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -85,10 +84,18 @@ public sealed class CreateQuizHandler(
 
 public class CreateQuizValidator : AbstractValidator<CreateQuizCommand>
 {
-    public CreateQuizValidator(ElearningDbContext context)
+    public CreateQuizValidator([FromKeyedServices("elearning:quizs")] IRepository<Quiz> repository)
     {
-        RuleFor(e => e.Code).NotEmpty().MinimumLength(2).MaximumLength(75);
-        RuleFor(e => e.Name).NotEmpty().MinimumLength(2).MaximumLength(75);
+        RuleFor(e => e.Code)
+            .NotEmpty().MinimumLength(2).MaximumLength(75)
+            .MustAsync(async (code, ct) => await repository.FirstOrDefaultAsync(new QuizByCodeSpec(code), ct) is null)
+                .WithMessage((_, code) => $"Item with Code: {code} already exists.");
+
+        RuleFor(e => e.Name)
+            .NotEmpty().MinimumLength(2).MaximumLength(75)
+            .MustAsync(async (name, ct) => await repository.FirstOrDefaultAsync(new QuizByNameSpec(name), ct) is null)
+                .WithMessage((_, name) => $"Item with Name: {name} already exists.");
+
         RuleFor(e => e.Price).GreaterThanOrEqualTo(0);
         RuleFor(e => e.QuizTopicId).NotEqual(Guid.Empty).WithMessage("QuizTopic required");
         RuleFor(e => e.QuizModeId).NotEqual(Guid.Empty).WithMessage("QuizMode Required");

@@ -24,22 +24,3 @@ public static class CreateQuizResultEndpoint
 
     }
 }
-
-public static class MobileCreateQuizResultEndpoint
-{
-    internal static RouteHandlerBuilder MapMobileCreateQuizResultEndpoint(this IEndpointRouteBuilder endpoints)
-    {
-        return endpoints.MapPost("/mobile-create", async (CreateQuizResultCommand request, ISender mediator) =>
-                {
-                    var response = await mediator.Send(request);
-                    return Results.CreatedAtRoute("MobileCreateQuizResultEndpoint", new { id = response.Id }, response);
-                })
-                .WithName("MobileCreateQuizResultEndpoint")
-                .WithSummary("Creates a QuizResult item")
-                .WithDescription("Creates a QuizResult item")
-                .Produces<CreateQuizResultResponse>(StatusCodes.Status201Created)
-
-                .MapToApiVersion(new ApiVersion(1, 0));
-
-    }
-}

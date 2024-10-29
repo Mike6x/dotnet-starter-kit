@@ -27,7 +27,7 @@ public sealed class DeleteQuizHandler(
 
         if (await quizResultRepo.AnyAsync(new QuizResultsByQuizIdSpec(request.Id), cancellationToken))
         {
-            throw new ConflictException("Item cannot be deleted as it's being used.");
+            throw new ConflictException($"Item with Id: {request.Id} cannot be deleted as it's being used.");
         }
 
         if (item.QuizUrl != null)

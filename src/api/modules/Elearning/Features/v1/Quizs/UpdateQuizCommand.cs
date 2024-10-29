@@ -88,10 +88,20 @@ public sealed class UpdateQuizHandler(
 
 public class UpdateQuizValidator : AbstractValidator<UpdateQuizCommand>
 {
-    public UpdateQuizValidator(ElearningDbContext context)
+    public UpdateQuizValidator([FromKeyedServices("elearning:quizs")] IRepository<Quiz> repository)
     {
-        RuleFor(e => e.Code).NotEmpty().MinimumLength(2).MaximumLength(75);
-        RuleFor(e => e.Name).NotEmpty().MinimumLength(2).MaximumLength(75);
+        RuleFor(e => e.Code)
+            .NotEmpty().MinimumLength(2).MaximumLength(75)
+            .MustAsync(async (item, code, ct) => await repository.FirstOrDefaultAsync(new QuizByCodeSpec(code), ct) 
+                    is not { } existingItem || existingItem.Id == item.Id)
+                    .WithMessage((_, code) => $"Item with Code: {code} already exists.");
+
+        RuleFor(e => e.Name)
+            .NotEmpty().MinimumLength(2).MaximumLength(75)
+            .MustAsync(async (item, name, ct) => await repository.FirstOrDefaultAsync(new QuizByNameSpec(name), ct) 
+                is not { } existingItem || existingItem.Id == item.Id)
+                .WithMessage((_, name) => $"Item with Name: {name} already exists.");
+
         RuleFor(e => e.Price).GreaterThanOrEqualTo(0);
         RuleFor(e => e.Sale).GreaterThanOrEqualTo(0);
         RuleFor(e => e.Rating).GreaterThanOrEqualTo(0);

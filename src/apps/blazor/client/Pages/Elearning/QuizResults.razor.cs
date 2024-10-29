@@ -13,7 +13,7 @@ public partial class QuizResults : ComponentBase
 
     private EntityTable<QuizResultDto, Guid, QuizResultViewModel> _table = default!;
     protected EntityServerTableContext<QuizResultDto, Guid, QuizResultViewModel> Context { get; set; } = default!;
-    
+
     protected override void OnInitialized()
     {
         Context = new(
@@ -26,30 +26,32 @@ public partial class QuizResults : ComponentBase
                 new(QuizResult => QuizResult.QuizCode, "Quiz Code", "Quiz.Code"),
                 // new(QuizResult => QuizResult.QuizName, "Quiz Name", "Quiz.Name"),
 
-                new(QuizResult => QuizResult.Qt, "Exam Type", "Qt"),
+                new(QuizResult => QuizResult.Qt, "Exam Title", "Qt"),
 
                 new(QuizResult => QuizResult.SId, "Student Id", "SId"),
                 new(QuizResult => QuizResult.Sp, "Student Point", "Sp"),
 
-                new(QuizResult => QuizResult.Ps, "Passing Score", "Ps"),
+                new(QuizResult => QuizResult.Psp, "Require Score in %", "Psp"),
+                // new(QuizResult => QuizResult.Ps, "Passing Score", "Ps"),
                 new(QuizResult => QuizResult.Tp, "Total Score", "Tp"),
-                 new(QuizResult => QuizResult.Psp, "Require Score in %", "Psp"),
+
 
                 new(QuizResult => QuizResult.StartTime.ToLocalTime().ToString("yyyy/MM/dd HH:mmm"), "StartTime", "StartTime"),
                 new(QuizResult => QuizResult.EndTime.ToLocalTime().ToString("yyyy/MM/dd HH:mmm"), "EndTime", "EndTime"),
-                
-                new(QuizResult => QuizResult.Ut, "Used Time in Seconds", "Ut"),              
-                new(QuizResult => QuizResult.Tl, "Time Limit", "Tl"),
+
+                // new(QuizResult => QuizResult.Ut, "Used Time in Seconds", "Ut"),
+                // new(QuizResult => QuizResult.Tl, "Time Limit", "Tl"),
 
                 new(QuizResult => QuizResult.Rating, "Rating", "Rating"),
-                new(QuizResult => QuizResult.IsPass, "Passed", Type: typeof(bool))
+                new(QuizResult => QuizResult.IsPass, "Is Passed", Type: typeof(bool)),
+
             },
             enableAdvancedSearch: true,
             idFunc: item => item.Id,
             exportFunc: async filter =>
             {
                 var dataFilter = filter.Adapt<ExportQuizResultsRequest>();
-   
+
                 dataFilter.QuizId = SearchQuizId == Guid.Empty ? null : SearchQuizId;
                 dataFilter.UserId = SearchUserString;
                 dataFilter.IsPass = SearchIsPass;
@@ -61,7 +63,7 @@ public partial class QuizResults : ComponentBase
             searchFunc: async filter =>
             {
                 var dataFilter = filter.Adapt<SearchQuizResultsRequest>();
-                
+
                 dataFilter.QuizId = SearchQuizId == Guid.Empty ? null : SearchQuizId;
                 dataFilter.IsPass = SearchIsPass;
 

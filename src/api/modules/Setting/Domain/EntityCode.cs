@@ -15,7 +15,7 @@ public class EntityCode : AuditableEntity, IAggregateRoot
     public int? Value { get; private set; }
     public CodeType Type { get; private set; }
 
-    private EntityCode(
+    public EntityCode(
     int order,
     string code,
     string name,
@@ -35,7 +35,7 @@ public class EntityCode : AuditableEntity, IAggregateRoot
         Type = type ?? CodeType.MasterData;
     }
 
-    private EntityCode()
+    public EntityCode()
     : this(0, string.Empty, string.Empty, null, true, string.Empty, 0, CodeType.MasterData)
     {
     }

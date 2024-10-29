@@ -16,10 +16,10 @@
             <MudTextField Label="Order" For="@(() => context.Order)" @bind-Value="context.Order" />
         </MudItem>
         <MudItem xs="12" md="3">
-            <MudTextField Label="Code" For="@(() => context.Code)" @bind-Value="context.Code" />
+            <MudTextField Label="Code" For="@(() => context.Code)" @bind-Value="context.Code" Required/>
         </MudItem>
         <MudItem xs="12" md="3">
-            <MudTextField Label="Name" For="@(() => context.Name)" @bind-Value="context.Name" T="string" />
+            <MudTextField Label="Name" For="@(() => context.Name)" @bind-Value="context.Name" T="string" Required/>
         </MudItem>
         <MudItem xs="12" md="3">
             <MudSelect Label="Type" @bind-Value="context.Type" Variant="Variant.Filled">
