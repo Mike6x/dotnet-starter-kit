@@ -9839,7 +9839,7 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         public string? Description { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("isActive")]
-        public bool IsActive { get; set; } = true;
+        public bool? IsActive { get; set; } = true;
 
         [System.Text.Json.Serialization.JsonPropertyName("fullName")]
         public string? FullName { get; set; } = default!;

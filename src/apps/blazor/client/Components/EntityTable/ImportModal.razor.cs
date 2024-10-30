@@ -4,8 +4,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
 using FSH.Starter.Blazor.Infrastructure.Api;
-using FSH.Starter.Blazor.Shared;
-using MudBlazor.Services;
+using Shared.Authorization;
 
 namespace FSH.Starter.Blazor.Client.Components.EntityTable;
 
@@ -81,7 +80,7 @@ public partial class ImportModal
             }
 
             byte[]? buffer = new byte[_file.Size];
-            await _file.OpenReadStream(_file.Size).ReadAsync(buffer);
+            _ = await _file.OpenReadStream(_file.Size).ReadAsync(buffer);
             string? base64String = $"data:{AppConstants.StandardExcelFormat};base64,{Convert.ToBase64String(buffer)}";
 
             RequestModel = new FileUploadCommand

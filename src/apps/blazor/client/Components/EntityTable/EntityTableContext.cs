@@ -1,5 +1,5 @@
-﻿using FSH.Starter.Shared.Authorization;
-using MudBlazor;
+﻿using MudBlazor;
+using Shared.Authorization;
 
 namespace FSH.Starter.Blazor.Client.Components.EntityTable;
 

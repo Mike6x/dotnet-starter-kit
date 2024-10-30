@@ -1,7 +1,7 @@
 ﻿using FSH.Framework.Core.Identity.Users.Abstractions;
-using FSH.Starter.Shared.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Shared.Authorization;
 
 namespace FSH.Framework.Infrastructure.Auth.Policy;
 public sealed class RequiredPermissionAuthorizationHandler(IUserService userService) : AuthorizationHandler<PermissionAuthorizationRequirement>

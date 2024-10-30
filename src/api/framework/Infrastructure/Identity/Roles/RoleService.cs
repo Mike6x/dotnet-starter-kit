@@ -7,9 +7,9 @@ using FSH.Framework.Core.Identity.Users.Abstractions;
 using FSH.Framework.Infrastructure.Identity.Persistence;
 using FSH.Framework.Infrastructure.Identity.RoleClaims;
 using FSH.Framework.Infrastructure.Tenant;
-using FSH.Starter.Shared.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Shared.Authorization;
 
 namespace FSH.Framework.Infrastructure.Identity.Roles;
 

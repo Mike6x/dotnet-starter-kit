@@ -13,9 +13,9 @@ public static class ExportProductsEndpoint
     internal static RouteHandlerBuilder MapExportProductsEndpoint(this IEndpointRouteBuilder endpoints)
     {
         return endpoints
-            .MapPost("/export", async Task<byte[]> (ISender mediator, [FromBody] BaseFilter filter) =>
+            .MapPost("/export", async Task<byte[]> (ISender mediator, [FromBody] ExportProductsRequest command) =>
             {
-                var response = await mediator.Send(new ExportProductsRequest(filter));
+                var response = await mediator.Send(command);
 
                 return response;
             })

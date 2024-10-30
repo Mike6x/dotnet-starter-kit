@@ -1,4 +1,4 @@
-﻿namespace FSH.Starter.Shared.Authorization;
+﻿namespace Shared.Authorization;
 public static class TenantConstants
 {
     public static class Root

@@ -1,10 +1,10 @@
 ﻿using FSH.Framework.Core.Identity.Tokens;
 using FSH.Framework.Core.Identity.Tokens.Features.Generate;
-using FSH.Starter.Shared.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using Shared.Authorization;
 
 namespace FSH.Framework.Infrastructure.Identity.Tokens.Endpoints;
 public static class TokenGenerationEndpoint

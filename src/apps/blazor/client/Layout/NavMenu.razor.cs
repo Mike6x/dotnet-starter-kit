@@ -1,8 +1,8 @@
 ﻿using FSH.Starter.Blazor.Infrastructure.Auth;
-using FSH.Starter.Blazor.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Shared.Authorization;
 
 namespace FSH.Starter.Blazor.Client.Layout;
 
@@ -38,22 +38,22 @@ public partial class NavMenu
     protected override async Task OnParametersSetAsync()
     {
         var user = (await AuthState).User;
-        _canViewHangfire = await AuthService.HasPermissionAsync(user, FshAction.View, FshResource.Hangfire);
-        _canViewAuditTrails = await AuthService.HasPermissionAsync(user, FshAction.View, FshResource.AuditTrails);
+        _canViewHangfire = await AuthService.HasPermissionAsync(user, FshActions.View, FshResources.Hangfire);
+        _canViewAuditTrails = await AuthService.HasPermissionAsync(user, FshActions.View, FshResources.AuditTrails);
         
-        _canViewTenants = await AuthService.HasPermissionAsync(user, FshAction.View, FshResource.Tenants);
-        _canViewRoles = await AuthService.HasPermissionAsync(user, FshAction.View, FshResource.Roles);
-        _canViewUsers = await AuthService.HasPermissionAsync(user, FshAction.View, FshResource.Users);
+        _canViewTenants = await AuthService.HasPermissionAsync(user, FshActions.View, FshResources.Tenants);
+        _canViewRoles = await AuthService.HasPermissionAsync(user, FshActions.View, FshResources.Roles);
+        _canViewUsers = await AuthService.HasPermissionAsync(user, FshActions.View, FshResources.Users);
         
-        _canViewDimensions = await AuthService.HasPermissionAsync(user, FshAction.View, FshResource.Dimensions);
-        _canViewEntityCodes = await AuthService.HasPermissionAsync(user, FshAction.View, FshResource.EntityCodes);
+        _canViewDimensions = await AuthService.HasPermissionAsync(user, FshActions.View, FshResources.Dimensions);
+        _canViewEntityCodes = await AuthService.HasPermissionAsync(user, FshActions.View, FshResources.EntityCodes);
         
-        _canViewQuizs = await AuthService.HasPermissionAsync(user, FshAction.View, FshResource.Quizs);
-        _canViewQuizResults = await AuthService.HasPermissionAsync(user, FshAction.View, FshResource.QuizResults);
+        _canViewQuizs = await AuthService.HasPermissionAsync(user, FshActions.View, FshResources.Quizs);
+        _canViewQuizResults = await AuthService.HasPermissionAsync(user, FshActions.View, FshResources.QuizResults);
         
         
         
-        _canViewProducts = await AuthService.HasPermissionAsync(user, FshAction.View, FshResource.Products);
-        _canViewTodos = await AuthService.HasPermissionAsync(user, FshAction.View, FshResource.Todos);
+        _canViewProducts = await AuthService.HasPermissionAsync(user, FshActions.View, FshResources.Products);
+        _canViewTodos = await AuthService.HasPermissionAsync(user, FshActions.View, FshResources.Todos);
     }
 }

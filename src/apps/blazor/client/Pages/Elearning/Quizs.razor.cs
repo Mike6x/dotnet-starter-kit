@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.VisualBasic;
 using MudBlazor;
+using Shared.Authorization;
 
 namespace FSH.Starter.Blazor.Client.Pages.Elearning;
 

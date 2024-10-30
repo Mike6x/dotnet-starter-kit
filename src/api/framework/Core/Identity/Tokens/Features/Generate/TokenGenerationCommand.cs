@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 using FluentValidation;
-using FSH.Starter.Shared.Authorization;
+using Shared.Authorization;
 
 namespace FSH.Framework.Core.Identity.Tokens.Features.Generate;
 public record TokenGenerationCommand(

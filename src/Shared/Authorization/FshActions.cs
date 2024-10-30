@@ -1,4 +1,4 @@
-﻿namespace FSH.Starter.Shared.Authorization;
+﻿namespace Shared.Authorization;
 public static class FshActions
 {
     public const string View = nameof(View);
@@ -8,6 +8,7 @@ public static class FshActions
     public const string Delete = nameof(Delete);
     public const string Export = nameof(Export);
     public const string Import = nameof(Import);
+    public const string Unlock = nameof(Unlock);
     public const string Generate = nameof(Generate);
     public const string Clean = nameof(Clean);
     public const string UpgradeSubscription = nameof(UpgradeSubscription);

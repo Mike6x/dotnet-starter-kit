@@ -12,7 +12,6 @@
       <ProjectReference Include="..\..\framework\Core\Core.csproj" />
       <ProjectReference Include="..\..\framework\Infrastructure\Infrastructure.csproj" />
       <ProjectReference Include="..\Setting\Setting.csproj" />
-      <ProjectReference Include="..\Shared\Shared.csproj" />
     </ItemGroup>
 
 </Project>
