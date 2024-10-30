@@ -11,13 +11,13 @@ public partial class EntityCodes : ComponentBase
     [Inject]
     protected IApiClient ApiClient { get; set; } = default!;
 
-    protected EntityServerTableContext<EntityCodeDto, Guid, EntityCodeViewModel> Context { get; set; } = default!;
+    protected EntityServerTableContext<GetEntityCodeResponse, Guid, EntityCodeViewModel> Context { get; set; } = default!;
 
-    private EntityTable<EntityCodeDto, Guid, EntityCodeViewModel> _table = default!;
+    private EntityTable<GetEntityCodeResponse, Guid, EntityCodeViewModel> _table = default!;
 
     protected override void OnInitialized() =>
         Context = new(
-            entityName: "EntityCodes",
+            entityName: "EntityCode",
             entityNamePlural: "EntityCodes",
             entityResource: FshResources.EntityCodes,
             fields: new()
@@ -33,25 +33,14 @@ public partial class EntityCodes : ComponentBase
                 new(item => item.Description, "Description", "Description"),
                 new(item => item.IsActive,  "Active", Type: typeof(bool)),
             },
-            enableAdvancedSearch: true,
+            enableAdvancedSearch: false,
             idFunc: item => item.Id,
-            exportFunc: async filter =>
-            {
-                var dataFilter = filter.Adapt<ExportEntityCodesRequest>();
-                dataFilter.Type = SearchCodeType == default ? null : SearchCodeType;
-                
-                return await ApiClient.ExportEntityCodesEndpointAsync("1", dataFilter);
-
-            },
-            importFunc: async (fileUploadModel, isUpdate) => await ApiClient.ImportEntityCodesEndpointAsync("1", isUpdate, fileUploadModel),
             searchFunc: async filter =>
             {
-                var dataFilter = filter.Adapt<SearchEntityCodesRequest>();
-                dataFilter.Type = SearchCodeType == default ? null : SearchCodeType;
-                
-                var result = await ApiClient.SearchEntityCodesEndpointAsync("1", dataFilter);
-                
-                return result.Adapt<PaginationResponse<EntityCodeDto>>();
+                var searchFilter = filter.Adapt<PaginationFilter>();
+
+                var result = await ApiClient.GetEntityCodeListEndpointAsync("1", searchFilter);
+                return result.Adapt<PaginationResponse<GetEntityCodeResponse>>();
             },
             createFunc: async item =>
             {
@@ -66,14 +55,14 @@ public partial class EntityCodes : ComponentBase
   
     #region Advanced Search
 
-    private CodeType _searchCodeType;
+    private CodeType _searchCodeType = CodeType._0;
     private CodeType SearchCodeType
     {
         get => _searchCodeType;
         set
         {
             _searchCodeType = value;
-            _ = _table.ReloadDataAsync();
+            _ = _table?.ReloadDataAsync();
         }
     }
     #endregion

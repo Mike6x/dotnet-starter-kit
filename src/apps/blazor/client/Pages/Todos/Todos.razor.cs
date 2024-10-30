@@ -1,6 +1,6 @@
 ﻿using FSH.Starter.Blazor.Client.Components.EntityTable;
 using FSH.Starter.Blazor.Infrastructure.Api;
-using FSH.Starter.Blazor.Shared;
+using FSH.Starter.Shared.Authorization;
 using Mapster;
 using Microsoft.AspNetCore.Components;
 
@@ -17,7 +17,7 @@ public partial class Todos : ComponentBase
 
     protected override void OnInitialized() =>
         Context = new(
-            entityName: "Todos",
+            entityName: "Todo",
             entityNamePlural: "Todos",
             entityResource: FshResources.Todos,
             fields: new()

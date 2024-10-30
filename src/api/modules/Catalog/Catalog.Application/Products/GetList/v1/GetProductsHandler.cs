@@ -16,8 +16,8 @@ public class GetProductsHandler(
     {
         ArgumentNullException.ThrowIfNull(request);
         
-        var spec = new GetProductsSpecs(request);
+        var spec = new EntitiesByBaseFilterSpec<Product, ProductDto>(request.Filter);
         
-        return await repository.ListAsync(spec, cancellationToken).ConfigureAwait(false);
+        return await repository.ListAsync(spec, cancellationToken);
     }
 }

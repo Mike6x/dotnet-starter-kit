@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Routing;
 namespace FSH.Starter.WebApi.Setting.Features.v1.EntityCodes;
 public static class DeleteEntityCodeEndpoint
 {
-    internal static RouteHandlerBuilder MapDeleteEntityCodeEndpoint(this IEndpointRouteBuilder endpoints)
+    internal static RouteHandlerBuilder MapEntityCodeDeletionEndpoint(this IEndpointRouteBuilder endpoints)
     {
         return endpoints
             .MapDelete("/{id:guid}", async (Guid id, ISender mediator) =>
@@ -22,6 +22,5 @@ public static class DeleteEntityCodeEndpoint
             .Produces(StatusCodes.Status204NoContent)
             .RequirePermission("Permissions.EntityCodes.Delete")
             .MapToApiVersion(new ApiVersion(1, 0));
-
     }
 }

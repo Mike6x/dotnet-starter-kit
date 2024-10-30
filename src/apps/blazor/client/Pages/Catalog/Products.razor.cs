@@ -31,20 +31,20 @@ public partial class Products
             idFunc: prod => prod.Id!.Value,
             exportFunc: async filter =>
             {
-                var dataFilter = filter.Adapt<ExportProductsRequest>();
-                dataFilter.MinimumRate = Convert.ToDouble(SearchMinimumRate);
-                dataFilter.MaximumRate = Convert.ToDouble(SearchMaximumRate);
+                var exportFilter = filter.Adapt<BaseFilter>();
                 
-                return await ApiClient.ExportProductsEndpointAsync("1", dataFilter);
-
+                return await ApiClient.ExportProductsEndpointAsync("1", exportFilter);
             },
             importFunc: async (fileUploadModel, isUpdate) => await ApiClient.ImportProductsEndpointAsync("1", isUpdate, fileUploadModel),
             searchFunc: async filter =>
             {
-                var dataFilter = filter.Adapt<SearchProductsRequest>();
-                dataFilter.MinimumRate = Convert.ToDouble(SearchMinimumRate);
-                dataFilter.MaximumRate = Convert.ToDouble(SearchMaximumRate);
-                var result = await ApiClient.SearchProductsEndpointAsync("1", dataFilter);
+                var searchFilter = filter.Adapt<PaginationFilter>();
+                
+                // var searchFilter = filter.Adapt<SearchProductsCommand>()
+                // searchFilter.MinimumRate = SearchMinimumRate
+                // searchFilter.MaximumRate = SearchMaximumRate
+
+                var result = await ApiClient.SearchProductsEndpointAsync("1", searchFilter);
                 return result.Adapt<PaginationResponse<ProductDto>>();
             },
             createFunc: async prod =>
@@ -55,7 +55,8 @@ public partial class Products
             {
                 await ApiClient.UpdateProductEndpointAsync("1", id, prod.Adapt<UpdateProductCommand>());
             },
-            deleteFunc: async id => await ApiClient.DeleteProductEndpointAsync("1", id));
+            deleteFunc: async id => await ApiClient.DeleteProductEndpointAsync("1", id)
+        );
 
     // Advanced Search
 

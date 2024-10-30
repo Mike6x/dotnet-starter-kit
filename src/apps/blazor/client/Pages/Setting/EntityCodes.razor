@@ -2,17 +2,7 @@
 
 <PageHeader Title="EntityCodes" Header="EntityCodes" SubHeader="Manage your EntityCodes." />
 
-<EntityTable @ref="_table" TEntity="EntityCodeDto" TId="Guid" TRequest="EntityCodeViewModel" Context="@Context" >
-    <AdvancedSearchContent>
-
-        <MudSelect Label="Type" @bind-Value="SearchCodeType" Variant="Variant.Filled">
-            @foreach (CodeType item in Enum.GetValues(typeof(CodeType)))
-            {
-            <MudSelectItem Value="@item">@item</MudSelectItem>
-            }
-        </MudSelect>
-
-    </AdvancedSearchContent>
+<EntityTable @ref="_table" TEntity="GetEntityCodeResponse" TId="Guid" TRequest="EntityCodeViewModel" Context="@Context" >
 
     <EditFormContent>
         @if (!Context.AddEditModal.IsCreate)
@@ -26,14 +16,14 @@
             <MudTextField Label="Order" For="@(() => context.Order)" @bind-Value="context.Order" />
         </MudItem>
         <MudItem xs="12" md="3">
-            <MudTextField Label="Code" For="@(() => context.Code)" @bind-Value="context.Code" />
+            <MudTextField Label="Code" For="@(() => context.Code)" @bind-Value="context.Code" Required/>
         </MudItem>
         <MudItem xs="12" md="3">
-            <MudTextField Label="Name" For="@(() => context.Name)" @bind-Value="context.Name" T="string" />
+            <MudTextField Label="Name" For="@(() => context.Name)" @bind-Value="context.Name" T="string" Required/>
         </MudItem>
         <MudItem xs="12" md="3">
             <MudSelect Label="Type" @bind-Value="context.Type" Variant="Variant.Filled">
-                @foreach (CodeType item in Enum.GetValues(typeof(CodeType)).Cast<CodeType>())
+                @foreach (CodeType item in Enum.GetValues(typeof(CodeType)))
                 {
                 <MudSelectItem Value="@item">@item</MudSelectItem>
                 }

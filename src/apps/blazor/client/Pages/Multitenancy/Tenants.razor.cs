@@ -2,7 +2,7 @@
 using FSH.Starter.Blazor.Client.Components.EntityTable;
 using FSH.Starter.Blazor.Infrastructure.Api;
 using FSH.Starter.Blazor.Infrastructure.Auth;
-using FSH.Starter.Blazor.Shared;
+using FSH.Starter.Shared.Authorization;
 using Mapster;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
@@ -32,8 +32,8 @@ public partial class Tenants : ComponentBase
         Context = new(
             entityName: "Tenant",
             entityNamePlural: "Tenants",
-            entityResource: FshResource.Tenants,
-            searchAction: FshAction.View,
+            entityResource: FshResources.Tenants,
+            searchAction: FshActions.View,
             deleteAction: string.Empty,
             updateAction: string.Empty,
             exportAction: string.Empty,
@@ -53,8 +53,8 @@ public partial class Tenants : ComponentBase
             hasExtraActionsFunc: () => true);
 
         var state = await AuthState;
-        _canUpgrade = await AuthService.HasPermissionAsync(state.User, FshAction.UpgradeSubscription, FshResource.Tenants);
-        _canModify = await AuthService.HasPermissionAsync(state.User, FshAction.Update, FshResource.Tenants);
+        _canUpgrade = await AuthService.HasPermissionAsync(state.User, FshActions.UpgradeSubscription, FshResources.Tenants);
+        _canModify = await AuthService.HasPermissionAsync(state.User, FshActions.Update, FshResources.Tenants);
     }
 
     private void ViewTenantDetails(string id)

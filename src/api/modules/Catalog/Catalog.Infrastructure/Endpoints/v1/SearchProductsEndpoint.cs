@@ -1,5 +1,6 @@
 using FSH.Framework.Core.Paging;
 using FSH.Framework.Infrastructure.Auth.Policy;
+using FSH.Starter.WebApi.Catalog.Application.Products.Get.v1;
 using FSH.Starter.WebApi.Catalog.Application.Products.Search.v1;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -14,9 +15,9 @@ public static class SearchProductsEndpoint
     internal static RouteHandlerBuilder MapSearchProductsEndpoint(this IEndpointRouteBuilder endpoints)
     {
         return endpoints
-            .MapPost("/search", async (ISender mediator, [FromBody] SearchProductsRequest command) =>
+            .MapPost("/search", async (ISender mediator, [FromBody] PaginationFilter filter) =>
             {
-                var response = await mediator.Send(command);
+                var response = await mediator.Send(new SearchProductsRequest(filter));
                 return Results.Ok(response);
             })
             .WithName(nameof(SearchProductsEndpoint))

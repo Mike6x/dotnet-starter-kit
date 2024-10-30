@@ -1,0 +1,63 @@
+﻿namespace FSH.Starter.WebApi.Elearning.Features.v1.Quizs;
+public record QuizDto(
+    Guid Id,
+    int? Order,
+    string Code,
+    string Name,
+    string? Description,
+    bool IsActive,
+    Uri? QuizUrl,
+    DateTime FromDate,
+    DateTime ToDate,
+    Guid QuizTypeId,
+    string QuizTypeName,
+    Guid QuizTopicId,
+    string QuizTopicName,
+    Guid QuizModeId,
+    string QuizModeName,
+    decimal? Price,
+    int? Sale,
+    int? RatingCount,
+    decimal? Rating);
+
+public record QuizExportDto(
+    Guid Id,
+    int? Order,
+    string Code,
+    string Name,
+    string? Description,
+    bool IsActive,
+    Uri? QuizUrl,
+    DateTime FromDate,
+    DateTime ToDate,
+    Guid QuizTypeId,
+    Guid QuizTopicId,
+    Guid QuizModeId,
+    decimal? Price,
+    int? Sale,
+    int? RatingCount,
+    decimal? Rating,
+    
+    Guid CreatedBy,
+    DateTimeOffset Created,
+    Guid? LastModifiedBy,
+    DateTimeOffset? LastModified
+    );
+
+public record GetQuizResponse(
+    Guid Id,
+    int? Order,
+    string Code,
+    string Name,
+    string? Description,
+    bool IsActive,
+    Uri? QuizUrl,
+    DateTime? FromDate,
+    DateTime? ToDate,
+    Guid QuizTypeId,
+    Guid QuizTopicId,
+    Guid QuizModeId,
+    decimal? Price,
+    int? Sale,
+    int? RatingCount,
+    decimal? Rating);

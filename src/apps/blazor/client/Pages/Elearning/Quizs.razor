@@ -1,0 +1,144 @@
+@page "/elearning/quizs"
+@using FSH.Starter.Blazor.Client.Pages.Setting
+
+<PageHeader Title="Quizs" Header="Quizs" SubHeader="Manage your Quizs." />
+
+<EntityTable @ref="_table" TEntity="QuizDto" TId="Guid" TRequest="QuizViewModel" Context="@Context">
+
+    <AdvancedSearchContent>
+
+        <DimensionAutocomplete @bind-Value="SearchQuizTopicId"
+                               Label="Quiz Topic" DimensionType="QuizTopic"
+                               AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" />
+
+
+        <DimensionAutocomplete @bind-Value="SearchQuizModeId"
+                               Label="Quiz Mode" DimensionType="QuizMode"
+                               AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" />
+
+
+        <DimensionAutocomplete @bind-Value="SearchQuizTypeId"
+                               Label="Quiz Type" DimensionType="QuizType"
+                               AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" />
+
+        <MudDatePicker Label="From Date" Editable="true" @bind-Date="SearchFromDate" DateFormat="dd.MM.yyyy" DisableToolbar="true" Variant="Variant.Outlined" />
+        
+        <MudDatePicker Label="To Date" Editable="true" @bind-Date="SearchToDate" DateFormat="dd.MM.yyyy" DisableToolbar="true" Variant="Variant.Outlined" />
+
+        <MudCheckBox @bind-Value="SearchIsActive"  Label="IsActive"></MudCheckBox>
+
+    </AdvancedSearchContent>
+
+    <EditFormContent>
+        @if (!Context.AddEditModal.IsCreate)
+        {
+        <MudItem xs="12" md="12">
+            <MudTextField Value="context.Id" Underline=false ReadOnly Label="Item Id" />
+        </MudItem>
+        }
+
+        <MudItem xs="12" md="3">
+            <MudTextField Label="Order" For="@(() => context.Order)" @bind-Value="context.Order" />
+        </MudItem>
+        <MudItem xs="12" md="3">
+            <MudTextField Label="Code" For="@(() => context.Code)" @bind-Value="context.Code" Required/>
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <MudTextField Label="Name" For="@(() => context.Name)" @bind-Value="context.Name" T="string" Required/>
+        </MudItem>
+         
+        <MudItem xs="12" md="3">
+            <MudTextField Label="Price" For="@(() => context.Price)" @bind-Value="context.Price" />
+        </MudItem>
+        <MudItem xs="12" md="3">
+            <MudTextField Label="Sales" For="@(() => context.Sale)" @bind-Value="context.Sale" />
+        </MudItem>
+        <MudItem xs="12" md="3">
+            <MudDatePicker Label="FromDate" Editable="true" @bind-Date="context.LocalFromDate" DateFormat="dd.MM.yyyy" DisableToolbar="true" Variant="Variant.Outlined" />
+        </MudItem>
+        <MudItem xs="12" md="3">
+            <MudTimePicker Label="FromTime" Editable="true" @bind-Time="context.LocalTimeOfFromDate" DisableToolbar="true" Variant="Variant.Outlined" />
+        </MudItem>
+
+        <MudItem xs="12" md="3">
+            <MudTextField Label="Rating" For="@(() => context.Rating)" @bind-Value="context.Rating" />
+        </MudItem>
+        <MudItem xs="12" md="3">
+            <MudTextField Label="Rating Counts" For="@(() => context.RatingCount)" @bind-Value="context.RatingCount" />
+        </MudItem>
+        <MudItem xs="12" md="3">
+            <MudDatePicker Label="ToDate" Editable="true" @bind-Date="context.LocalToDate" DateFormat="dd.MM.yyyy" DisableToolbar="true" Variant="Variant.Outlined" />
+        </MudItem>
+        <MudItem xs="12" md="3">
+            <MudTimePicker Label="ToTime" Editable="true" @bind-Time="context.LocalTimeOfToDate" DisableToolbar="true" Variant="Variant.Outlined" />
+        </MudItem>
+        
+        <MudItem xs="12" md="3">
+            <DimensionAutocomplete For="@(() => context.QuizTopicId)" @bind-Value="context.QuizTopicId"
+                                   Label="QuizTopic" DimensionType="QuizTopic"
+                                   AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter"Required/>
+        </MudItem>
+        <MudItem xs="12" md="3">
+            <DimensionAutocomplete For="@(() => context.QuizModeId)" @bind-Value="context.QuizModeId"
+                                   Label="QuizMode" DimensionType="QuizMode"
+                                   AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" Required />
+        </MudItem>
+        <MudItem xs="12" md="3">
+            <DimensionAutocomplete For="@(() => context.QuizTypeId)" @bind-Value="context.QuizTypeId"
+                                   Label="QuizType" DimensionType="QuizType"
+                                   AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" Required/>
+        </MudItem>
+        <MudItem xs="12" md="3">
+            <MudCheckBox @bind-Value="context.IsActive" For="@(() => context.IsActive)" Label="Active"></MudCheckBox>
+        </MudItem>
+
+        <MudItem xs="12" md="6">
+            <MudTextField Label="Description" For="@(() => context.Description)" @bind-Value="context.Description" />
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <MudTextField Label="QuizUrl" For="@(() => context.QuizUrl)" @bind-Value="context.QuizUrl" Disabled />
+        </MudItem>
+
+        <MudItem xs="12" md="12">
+            <div>
+                <MudButton HtmlTag="label" DisableElevation Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
+                           StartIcon="@Icons.Material.Filled.CloudUpload" for="fileInput">
+                    Upload
+                </MudButton>
+                @if (!Context.AddEditModal.IsCreate && context.QuizUrl != null)
+                {
+                <MudButton HtmlTag="label" DisableElevation Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" Target="_blank"
+                           StartIcon="@Icons.Material.Filled.RemoveRedEye" Style="margin-left: 5px;"
+                           Href=@QuizUrl>
+                    Take a Quiz
+                </MudButton>
+
+                <MudButton HtmlTag="label" DisableElevation Variant="Variant.Filled" Color="Color.Error" Size="Size.Small"
+                           StartIcon="@Icons.Material.Filled.Delete" Style="margin-left: 5px;" Disabled="@context.DeleteCurrentQuiz"
+                           OnClick="SetDeleteCurrentQuizFlag">
+                    Delete On Disk
+                </MudButton>
+                }
+                @if (!string.IsNullOrEmpty(context.QuizInBytes))
+                {
+                <MudButton HtmlTag="label" DisableElevation Variant="Variant.Filled" Color="Color.Warning" Size="Size.Small" Target="_blank"
+                           StartIcon="@Icons.Material.Filled.Clear" Style="margin-left: 5px;"
+                           OnClick="ClearQuizInBytes">
+                    Clear on Memory
+                </MudButton>
+                }
+            </div>
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <InputFile id="fileInput" hidden OnChange="UploadFiles" />
+            @if (UploadFile != null && !string.IsNullOrEmpty(context.QuizInBytes))
+            {
+            <MudText>
+                <MudIcon Icon="@Icons.Material.Filled.AttachFile" Class="mr-3 mb-n1" />
+                @UploadFile.Name   (<code>@UploadFile.Size bytes)</code>
+            </MudText>
+            }
+        </MudItem>
+
+    </EditFormContent>
+</EntityTable>

@@ -3,7 +3,19 @@
 <PageHeader Title="Dimensions" Header="Dimensions" SubHeader="Manage your Dimensions." />
 
 <EntityTable @ref="_table" TEntity="DimensionDto" TId="Guid" TRequest="DimensionViewModel" Context="@Context">
-   
+    <AdvancedSearchContent>
+        <MudTextField Placeholder="Type Filter" Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.FilterAlt" IconSize="Size.Medium"
+                      Style="flex:none!important;margin:0!important"
+                      @bind-Value="SearchTypeString" TextChanged="OnTypeStringChanged" Immediate="false" />
+       
+        <DimensionAutocomplete @bind-Value="SearchFatherId"
+                               AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter" />
+
+        <MudCheckBox @bind-Value="SearchIsActive"  Label="IsActive"></MudCheckBox>
+        
+    </AdvancedSearchContent>
+    
     <EditFormContent>
         @if (!Context.AddEditModal.IsCreate)
         {
@@ -16,10 +28,10 @@
             <MudTextField Label="Order" For="@(() => context.Order)" @bind-Value="context.Order" />
         </MudItem>
         <MudItem xs="12" md="3">
-            <MudTextField Label="Code" For="@(() => context.Code)" @bind-Value="context.Code" />
+            <MudTextField Label="Code" For="@(() => context.Code)" @bind-Value="context.Code" Required />
         </MudItem>
         <MudItem xs="12" md="3">
-            <MudTextField Label="Name" For="@(() => context.Name)" @bind-Value="context.Name" T="string" />
+            <MudTextField Label="Name" For="@(() => context.Name)" @bind-Value="context.Name" T="string" Required/>
         </MudItem>
         <MudItem xs="12" md="3">
             <MudTextField Label="Value" For="@(() => context.Value)" @bind-Value="context.Value" />
@@ -35,7 +47,7 @@
             <MudTextField Label="Full Native Name" For="@(() => context.FullNativeName)" @bind-Value="context.FullNativeName" T="string" />
         </MudItem>
         <MudItem xs="12" md="3">
-            <MudTextField Label="Type" For="@(() => context.Type)" @bind-Value="context.Type" T="string" />
+            <MudTextField Label="Type" For="@(() => context.Type)" @bind-Value="context.Type" T="string" Required/>
         </MudItem>
 
         <MudItem xs="12" md="3">
