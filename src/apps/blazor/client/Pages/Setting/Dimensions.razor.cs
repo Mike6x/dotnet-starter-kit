@@ -3,6 +3,7 @@ using FSH.Starter.Blazor.Infrastructure.Api;
 using FSH.Starter.Blazor.Shared;
 using Mapster;
 using Microsoft.AspNetCore.Components;
+using Shared.Authorization;
 
 namespace FSH.Starter.Blazor.Client.Pages.Setting;
 

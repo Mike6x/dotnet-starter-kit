@@ -1,6 +1,6 @@
-﻿using FSH.Starter.Shared.Authorization;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Shared.Authorization;
 
 namespace FSH.Starter.Blazor.Infrastructure.Auth;
 

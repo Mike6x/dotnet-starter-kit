@@ -5,12 +5,12 @@ using FSH.Framework.Infrastructure.Identity.RoleClaims;
 using FSH.Framework.Infrastructure.Identity.Roles;
 using FSH.Framework.Infrastructure.Identity.Users;
 using FSH.Framework.Infrastructure.Tenant;
-using FSH.Starter.Shared.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using IdentityConstants = FSH.Starter.Shared.Authorization.IdentityConstants;
+using Shared.Authorization;
+using IdentityConstants = Shared.Authorization.IdentityConstants;
 
 namespace FSH.Framework.Infrastructure.Identity.Persistence;
 internal sealed class IdentityDbInitializer(

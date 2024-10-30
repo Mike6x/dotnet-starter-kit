@@ -1,10 +1,10 @@
 ﻿using Finbuckle.MultiTenant.Abstractions;
 using FSH.Framework.Infrastructure.Constants;
-using FSH.Starter.Shared.Authorization;
 using Hangfire.Client;
 using Hangfire.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Shared.Authorization;
 
 namespace FSH.Framework.Infrastructure.Jobs;
 

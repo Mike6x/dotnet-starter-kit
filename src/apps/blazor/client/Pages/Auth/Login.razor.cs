@@ -1,9 +1,9 @@
 ﻿using FSH.Starter.Blazor.Client.Components;
 using FSH.Starter.Blazor.Infrastructure.Api;
-using FSH.Starter.Shared.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
+using Shared.Authorization;
 
 namespace FSH.Starter.Blazor.Client.Pages.Auth;
 

@@ -3,6 +3,7 @@ using FSH.Starter.Blazor.Infrastructure.Api;
 using FSH.Starter.Blazor.Shared;
 using Mapster;
 using Microsoft.AspNetCore.Components;
+using Shared.Authorization;
 
 namespace FSH.Starter.Blazor.Client.Pages.Catalog;
 
@@ -31,20 +32,20 @@ public partial class Products
             idFunc: prod => prod.Id!.Value,
             exportFunc: async filter =>
             {
-                var exportFilter = filter.Adapt<BaseFilter>();
+                var dataFilter = filter.Adapt<ExportProductsRequest>();
+                dataFilter.MinimumRate = Convert.ToDouble(SearchMinimumRate);
+                dataFilter.MaximumRate = Convert.ToDouble(SearchMaximumRate);
                 
-                return await ApiClient.ExportProductsEndpointAsync("1", exportFilter);
+                return await ApiClient.ExportProductsEndpointAsync("1", dataFilter);
             },
             importFunc: async (fileUploadModel, isUpdate) => await ApiClient.ImportProductsEndpointAsync("1", isUpdate, fileUploadModel),
             searchFunc: async filter =>
             {
-                var searchFilter = filter.Adapt<PaginationFilter>();
-                
-                // var searchFilter = filter.Adapt<SearchProductsCommand>()
-                // searchFilter.MinimumRate = SearchMinimumRate
-                // searchFilter.MaximumRate = SearchMaximumRate
+                var dataFilter = filter.Adapt<SearchProductsRequest>();
+                dataFilter.MinimumRate = Convert.ToDouble(SearchMinimumRate);
+                dataFilter.MaximumRate = Convert.ToDouble(SearchMaximumRate);
 
-                var result = await ApiClient.SearchProductsEndpointAsync("1", searchFilter);
+                var result = await ApiClient.SearchProductsEndpointAsync("1", dataFilter);
                 return result.Adapt<PaginationResponse<ProductDto>>();
             },
             createFunc: async prod =>

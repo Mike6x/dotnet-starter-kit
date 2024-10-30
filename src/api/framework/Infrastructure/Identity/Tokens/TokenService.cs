@@ -13,11 +13,11 @@ using FSH.Framework.Infrastructure.Auth.Jwt;
 using FSH.Framework.Infrastructure.Identity.Audit;
 using FSH.Framework.Infrastructure.Identity.Users;
 using FSH.Framework.Infrastructure.Tenant;
-using FSH.Starter.Shared.Authorization;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Shared.Authorization;
 
 namespace FSH.Framework.Infrastructure.Identity.Tokens;
 public sealed class TokenService : ITokenService

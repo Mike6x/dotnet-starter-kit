@@ -18,11 +18,11 @@ using FSH.Framework.Infrastructure.Constants;
 using FSH.Framework.Infrastructure.Identity.Persistence;
 using FSH.Framework.Infrastructure.Identity.Roles;
 using FSH.Framework.Infrastructure.Tenant;
-using FSH.Starter.Shared.Authorization;
 using Mapster;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
+using Shared.Authorization;
 
 namespace FSH.Framework.Infrastructure.Identity.Users.Services;
 

@@ -5,7 +5,8 @@ using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using FSH.Starter.Shared.Authorization;
+
+using Shared.Authorization;
 
 namespace FSH.Starter.Blazor.Infrastructure.Auth;
 public static class Extensions
