@@ -11,4 +11,24 @@ public class UpdateUserCommand : IRequest
     public string? Email { get; set; }
     public FileUploadCommand? Image { get; set; }
     public bool DeleteCurrentImage { get; set; }
+
+        #region My Customize
+    public string? UserName { get; set; }
+    public bool IsActive { get; set; }
+    public bool? IsLive { get; set; }
+    public bool EmailConfirmed { get; set; }
+
+    // public string? ImageUrl { get; set; }
+
+    public string? Password { get; set; }
+    public string? ConfirmPassword { get; set; }
+
+    public DateTimeOffset? LockoutEnd { get; set; }
+
+    public string? CreatedBy { get; set; }
+    public DateTime? CreatedOn { get; set; } = default!;
+    public string? LastModifiedBy { get; set; }
+    public DateTime? LastModifiedOn { get; set; } = default!;
+
+    #endregion
 }

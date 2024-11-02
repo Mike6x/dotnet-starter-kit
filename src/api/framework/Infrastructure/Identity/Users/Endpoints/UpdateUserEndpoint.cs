@@ -14,13 +14,21 @@ public static class UpdateUserEndpoint
 {
     internal static RouteHandlerBuilder MapUpdateUserEndpoint(this IEndpointRouteBuilder endpoints)
     {
-        return endpoints.MapPut("/profile", (UpdateUserCommand request, ISender mediator, ClaimsPrincipal user, IUserService service) =>
+        return endpoints.MapPut("/profile", (
+            UpdateUserCommand request, 
+            ISender mediator, 
+            ClaimsPrincipal user, 
+            HttpContext context,
+            IUserService service) =>
         {
             if (user.GetUserId() is not { } userId || string.IsNullOrEmpty(userId))
             {
                 throw new UnauthorizedException();
             }
-            return service.UpdateAsync(request, userId);
+
+             var origin = $"{context.Request.Scheme}://{context.Request.Host.Value}{context.Request.PathBase.Value}";
+
+            return service.UpdateAsync(request, userId, origin);
         })
         .WithName(nameof(UpdateUserEndpoint))
         .WithSummary("update user profile")

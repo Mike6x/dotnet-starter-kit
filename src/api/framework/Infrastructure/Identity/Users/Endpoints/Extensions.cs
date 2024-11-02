@@ -11,6 +11,8 @@ internal static class Extensions
         app.MapUpdateUserEndpoint();
         app.MapGetUsersListEndpoint();
         app.MapDeleteUserEndpoint();
+        app.MapDisableUserEndpoint();
+        
         app.MapForgotPasswordEndpoint();
         app.MapChangePasswordEndpoint();
         app.MapResetPasswordEndpoint();
