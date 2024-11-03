@@ -21,7 +21,7 @@ public static class SearchQuizsEndpoint
         .WithSummary("Gets a list of Quiz items with paging support")
         .WithDescription("Gets a list of Quiz items with paging support")
         .Produces<PagedList<QuizDto>>()
-        .RequirePermission("Permissions.Quizs.View")
+        .RequirePermission("Permissions.Quizs.Search")
         .MapToApiVersion(1);
     }
 }

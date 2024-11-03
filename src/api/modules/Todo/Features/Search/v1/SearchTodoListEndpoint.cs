@@ -21,7 +21,7 @@ public static class SearchTodoListEndpoint
         .WithSummary("Gets a list of todo items with paging support")
         .WithDescription("Gets a list of todo items with paging support")
         .Produces<PagedList<TodoDto>>()
-        .RequirePermission("Permissions.Todos.View")
+        .RequirePermission("Permissions.Todos.Search")
         .MapToApiVersion(1);
     }
 }

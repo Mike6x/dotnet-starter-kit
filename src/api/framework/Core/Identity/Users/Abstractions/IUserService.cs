@@ -55,7 +55,7 @@ public interface IUserService
     Task<UserDetail> GetByEmailAsync(string email, CancellationToken cancellationToken);
     Task<UserDetail> GetByPhoneAsync(string phone, CancellationToken cancellationToken);
     
-    Task<string> DeleteAsync(string userId);
+    Task DeleteAsync(string userId);
     Task<byte[]> ExportAsync(UserListFilter filter, CancellationToken cancellationToken);
 
     Task SendVerificationEmailAsync(string userId, string origin, CancellationToken cancellationToken);

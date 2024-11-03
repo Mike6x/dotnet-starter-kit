@@ -26,7 +26,7 @@ public static class UpdateUserEndpoint
                 throw new UnauthorizedException();
             }
 
-             var origin = $"{context.Request.Scheme}://{context.Request.Host.Value}{context.Request.PathBase.Value}";
+            var origin = $"{context.Request.Scheme}://{context.Request.Host.Value}{context.Request.PathBase.Value}";
 
             return service.UpdateAsync(request, userId, origin);
         })

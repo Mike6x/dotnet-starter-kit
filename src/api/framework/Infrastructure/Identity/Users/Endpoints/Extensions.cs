@@ -6,22 +6,35 @@ internal static class Extensions
 {
     public static IEndpointRouteBuilder MapUserEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapRegisterUserEndpoint();
-        app.MapSelfRegisterUserEndpoint();
-        app.MapUpdateUserEndpoint();
-        app.MapGetUsersListEndpoint();
+        app.MapAssignRolesToUserEndpoint();
+        app.MapChangePasswordEndpoint();
         app.MapDeleteUserEndpoint();
         app.MapDisableUserEndpoint();
-        
+        app.MapExportUsersEndpoint();
+
         app.MapForgotPasswordEndpoint();
-        app.MapChangePasswordEndpoint();
-        app.MapResetPasswordEndpoint();
-        app.MapGetMeEndpoint();
+        app.MapGetCornfirmEmailEndpoint();
+        app.MapGetCornfirmPhoneNumberEndpoint();
+
+        app.MapGetUserByEmailEndpoint();
+        app.MapGetUserByNameEndpoint();
+        app.MapGetUserByPhoneNumberEndpoint();
         app.MapGetUserEndpoint();
-        app.MapGetCurrentUserPermissionsEndpoint();
-        app.ToggleUserStatusEndpointEndpoint();
-        app.MapAssignRolesToUserEndpoint();
+
+        app.MapGetCurrentUserPermissionsEndpoint();   
+        app.MapGetMeEndpoint(); 
         app.MapGetUserRolesEndpoint();
+        app.MapGetUsersListEndpoint();
+
+        app.MapRegisterUserEndpoint();
+        app.MapResetPasswordEndpoint();
+        app.MapSearchUsersEndpoint();
+
+        app.MapSelfRegisterUserEndpoint();
+        app.MapSendVerificationEmailEndPoint();
+        app.ToggleUserStatusEndpointEndpoint();
+        app.MapUpdateUserEndpoint();
+   
         app.MapGetUserAuditTrailEndpoint();
         return app;
     }
