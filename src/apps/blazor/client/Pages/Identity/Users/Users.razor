@@ -4,7 +4,7 @@
 
 <EntityTable TEntity="UserDetail" TId="Guid" TRequest="RegisterUserCommand" Context="@Context">
     <ExtraActions>
-        <MudMenuItem OnClick="(() => ViewProfile(context.Id))">View Profile</MudMenuItem>
+        <MudMenuItem OnClick="(() => ViewProfile(context.Id))">Edit Profile</MudMenuItem>
         @if (_canViewRoles)
         {
             <MudMenuItem OnClick="(() => ManageRoles(context.Id))">Manage Roles</MudMenuItem>

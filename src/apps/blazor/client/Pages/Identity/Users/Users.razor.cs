@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
 using System.Security.Claims;
 using Shared.Authorization;
+using Mapster;
 
 namespace FSH.Starter.Blazor.Client.Pages.Identity.Users;
 
@@ -25,6 +26,7 @@ public partial class Users : ComponentBase
     private bool _canExportUsers;
     private bool _canViewAuditTrails;
     private bool _canViewRoles;
+    private string _currentUserId = string.Empty;
 
     // Fields for editform
     protected string Password { get; set; } = string.Empty;
@@ -40,6 +42,7 @@ public partial class Users : ComponentBase
         _canExportUsers = await AuthService.HasPermissionAsync(user, FshActions.Export, FshResources.Users);
         _canViewRoles = await AuthService.HasPermissionAsync(user, FshActions.View, FshResources.UserRoles);
         _canViewAuditTrails = await AuthService.HasPermissionAsync(user, FshActions.View, FshResources.AuditTrails);
+        _currentUserId = user.GetUserId() ?? string.Empty;
 
         Context = new(
             entityName: "User",
@@ -55,8 +58,9 @@ public partial class Users : ComponentBase
                 new(user => user.UserName, "UserName"),
                 new(user => user.Email, "Email"),
                 new(user => user.PhoneNumber, "PhoneNumber"),
-                new(user => user.EmailConfirmed, "Email Confirmation", Type: typeof(bool)),
-                new(user => user.IsActive, "Active", Type: typeof(bool))
+                new(user => user.EmailConfirmed, "Email Confirmed", Type: typeof(bool)),
+                new(user => user.IsActive, "Active", Type: typeof(bool)),
+                new(user => user.IsActive, "Online", Type: typeof(bool))               
             },
             idFunc: user => user.Id,
             loadDataFunc: async () => (await UsersClient.GetUsersListEndpointAsync()).ToList(),
@@ -68,6 +72,27 @@ public partial class Users : ComponentBase
                     || user.PhoneNumber?.Contains(searchString, StringComparison.OrdinalIgnoreCase) == true
                     || user.UserName?.Contains(searchString, StringComparison.OrdinalIgnoreCase) == true,
             createFunc: user => UsersClient.RegisterUserEndpointAsync(user),
+            updateFunc: async (id, user) =>
+            {
+                UpdateUserCommand updateRequest = user.Adapt<UpdateUserCommand>();
+                updateRequest.Id = id.ToString();
+
+                updateRequest.IsActive = true;
+                updateRequest.EmailConfirmed = false;
+                updateRequest.LastModifiedBy = _currentUserId;
+                updateRequest.LastModifiedOn = DateTime.UtcNow;
+
+                await UsersClient.UpdateUserEndpointAsync(updateRequest);
+            },
+
+            deleteFunc: async id => await UsersClient.DisableUserEndpointAsync(id.ToString()),
+            exportFunc: async filter =>
+            {
+                var dataFilter = filter.Adapt<UserListFilter>();
+                         
+                return await UsersClient.ExportUsersEndpointAsync(dataFilter);
+            },
+
             hasExtraActionsFunc: () => true,
             exportAction: string.Empty);
     }
@@ -97,4 +122,6 @@ public partial class Users : ComponentBase
 
         Context.AddEditModal.ForceRender();
     }
+
+    
 }

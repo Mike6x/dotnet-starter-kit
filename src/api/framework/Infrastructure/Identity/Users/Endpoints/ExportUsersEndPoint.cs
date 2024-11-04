@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Routing;
 
 namespace FSH.Framework.Infrastructure.Identity.Users.Endpoints
 {
-    public static class ExportUsersEndPoint
+    public static class ExportUsersEndpoint
     {
         internal static RouteHandlerBuilder MapExportUsersEndpoint(this IEndpointRouteBuilder endpoints)
         {
@@ -15,7 +15,7 @@ namespace FSH.Framework.Infrastructure.Identity.Users.Endpoints
             {
                 return service.ExportAsync(filter, cancellationToken);
             })
-            .WithName(nameof(ExportUsersEndPoint))
+            .WithName(nameof(ExportUsersEndpoint))
             .WithSummary("Export a list of users with paging support")
             .RequirePermission("Permissions.Users.Export")
             .WithDescription("Export a list of users with paging support");
