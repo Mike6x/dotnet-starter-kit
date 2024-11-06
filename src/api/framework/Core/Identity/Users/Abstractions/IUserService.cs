@@ -31,7 +31,9 @@ public interface IUserService
     
     Task<RegisterUserResponse> RegisterAsync(RegisterUserCommand request, string origin, CancellationToken cancellationToken);
     
-    Task UpdateAsync(UpdateUserCommand request, string userId, string origin);
+    Task UpdateAsync(UpdateUserCommand request, string userId);
+
+    Task UpdateProfileAsync(UpdateUserCommand request, string userId, string origin);
     Task DisableAsync(string userId);
     
     Task<string> ConfirmEmailAsync(string userId, string code, string tenant, CancellationToken cancellationToken);

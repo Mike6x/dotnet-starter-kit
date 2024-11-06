@@ -34,6 +34,7 @@ internal static class Extensions
         app.MapSendVerificationEmailEndPoint();
         app.ToggleUserStatusEndpointEndpoint();
         app.MapUpdateUserEndpoint();
+        app.MapUpdateCurrentUserEndpoint();
    
         app.MapGetUserAuditTrailEndpoint();
         return app;

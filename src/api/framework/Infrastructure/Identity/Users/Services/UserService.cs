@@ -179,7 +179,7 @@ internal sealed partial class UserService(
         await userManager.UpdateAsync(user);
     }
 
-    public async Task UpdateAsync(UpdateUserCommand request, string userId, string origin)
+    public async Task UpdateAsync(UpdateUserCommand request, string userId)
     {
         var user = await userManager.FindByIdAsync(userId);
 
@@ -197,15 +197,48 @@ internal sealed partial class UserService(
 
         user.FirstName = request.FirstName;
         user.LastName = request.LastName;
-        user.UserName = request.UserName ?? request.Email;
-
-        // ???
         user.PhoneNumber = request.PhoneNumber;
         string? phoneNumber = await userManager.GetPhoneNumberAsync(user);
         if (request.PhoneNumber != phoneNumber)
         {
             await userManager.SetPhoneNumberAsync(user, request.PhoneNumber);
         }
+
+        var result = await userManager.UpdateAsync(user);
+        await signInManager.RefreshSignInAsync(user);
+
+        if (!result.Succeeded)
+        {
+            throw new FshException("Update profile failed");
+        }
+    }
+
+    public async Task UpdateProfileAsync(UpdateUserCommand request, string userId, string origin)
+    {
+        var user = await userManager.FindByIdAsync(userId) ?? throw new NotFoundException("user not found");
+
+        Uri imageUri = user.ImageUrl ?? null!;
+        if (request.Image != null || request.DeleteCurrentImage)
+        {
+            user.ImageUrl = await storageService.UploadAsync<FshUser>(request.Image, FileType.Image);
+            if (request.DeleteCurrentImage && imageUri != null)
+            {
+                storageService.Remove(imageUri);
+            }
+        }
+
+        user.FirstName = request.FirstName;
+        user.LastName = request.LastName;
+        user.UserName = request.UserName ?? request.Email;
+        user.PhoneNumber = request.PhoneNumber;
+
+        // ???
+        // user.PhoneNumber = request.PhoneNumber;
+        // string? phoneNumber = await userManager.GetPhoneNumberAsync(user);
+        // if (request.PhoneNumber != phoneNumber)
+        // {
+        //     await userManager.SetPhoneNumberAsync(user, request.PhoneNumber);
+        // }
 
         user.EmailConfirmed = request.IsActive && request.EmailConfirmed;
         user.IsActive = request.IsActive;

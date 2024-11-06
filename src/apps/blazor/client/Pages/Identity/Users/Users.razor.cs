@@ -8,6 +8,7 @@ using MudBlazor;
 using System.Security.Claims;
 using Shared.Authorization;
 using Mapster;
+using FSH.Starter.Blazor.Client.Components.Dialogs;
 
 namespace FSH.Starter.Blazor.Client.Pages.Identity.Users;
 
@@ -21,14 +22,14 @@ public partial class Users : ComponentBase
     [Inject]
     protected IApiClient UsersClient { get; set; } = default!;
 
-    protected EntityClientTableContext<UserDetail, Guid, RegisterUserCommand> Context { get; set; } = default!;
+    protected EntityClientTableContext<UserDetail, Guid, UserViewModel> Context { get; set; } = default!;
 
-    private bool _canExportUsers;
+    private bool _canRemoveUsers;
     private bool _canViewAuditTrails;
     private bool _canViewRoles;
     private string _currentUserId = string.Empty;
 
-    // Fields for editform
+    // Fields for edit form
     protected string Password { get; set; } = string.Empty;
     protected string ConfirmPassword { get; set; } = string.Empty;
 
@@ -38,19 +39,24 @@ public partial class Users : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        var user = (await AuthState).User;
-        _canExportUsers = await AuthService.HasPermissionAsync(user, FshActions.Export, FshResources.Users);
-        _canViewRoles = await AuthService.HasPermissionAsync(user, FshActions.View, FshResources.UserRoles);
-        _canViewAuditTrails = await AuthService.HasPermissionAsync(user, FshActions.View, FshResources.AuditTrails);
-        _currentUserId = user.GetUserId() ?? string.Empty;
+
+        if ((await AuthState).User is { } user)
+        {
+            _canRemoveUsers = await AuthService.HasPermissionAsync(user, FshActions.Delete, FshResources.Users);
+            _canViewRoles = await AuthService.HasPermissionAsync(user, FshActions.View, FshResources.UserRoles);
+            _canViewAuditTrails = await AuthService.HasPermissionAsync(user, FshActions.View, FshResources.AuditTrails);
+            _currentUserId = user.GetUserId() ?? string.Empty;
+        }
 
         Context = new(
             entityName: "User",
             entityNamePlural: "Users",
             entityResource: FshResources.Users,
-            searchAction: FshActions.View,
-            updateAction: string.Empty,
-            deleteAction: string.Empty,
+            // searchAction: FshActions.View,
+            // updateAction: string.Empty,
+            // deleteAction: string.Empty,
+            // exportAction: string.Empty,
+            importAction: string.Empty,
             fields: new()
             {
                 new(user => user.FirstName,"First Name"),
@@ -71,18 +77,22 @@ public partial class Users : ComponentBase
                     || user.Email?.Contains(searchString, StringComparison.OrdinalIgnoreCase) == true
                     || user.PhoneNumber?.Contains(searchString, StringComparison.OrdinalIgnoreCase) == true
                     || user.UserName?.Contains(searchString, StringComparison.OrdinalIgnoreCase) == true,
-            createFunc: user => UsersClient.RegisterUserEndpointAsync(user),
+            createFunc: user =>
+            {
+                var createRequest = user.Adapt<RegisterUserCommand>();
+
+                if (string.IsNullOrEmpty(createRequest.UserName)) createRequest.UserName = createRequest.Email;
+
+                return UsersClient.RegisterUserEndpointAsync(createRequest);
+            },
             updateFunc: async (id, user) =>
             {
                 UpdateUserCommand updateRequest = user.Adapt<UpdateUserCommand>();
                 updateRequest.Id = id.ToString();
-
-                updateRequest.IsActive = true;
-                updateRequest.EmailConfirmed = false;
                 updateRequest.LastModifiedBy = _currentUserId;
                 updateRequest.LastModifiedOn = DateTime.UtcNow;
 
-                await UsersClient.UpdateUserEndpointAsync(updateRequest);
+                await UsersClient.UpdateUserEndpointAsync(id.ToString(),updateRequest);
             },
 
             deleteFunc: async id => await UsersClient.DisableUserEndpointAsync(id.ToString()),
@@ -92,9 +102,8 @@ public partial class Users : ComponentBase
                          
                 return await UsersClient.ExportUsersEndpointAsync(dataFilter);
             },
-
-            hasExtraActionsFunc: () => true,
-            exportAction: string.Empty);
+           
+            hasExtraActionsFunc: () => true);
     }
 
     private void ViewProfile(in Guid userId) =>
@@ -123,5 +132,26 @@ public partial class Users : ComponentBase
         Context.AddEditModal.ForceRender();
     }
 
+    private async Task RemoveUserAsync(Guid userId) 
+    {
+    string deleteContent = "You're sure you want to remove this user ?";
+    var parameters = new DialogParameters
+    {
+        { nameof(DeleteConfirmation.ContentText), deleteContent }
+    };
+    var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, BackdropClick = false };
+    var dialog = await DialogService.ShowAsync<DeleteConfirmation>("Remove", parameters, options);
+    var result = await dialog.Result;
+    if (!result!.Canceled)
+    {
+        _ = UsersClient.DeleteUserEndpointAsync(userId.ToString());
+        _ = Context.LoadDataFunc();
+    }
+
+    }
     
+}
+
+public class UserViewModel : UpdateUserCommand
+{
 }

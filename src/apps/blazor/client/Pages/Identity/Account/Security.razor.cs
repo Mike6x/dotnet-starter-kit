@@ -1,5 +1,6 @@
 ﻿using FSH.Starter.Blazor.Client.Components;
 using FSH.Starter.Blazor.Infrastructure.Api;
+using FSH.Starter.Blazor.Infrastructure.Auth;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
@@ -7,6 +8,8 @@ namespace FSH.Starter.Blazor.Client.Pages.Identity.Account;
 
 public partial class Security
 {
+    [Inject]
+    protected IAuthenticationService AuthService { get; set; } = default!;
     [Inject]
     public IApiClient PersonalClient { get; set; } = default!;
 
@@ -25,6 +28,9 @@ public partial class Security
             _passwordModel.Password = string.Empty;
             _passwordModel.NewPassword = string.Empty;
             _passwordModel.ConfirmNewPassword = string.Empty;
+            
+            Toast.Add("Please Login again to Continue.", Severity.Success);
+            await AuthService.ReLoginAsync(Navigation.Uri);
         }
     }
 
