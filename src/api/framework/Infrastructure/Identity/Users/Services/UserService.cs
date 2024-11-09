@@ -53,7 +53,7 @@ internal sealed partial class UserService(
 
         var user = await userManager.Users
             .Where(u => u.Id == userId && !u.EmailConfirmed)
-            .FirstOrDefaultAsync(cancellationToken);
+            .FirstOrDefaultAsync(cancellationToken);      
 
         _ = user ?? throw new NotFoundException($"User with Id: {userId} not found!");
 
@@ -296,7 +296,7 @@ internal sealed partial class UserService(
 
         string code = await userManager.GenerateEmailConfirmationTokenAsync(user);
         code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-        const string route = "api/users/confirm-email/";
+        const string route = "api/users/confirm-email";
         var endpointUri = new Uri(string.Concat($"{origin}/", route));
         string verificationUri = QueryHelpers.AddQueryString(endpointUri.ToString(), QueryStringKeys.UserId, user.Id);
         verificationUri = QueryHelpers.AddQueryString(verificationUri, QueryStringKeys.Code, code);

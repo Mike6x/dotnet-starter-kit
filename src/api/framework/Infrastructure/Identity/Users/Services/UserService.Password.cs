@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Text;
+using System.Text.Encodings.Web;
 using FSH.Framework.Core.Exceptions;
 using FSH.Framework.Core.Identity.Users.Features.ChangePassword;
 using FSH.Framework.Core.Identity.Users.Features.ForgotPassword;
@@ -14,23 +15,19 @@ internal sealed partial class UserService
     {
         EnsureValidTenant();
 
-        var user = await userManager.FindByEmailAsync(request.Email);
-        if (user == null)
+        var user = await userManager.FindByEmailAsync(request.Email) ?? throw new NotFoundException("user not found");
+        if (!await userManager.IsEmailConfirmedAsync(user))
         {
-            throw new NotFoundException("user not found");
-        }
-
-        if (string.IsNullOrWhiteSpace(user.Email))
-        {
-            throw new InvalidOperationException("user email cannot be null or empty");
+            throw new InvalidOperationException("user not confirm");
         }
 
         var token = await userManager.GeneratePasswordResetTokenAsync(user);
         token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
 
-        var resetPasswordUri = $"{origin}/reset-password?token={token}&email={request.Email}";
+        string resetPasswordUri = $"{origin}/reset-password?token={token}&email={request.Email}";
+
         var mailRequest = new MailRequest(
-            new Collection<string> { user.Email },
+            new Collection<string> { user.Email! },
             "Reset Password",
             $"Please reset your password using the following link: {resetPasswordUri}");
 

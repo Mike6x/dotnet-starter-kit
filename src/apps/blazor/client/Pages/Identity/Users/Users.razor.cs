@@ -145,7 +145,8 @@ public partial class Users : ComponentBase
     if (!result!.Canceled)
     {
         _ = UsersClient.DeleteUserEndpointAsync(userId.ToString());
-        _ = Context.LoadDataFunc();
+         await OnInitializedAsync();
+        //_ = Context.LoadDataFunc()
     }
 
     }

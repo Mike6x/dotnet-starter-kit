@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Routing;
 namespace FSH.Framework.Infrastructure.Identity.Users.Endpoints
 {
 
-    public static class SearchUsersEndPoint
+    public static class SearchUsersEndpoint
     {
         internal static RouteHandlerBuilder MapSearchUsersEndpoint(this IEndpointRouteBuilder endpoints)
         {
@@ -16,7 +16,7 @@ namespace FSH.Framework.Infrastructure.Identity.Users.Endpoints
             {
                 return service.SearchAsync(filter, cancellationToken);
             })
-            .WithName(nameof(SearchUsersEndPoint))
+            .WithName(nameof(SearchUsersEndpoint))
             .WithSummary("get a list of users with paging support")
             .RequirePermission("Permissions.Users.Search")
             .WithDescription("get a list of users with paging support");

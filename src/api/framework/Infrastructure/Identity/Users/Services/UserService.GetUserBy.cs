@@ -11,14 +11,14 @@ namespace FSH.Framework.Infrastructure.Identity.Users.Services
     
         #region My Customize
 
-        public async Task<UserDetail> GetByNameAsync(string userName, CancellationToken cancellationToken)
+        public async Task<UserDetail> GetByNameAsync(string name, CancellationToken cancellationToken)
         {
             var user = await userManager.Users
                 .AsNoTracking()
-                .Where(u => u.UserName == userName)
+                .Where(u => u.UserName == name)
                     .FirstOrDefaultAsync(cancellationToken);
 
-             _ = user ?? throw new NotFoundException($"User with username: {userName} not found!");
+             _ = user ?? throw new NotFoundException($"User with username: {name} not found!");
 
             return user.Adapt<UserDetail>();
         }
@@ -35,14 +35,14 @@ namespace FSH.Framework.Infrastructure.Identity.Users.Services
             return user.Adapt<UserDetail>();
         }
 
-        public async Task<UserDetail> GetByPhoneAsync(string phoneNumber, CancellationToken cancellationToken)
+        public async Task<UserDetail> GetByPhoneAsync(string phone, CancellationToken cancellationToken)
         {
             var user = await userManager.Users
                 .AsNoTracking()
-                .Where(u => u.PhoneNumber == phoneNumber)
+                .Where(u => u.PhoneNumber == phone)
                     .FirstOrDefaultAsync(cancellationToken);
 
-            _ = user ?? throw new NotFoundException($"User with phone number: {phoneNumber} not found!");
+            _ = user ?? throw new NotFoundException($"User with phone number: {phone} not found!");
 
             return user.Adapt<UserDetail>();
         }

@@ -1624,7 +1624,7 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<StringTask> GetConirmEmailEndPointAsync(string tenant, string userId, string code);
+        System.Threading.Tasks.Task<StringTask> GetConirmEmailEndPointAsync(string userId, string code, string tenant);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -1635,7 +1635,7 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<StringTask> GetConirmEmailEndPointAsync(string tenant, string userId, string code, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<StringTask> GetConirmEmailEndPointAsync(string userId, string code, string tenant, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Confirm phone number
@@ -9174,9 +9174,9 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<StringTask> GetConirmEmailEndPointAsync(string tenant, string userId, string code)
+        public virtual System.Threading.Tasks.Task<StringTask> GetConirmEmailEndPointAsync(string userId, string code, string tenant)
         {
-            return GetConirmEmailEndPointAsync(tenant, userId, code, System.Threading.CancellationToken.None);
+            return GetConirmEmailEndPointAsync(userId, code, tenant, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -9188,16 +9188,16 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<StringTask> GetConirmEmailEndPointAsync(string tenant, string userId, string code, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<StringTask> GetConirmEmailEndPointAsync(string userId, string code, string tenant, System.Threading.CancellationToken cancellationToken)
         {
-            if (tenant == null)
-                throw new System.ArgumentNullException("tenant");
-
             if (userId == null)
                 throw new System.ArgumentNullException("userId");
 
             if (code == null)
                 throw new System.ArgumentNullException("code");
+
+            if (tenant == null)
+                throw new System.ArgumentNullException("tenant");
 
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -9214,9 +9214,9 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
                     // Operation Path: "api/users/confirm-email"
                     urlBuilder_.Append("api/users/confirm-email");
                     urlBuilder_.Append('?');
-                    urlBuilder_.Append(System.Uri.EscapeDataString("tenant")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(tenant, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     urlBuilder_.Append(System.Uri.EscapeDataString("userId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(userId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     urlBuilder_.Append(System.Uri.EscapeDataString("code")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(code, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    urlBuilder_.Append(System.Uri.EscapeDataString("tenant")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(tenant, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     urlBuilder_.Length--;
 
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -14639,11 +14639,14 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         [System.Text.Json.Serialization.JsonPropertyName("isActive")]
         public bool IsActive { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("isLive")]
-        public bool? IsLive { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("isOnline")]
+        public bool? IsOnline { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("emailConfirmed")]
         public bool EmailConfirmed { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("imageUrl")]
+        public System.Uri? ImageUrl { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("password")]
         public string? Password { get; set; } = default!;
@@ -14714,6 +14717,9 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         [System.Text.Json.Serialization.JsonPropertyName("isActive")]
         public bool IsActive { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("isOnline")]
+        public bool IsOnline { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("emailConfirmed")]
         public bool EmailConfirmed { get; set; } = default!;
 
@@ -14722,6 +14728,21 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
 
         [System.Text.Json.Serialization.JsonPropertyName("imageUrl")]
         public System.Uri? ImageUrl { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("lockoutEnd")]
+        public System.DateTime? LockoutEnd { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("createdBy")]
+        public string? CreatedBy { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("createdOn")]
+        public System.DateTime? CreatedOn { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("lastModifiedBy")]
+        public string? LastModifiedBy { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("lastModifiedOn")]
+        public System.DateTime? LastModifiedOn { get; set; } = default!;
 
     }
 

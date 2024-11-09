@@ -15,10 +15,10 @@ public class UpdateUserCommand : IRequest
         #region My Customize
     public string? UserName { get; set; }
     public bool IsActive { get; set; }
-    public bool? IsLive { get; set; }
+    public bool? IsOnline { get; set; }
     public bool EmailConfirmed { get; set; }
 
-    // public string? ImageUrl { get; set; }
+    public Uri? ImageUrl { get; set; }
 
     public string? Password { get; set; }
     public string? ConfirmPassword { get; set; }

@@ -16,30 +16,41 @@ public static class ForgotPasswordEndpoint
 {
     internal static RouteHandlerBuilder MapForgotPasswordEndpoint(this IEndpointRouteBuilder endpoints)
     {
-        return endpoints.MapPost("/forgot-password", async (HttpRequest request, [FromHeader(Name = TenantConstants.Identifier)] string tenant, ForgotPasswordCommand command, IOptions<OriginOptions> settings, IValidator<ForgotPasswordCommand> validator, IUserService userService, CancellationToken cancellationToken) =>
-        {
-            ValidationResult result = await validator.ValidateAsync(command, cancellationToken);
-            if (!result.IsValid)
-            {
-                return Results.ValidationProblem(result.ToDictionary());
-            }
+        return endpoints.MapPost("/forgot-password", async (
+            HttpRequest request, 
+            [FromHeader(Name = TenantConstants.Identifier)] string tenant, 
+            ForgotPasswordCommand command, 
+            IOptions<OriginOptions> settings, 
+            IValidator<ForgotPasswordCommand> validator, 
+            IUserService userService, 
+            CancellationToken cancellationToken) =>
+                {
+                    ValidationResult result = await validator.ValidateAsync(command, cancellationToken);
+                    if (!result.IsValid)
+                    {
+                        return Results.ValidationProblem(result.ToDictionary());
+                    }
 
-            // Obtain origin from appsettings
-            var origin = settings.Value;
+                    // Obtain origin from appsettings
+                    var origin = settings.Value;
 
-            if (origin?.OriginUrl == null)
-            {
-                // Handle the case where OriginUrl is null
-                return Results.BadRequest("Origin URL is not configured.");
-            }
+                    if (origin?.OriginUrl == null)
+                    {
+                        // Handle the case where OriginUrl is null
+                        return Results.BadRequest("Origin URL is not configured.");
+                    }
 
-            await userService.ForgotPasswordAsync(command, origin.OriginUrl.ToString(), cancellationToken);
-            return Results.Ok("Password reset email sent.");
-        })
-        .WithName(nameof(ForgotPasswordEndpoint))
-        .WithSummary("Forgot password")
-        .WithDescription("Generates a password reset token and sends it via email.")
-        .AllowAnonymous();
+                    var originUrl = request.Headers.Origin;
+                    await userService.ForgotPasswordAsync(command, originUrl!, cancellationToken);
+                    
+                    // await userService.ForgotPasswordAsync(command, origin.OriginUrl.ToString(), cancellationToken);
+
+                    return Results.Ok("Password reset email sent.");
+                })
+                .WithName(nameof(ForgotPasswordEndpoint))
+                .WithSummary("Forgot password")
+                .WithDescription("Generates a password reset token and sends it via email.")
+                .AllowAnonymous();
     }
 
 }
