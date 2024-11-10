@@ -1,4 +1,5 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -130,13 +131,28 @@ public sealed class TokenService : ITokenService
         return tokenHandler.WriteToken(token);
     }
 
-    private List<Claim> GetClaims(FshUser user, string ipAddress) =>
-        new List<Claim>
+    // private List<Claim> GetClaims(FshUser user, string ipAddress) =>
+    //     new List<Claim>
+    //     {
+    //         new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+    //         new(JwtRegisteredClaimNames.Sub, user.Id),
+    //         new(JwtRegisteredClaimNames.Email, user.Email!),
+    //         new(JwtRegisteredClaimNames.Name, user.FirstName ?? string.Empty),
+    //         new(FshClaims.Fullname, $"{user.FirstName} {user.LastName}"),
+    //         new(ClaimTypes.Surname, user.LastName ?? string.Empty),
+    //         new(FshClaims.IpAddress, ipAddress),
+    //         new(FshClaims.Tenant, _multiTenantContextAccessor!.MultiTenantContext.TenantInfo!.Id),
+    //         new(FshClaims.ImageUrl, user.ImageUrl == null ? string.Empty : user.ImageUrl.ToString())
+    //     };
+
+    private List<Claim>  GetClaims(FshUser user, string ipAddress) =>
+        new List<Claim> 
         {
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new(JwtRegisteredClaimNames.Sub, user.Id),
-            new(JwtRegisteredClaimNames.Email, user.Email!),
-            new(JwtRegisteredClaimNames.Name, user.FirstName ?? string.Empty),
+            new(ClaimTypes.NameIdentifier, user.Id),
+            new(ClaimTypes.Email, user.Email!),
+            new(ClaimTypes.Name, user.FirstName ?? string.Empty),
+            new(ClaimTypes.MobilePhone, user.PhoneNumber ?? string.Empty),
             new(FshClaims.Fullname, $"{user.FirstName} {user.LastName}"),
             new(ClaimTypes.Surname, user.LastName ?? string.Empty),
             new(FshClaims.IpAddress, ipAddress),

@@ -36,6 +36,7 @@ public partial class Profile
             _profileModel.FirstName = user.GetFirstName() ?? string.Empty;
             _profileModel.LastName = user.GetSurname() ?? string.Empty;
             _profileModel.PhoneNumber = user.GetPhoneNumber();
+            _profileModel.ImageUrl = user.GetImageUrl();
             if (user.GetImageUrl() != null)
             {
                 _imageUrl = user.GetImageUrl()!.ToString();

@@ -31,16 +31,16 @@ namespace FSH.Framework.Infrastructure.Identity.Users.Endpoints
             {
                 TenantDetail tenantDetail = await tenantService.GetByIdAsync(tenant) ?? throw new NotFoundException($"Tenant: {tenant} not found");
                 var tenantInfo = tenantDetail.Adapt<FshTenantInfo>();  
-
                 context.SetTenantInfo(tenantInfo, true);
-                // context.Request.Headers.Add("tenant", tenant);
+
+                context.Request.Headers.Append("tenant", tenant);
+                
 
                 return Task.FromResult(userService.ConfirmEmailAsync(userId, code, tenant, cancellationToken));
             })
             .WithName(nameof(GetConirmEmailEndpoint))
             .WithSummary("Confirm email")
             .WithDescription("Confirm email address for a user.")
-            .RequirePermission("Permissions.Users.Search")
             .AllowAnonymous();
         }
         

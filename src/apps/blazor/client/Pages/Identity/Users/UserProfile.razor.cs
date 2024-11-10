@@ -41,19 +41,6 @@ public partial class UserProfile
     private DateTime? LockoutEndDate { get; set; }
     private TimeSpan? LockoutEndTime { get; set; }
 
-    // private string? _firstName;
-    // private string? _lastName;
-    // private string? _phoneNumber;
-    // private string? _email;
-    //  private bool _emailConfirmed;
-    
-    //private bool _canToggleUserStatus;
-
-
-
-   // [Parameter]
-    //public Uri? ImageUrl { get; set; }
-
     protected override async Task OnInitializedAsync()
     {
         if (await ApiHelper.ExecuteCallGuardedAsync(
@@ -96,7 +83,7 @@ public partial class UserProfile
 
             _imageUrl = user.ImageUrl;
             Title = $"{_profileModel.FirstName} {_profileModel.LastName}'s Profile";
-            Description = _profileModel.Email;
+            Description = $"Id: {_profileModel.Id}";
 
         }
 
@@ -251,6 +238,7 @@ public partial class UserProfile
         }
     }
 }
+
 // public partial class UserProfile
 // {
 //     [CascadingParameter]

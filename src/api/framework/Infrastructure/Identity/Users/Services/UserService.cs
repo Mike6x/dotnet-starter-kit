@@ -52,10 +52,10 @@ internal sealed partial class UserService(
         EnsureValidTenant();
 
         var user = await userManager.Users
-            .Where(u => u.Id == userId && !u.EmailConfirmed)
-            .FirstOrDefaultAsync(cancellationToken);      
+            .Where(u => u.Id == userId )
+            .FirstOrDefaultAsync(cancellationToken) ?? throw new NotFoundException($"User with Id: {userId} not found!");
 
-        _ = user ?? throw new NotFoundException($"User with Id: {userId} not found!");
+        if (user!.EmailConfirmed) return  $"Account: {userId}  already confirmed with E-Mail {user.Email} ";
 
         code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
         var result = await userManager.ConfirmEmailAsync(user, code);
