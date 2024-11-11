@@ -20,13 +20,12 @@ dotnet ef migrations add "Add Catalog Schema" --project .././migrations/postgres
 \
 \
 dotnet ef migrations add "Add Setting Schema" --project .././migrations/mssql/ --context SettingDbContext -o Setting\
-\pard\pardeftab720\partightenfactor0
-\cf2 dotnet ef migrations add "Add Elearning Schema" --project .././migrations/mssql/ --context ElearningDbContext -o Elearning\
+dotnet ef migrations add "Add Elearning Schema" --project .././migrations/mssql/ --context ElearningDbContext -o Elearning\
 \
-dotnet ef migrations add \'93Fix Quiz Relation\'94  --project .././migrations/mssql/ --context ElearningDbContext -o Elearning\cf2 \
-\pard\pardeftab720\partightenfactor0
-\cf2 \
+dotnet ef migrations add \'93Fix Quiz Relation\'94  --project .././migrations/mssql/ --context ElearningDbContext -o Elearning\
 \
+\pard\pardeftab720\partightenfactor0
+\cf2 dotnet ef migrations add "Add Identity IsOnline\'94 --project .././migrations/mssql/ --context IdentityDbContext -o Identity\
 \pard\pardeftab720\partightenfactor0
 
 \f2\fs28 \cf2 \

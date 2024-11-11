@@ -7,6 +7,7 @@ public class FshUser : IdentityUser
     public string? LastName { get; set; }
     public Uri? ImageUrl { get; set; }
     public bool IsActive { get; set; }
+    public bool? IsOnline { get; set; }
     public string? RefreshToken { get; set; }
     public DateTime RefreshTokenExpiryTime { get; set; }
 

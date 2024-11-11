@@ -1624,7 +1624,7 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<StringTask> GetConirmEmailEndPointAsync(string userId, string code, string tenant);
+        System.Threading.Tasks.Task<StringTaskTask> GetConirmEmailEndpointAsync(string userId, string code, string tenant);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -1635,7 +1635,7 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<StringTask> GetConirmEmailEndPointAsync(string userId, string code, string tenant, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<StringTaskTask> GetConirmEmailEndpointAsync(string userId, string code, string tenant, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Confirm phone number
@@ -1645,7 +1645,7 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<StringTask> GetConfirmPhoneNumberEndPointAsync(string userId, string code);
+        System.Threading.Tasks.Task<StringTask> GetConfirmPhoneNumberEndpointAsync(string userId, string code);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -1656,7 +1656,7 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<StringTask> GetConfirmPhoneNumberEndPointAsync(string userId, string code, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<StringTask> GetConfirmPhoneNumberEndpointAsync(string userId, string code, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Get user profile by Name
@@ -1855,7 +1855,7 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<UserDetailPagedList> SearchUsersEndPointAsync(UserListFilter body);
+        System.Threading.Tasks.Task<UserDetailPagedList> SearchUsersEndpointAsync(UserListFilter body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -1866,7 +1866,7 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<UserDetailPagedList> SearchUsersEndPointAsync(UserListFilter body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<UserDetailPagedList> SearchUsersEndpointAsync(UserListFilter body, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// self register user
@@ -9174,9 +9174,9 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<StringTask> GetConirmEmailEndPointAsync(string userId, string code, string tenant)
+        public virtual System.Threading.Tasks.Task<StringTaskTask> GetConirmEmailEndpointAsync(string userId, string code, string tenant)
         {
-            return GetConirmEmailEndPointAsync(userId, code, tenant, System.Threading.CancellationToken.None);
+            return GetConirmEmailEndpointAsync(userId, code, tenant, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -9188,7 +9188,7 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<StringTask> GetConirmEmailEndPointAsync(string userId, string code, string tenant, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<StringTaskTask> GetConirmEmailEndpointAsync(string userId, string code, string tenant, System.Threading.CancellationToken cancellationToken)
         {
             if (userId == null)
                 throw new System.ArgumentNullException("userId");
@@ -9205,8 +9205,7 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    request_.Content = new System.Net.Http.StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json");
-                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
@@ -9244,7 +9243,7 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<StringTask>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<StringTaskTask>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -9279,9 +9278,9 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<StringTask> GetConfirmPhoneNumberEndPointAsync(string userId, string code)
+        public virtual System.Threading.Tasks.Task<StringTask> GetConfirmPhoneNumberEndpointAsync(string userId, string code)
         {
-            return GetConfirmPhoneNumberEndPointAsync(userId, code, System.Threading.CancellationToken.None);
+            return GetConfirmPhoneNumberEndpointAsync(userId, code, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -9293,7 +9292,7 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<StringTask> GetConfirmPhoneNumberEndPointAsync(string userId, string code, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<StringTask> GetConfirmPhoneNumberEndpointAsync(string userId, string code, System.Threading.CancellationToken cancellationToken)
         {
             if (userId == null)
                 throw new System.ArgumentNullException("userId");
@@ -9307,8 +9306,7 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    request_.Content = new System.Net.Http.StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json");
-                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
@@ -10221,9 +10219,9 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<UserDetailPagedList> SearchUsersEndPointAsync(UserListFilter body)
+        public virtual System.Threading.Tasks.Task<UserDetailPagedList> SearchUsersEndpointAsync(UserListFilter body)
         {
-            return SearchUsersEndPointAsync(body, System.Threading.CancellationToken.None);
+            return SearchUsersEndpointAsync(body, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -10235,7 +10233,7 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<UserDetailPagedList> SearchUsersEndPointAsync(UserListFilter body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<UserDetailPagedList> SearchUsersEndpointAsync(UserListFilter body, System.Threading.CancellationToken cancellationToken)
         {
             if (body == null)
                 throw new System.ArgumentNullException("body");
@@ -13622,6 +13620,42 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class StringTaskTask
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public int Id { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("exception")]
+        public AggregateException? Exception { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("status")]
+        public TaskStatus Status { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isCanceled")]
+        public bool IsCanceled { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isCompleted")]
+        public bool IsCompleted { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isCompletedSuccessfully")]
+        public bool IsCompletedSuccessfully { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("creationOptions")]
+        public TaskCreationOptions CreationOptions { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("asyncState")]
+        public object? AsyncState { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isFaulted")]
+        public bool IsFaulted { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("result")]
+        public StringTask? Result { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class StructLayoutAttribute
     {
 
@@ -14731,6 +14765,9 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
 
         [System.Text.Json.Serialization.JsonPropertyName("lockoutEnd")]
         public System.DateTime? LockoutEnd { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isLocked")]
+        public bool IsLocked { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("createdBy")]
         public string? CreatedBy { get; set; } = default!;

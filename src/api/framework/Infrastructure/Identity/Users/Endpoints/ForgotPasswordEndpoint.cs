@@ -43,7 +43,7 @@ public static class ForgotPasswordEndpoint
                     var originUrl = request.Headers.Origin;
                     await userService.ForgotPasswordAsync(command, originUrl!, cancellationToken);
                     
-                    // await userService.ForgotPasswordAsync(command, origin.OriginUrl.ToString(), cancellationToken);
+                    // await userService.ForgotPasswordAsync(command, origin.OriginUrl.ToString(), cancellationToken)
 
                     return Results.Ok("Password reset email sent.");
                 })

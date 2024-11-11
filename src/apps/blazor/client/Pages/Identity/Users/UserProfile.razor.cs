@@ -159,6 +159,7 @@ public partial class UserProfile
          else { Toast.Add("Internal error.", Severity.Error); }
     }
 
+
     private async Task UpdateUserAsync()
     {
         if (LockoutEndDate != null && LockoutEndTime != null)

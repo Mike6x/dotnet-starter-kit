@@ -33,9 +33,6 @@ namespace FSH.Framework.Infrastructure.Identity.Users.Endpoints
                 var tenantInfo = tenantDetail.Adapt<FshTenantInfo>();  
                 context.SetTenantInfo(tenantInfo, true);
 
-                context.Request.Headers.Append("tenant", tenant);
-                
-
                 return Task.FromResult(userService.ConfirmEmailAsync(userId, code, tenant, cancellationToken));
             })
             .WithName(nameof(GetConirmEmailEndpoint))

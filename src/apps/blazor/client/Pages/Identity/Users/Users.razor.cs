@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using MudBlazor;
-using System.Security.Claims;
 using Shared.Authorization;
 using Mapster;
 using FSH.Starter.Blazor.Client.Components.Dialogs;
@@ -59,13 +58,16 @@ public partial class Users : ComponentBase
             importAction: string.Empty,
             fields: new()
             {
-                new(user => user.FirstName,"First Name"),
-                new(user => user.LastName, "Last Name"),
                 new(user => user.UserName, "UserName"),
                 new(user => user.Email, "Email"),
+                new(user => user.FirstName,"First Name"),
+                new(user => user.LastName, "Last Name"),
                 new(user => user.PhoneNumber, "PhoneNumber"),
-                new(user => user.EmailConfirmed, "Email Confirmed", Type: typeof(bool)),
+
                 new(user => user.IsActive, "Active", Type: typeof(bool)),
+                new(user => user.EmailConfirmed, "Email Confirmed", Type: typeof(bool)),
+                // new(user => user.LockoutEnd, "LockoutEnd", Type: typeof(DateTime)),
+                new(user => user.IsLocked, "Lockout", Type: typeof(bool)),
                 new(user => user.IsActive, "Online", Type: typeof(bool))               
             },
             idFunc: user => user.Id,
@@ -150,9 +152,12 @@ public partial class Users : ComponentBase
     }
 
     }
-    
+
 }
 
 public class UserViewModel : UpdateUserCommand
 {
+
+    // private bool _isLocked => LockoutEnd != null && LockoutEnd > DateTime.UtcNow
+
 }

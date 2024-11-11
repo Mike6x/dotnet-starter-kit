@@ -12,7 +12,7 @@ public class UserDetail
     public string? Email { get; set; }
 
     public bool IsActive { get; set; } = true;
-     public bool IsOnline { get; set; }
+    public bool IsOnline { get; set; }
 
     public bool EmailConfirmed { get; set; }
 
@@ -27,6 +27,7 @@ public class UserDetail
     //     A value in the past means the user is not locked out.
 
     public virtual DateTimeOffset? LockoutEnd { get; set; }
+    public bool IsLocked => LockoutEnd != null && LockoutEnd > DateTime.UtcNow;
 
     public string? CreatedBy { get; set; }
 

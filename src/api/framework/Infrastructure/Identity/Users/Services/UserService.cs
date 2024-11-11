@@ -204,6 +204,8 @@ internal sealed partial class UserService(
             await userManager.SetPhoneNumberAsync(user, request.PhoneNumber);
         }
 
+         user.IsOnline = request.IsOnline ?? user.IsOnline;
+
         var result = await userManager.UpdateAsync(user);
         await signInManager.RefreshSignInAsync(user);
 
@@ -239,7 +241,7 @@ internal sealed partial class UserService(
         // {
         //     await userManager.SetPhoneNumberAsync(user, request.PhoneNumber);
         // }
-
+        user.IsOnline = request.IsOnline ?? user.IsOnline;
         user.EmailConfirmed = request.IsActive && request.EmailConfirmed;
         user.IsActive = request.IsActive;
         user.LockoutEnd = request.LockoutEnd;

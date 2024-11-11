@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -23,13 +23,20 @@ using Shared.Authorization;
 namespace FSH.Framework.Infrastructure.Identity.Tokens;
 public sealed class TokenService : ITokenService
 {
+    private readonly SignInManager<FshUser> _signInManager;
     private readonly UserManager<FshUser> _userManager;
     private readonly IMultiTenantContextAccessor<FshTenantInfo>? _multiTenantContextAccessor;
     private readonly JwtOptions _jwtOptions;
     private readonly IPublisher _publisher;
-    public TokenService(IOptions<JwtOptions> jwtOptions, UserManager<FshUser> userManager, IMultiTenantContextAccessor<FshTenantInfo>? multiTenantContextAccessor, IPublisher publisher)
+    public TokenService(
+        IOptions<JwtOptions> jwtOptions, 
+        SignInManager<FshUser> signInManager,
+        UserManager<FshUser> userManager, 
+        IMultiTenantContextAccessor<FshTenantInfo>? multiTenantContextAccessor, 
+        IPublisher publisher)
     {
         _jwtOptions = jwtOptions.Value;
+        _signInManager = signInManager;
         _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         _multiTenantContextAccessor = multiTenantContextAccessor;
         _publisher = publisher;
@@ -38,18 +45,8 @@ public sealed class TokenService : ITokenService
     public async Task<TokenResponse> GenerateTokenAsync(TokenGenerationCommand request, string ipAddress, CancellationToken cancellationToken)
     {
         var currentTenant = _multiTenantContextAccessor!.MultiTenantContext.TenantInfo;
-        if (currentTenant == null) throw new UnauthorizedException();
-        if (string.IsNullOrWhiteSpace(currentTenant.Id)
-           || await _userManager.FindByEmailAsync(request.Email.Trim().Normalize()) is not { } user
-           || !await _userManager.CheckPasswordAsync(user, request.Password))
-        {
-            throw new UnauthorizedException();
-        }
 
-        if (!user.IsActive)
-        {
-            throw new UnauthorizedException("user is deactivated");
-        }
+        if (currentTenant == null || string.IsNullOrWhiteSpace(currentTenant.Id)) throw new UnauthorizedException("Tenant not found");
 
         if (currentTenant.Id != TenantConstants.Root.Id)
         {
@@ -64,8 +61,65 @@ public sealed class TokenService : ITokenService
             }
         }
 
-        return await GenerateTokensAndUpdateUser(user, ipAddress);
+        FshUser? user = (IsValidEmail(request.Email)
+            ? await _userManager.FindByEmailAsync(request.Email.Trim().Normalize())
+            : await _userManager.FindByNameAsync(request.Email)) 
+                ?? throw new UnauthorizedException("User is not found");
+
+        if (!user.IsActive)
+        {
+            throw new UnauthorizedException("user is deactivated");
+        }
+
+        if (!user.EmailConfirmed)
+        {
+            throw new UnauthorizedException("user not yet is confirmed by email");
+        }
+
+        var signInResult = await _signInManager.PasswordSignInAsync(user.UserName!, request.Password, true, true);
+
+        if (signInResult.IsLockedOut)
+        {
+            var logoutEndDate = await _userManager.GetLockoutEndDateAsync(user);
+            throw new UnauthorizedException($"Your account is locked out until {logoutEndDate.Value.LocalDateTime.ToString()}.");
+        }
+
+        return signInResult.Succeeded
+            ? await GenerateTokensAndUpdateUser(user, ipAddress)
+            : throw new UnauthorizedException("Wrong Password.");
     }
+
+    // public async Task<TokenResponse> GetTokenAsync(TokenGenerationCommand request, string ipAddress, CancellationToken cancellationToken)
+    // {
+    //     var currentTenant = _multiTenantContextAccessor!.MultiTenantContext.TenantInfo;
+    //     if (currentTenant == null) throw new UnauthorizedException();
+    //     if (string.IsNullOrWhiteSpace(currentTenant.Id)
+    //        || await _userManager.FindByEmailAsync(request.Email.Trim().Normalize()) is not { } user
+    //        || !await _userManager.CheckPasswordAsync(user, request.Password))
+    //     {
+    //         throw new UnauthorizedException();
+    //     }
+
+    //     if (!user.IsActive)
+    //     {
+    //         throw new UnauthorizedException("user is deactivated");
+    //     }
+
+    //     if (currentTenant.Id != TenantConstants.Root.Id)
+    //     {
+    //         if (!currentTenant.IsActive)
+    //         {
+    //             throw new UnauthorizedException($"tenant {currentTenant.Id} is deactivated");
+    //         }
+
+    //         if (DateTime.UtcNow > currentTenant.ValidUpto)
+    //         {
+    //             throw new UnauthorizedException($"tenant {currentTenant.Id} validity has expired");
+    //         }
+    //     }
+
+    //     return await GenerateTokensAndUpdateUser(user, ipAddress);
+    // }
 
 
     public async Task<TokenResponse> RefreshTokenAsync(RefreshTokenCommand request, string ipAddress, CancellationToken cancellationToken)
@@ -194,5 +248,18 @@ public sealed class TokenService : ITokenService
         }
 
         return principal;
+    }
+
+    private static bool IsValidEmail(string emailAddress)
+    {
+        try
+        {
+            MailAddress m = new(emailAddress);
+            return true;
+        }
+        catch (FormatException)
+        {
+            return false;
+        }
     }
 }
