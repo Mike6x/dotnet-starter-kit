@@ -22,7 +22,7 @@
                 <div style="padding-bottom:20px">
                     <MudButton DropShadow="false" HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
                                StartIcon="@Icons.Material.Filled.CloudUpload" for="fileInput">
-                    Upload Profile Picture
+                    Upload Picture
                 </MudButton>
                 @if(!string.IsNullOrEmpty(_imageUrl))
                 {
@@ -71,6 +71,10 @@
                             <MudTextField @bind-Value="@_profileModel.Email" Label="Email"
                                 For="@(() => _profileModel.Email)" Variant="Variant.Outlined"
                                 InputType="InputType.Email" Disabled="true" />
+                        </MudItem>
+
+                        <MudItem xs="12" md="12">
+                            <MudTextField @bind-Value="@_profileModel.ImageUrl" For="@(() => _profileModel.ImageUrl)" Label="User Picture URL" Variant="Variant.Outlined" Disabled/>
                         </MudItem>
                     </MudGrid>
                 </MudCardContent>

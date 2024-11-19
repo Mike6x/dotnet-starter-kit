@@ -15,7 +15,7 @@ public static class GetUsersListEndpoint
         })
         .WithName(nameof(GetUsersListEndpoint))
         .WithSummary("get users list")
-        .RequirePermission("Permissions.Users.View")
+        .RequirePermission("Permissions.Users.Search")
         .WithDescription("get users list");
     }
 }

@@ -36,6 +36,7 @@ public partial class Profile
             _profileModel.FirstName = user.GetFirstName() ?? string.Empty;
             _profileModel.LastName = user.GetSurname() ?? string.Empty;
             _profileModel.PhoneNumber = user.GetPhoneNumber();
+            _profileModel.ImageUrl = user.GetImageUrl();
             if (user.GetImageUrl() != null)
             {
                 _imageUrl = user.GetImageUrl()!.ToString();
@@ -45,16 +46,16 @@ public partial class Profile
 
         if (_profileModel.FirstName?.Length > 0)
         {
-            _firstLetterOfName = _profileModel.FirstName.ToUpper().FirstOrDefault();
+            _firstLetterOfName = _profileModel.FirstName.ToUpper(System.Globalization.CultureInfo.CurrentCulture).FirstOrDefault();
         }
     }
 
     private async Task UpdateProfileAsync()
     {
         if (await ApiHelper.ExecuteCallGuardedAsync(
-            () => PersonalClient.UpdateUserEndpointAsync(_profileModel), Toast, _customValidation))
+            () => PersonalClient.UpdateCurrentUserEndpointAsync(_profileModel), Toast, _customValidation))
         {
-            Toast.Add("Your Profile has been updated. Please Login again to Continue.", Severity.Success);
+            Toast.Add("Your Profile has been updated. Please Login again to get update.", Severity.Success);
             await AuthService.ReLoginAsync(Navigation.Uri);
         }
     }
@@ -65,7 +66,7 @@ public partial class Profile
         if (file is not null)
         {
             string? extension = Path.GetExtension(file.Name);
-            if (!AppConstants.SupportedImageFormats.Contains(extension.ToLower()))
+            if (!AppConstants.SupportedImageFormats.Contains(extension.ToLower(System.Globalization.CultureInfo.CurrentCulture)))
             {
                 Toast.Add("Image Format Not Supported.", Severity.Error);
                 return;
@@ -75,7 +76,7 @@ public partial class Profile
             fileName = fileName[..Math.Min(fileName.Length, 90)];
             var imageFile = await file.RequestImageFileAsync(AppConstants.StandardImageFormat, AppConstants.MaxImageWidth, AppConstants.MaxImageHeight);
             byte[]? buffer = new byte[imageFile.Size];
-            await imageFile.OpenReadStream(AppConstants.MaxAllowedSize).ReadAsync(buffer);
+            _ = await imageFile.OpenReadStream(AppConstants.MaxAllowedSize).ReadAsync(buffer);
             string? base64String = $"data:{AppConstants.StandardImageFormat};base64,{Convert.ToBase64String(buffer)}";
             _profileModel.Image = new FileUploadCommand() { Name = fileName, Data = base64String, Extension = extension };
 

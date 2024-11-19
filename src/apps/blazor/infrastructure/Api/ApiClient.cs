@@ -1449,109 +1449,67 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         System.Threading.Tasks.Task<TokenResponse> TokenGenerationEndpointAsync(string tenant, TokenGenerationCommand body, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
-        /// register user
+        /// assign roles
         /// </summary>
         /// <remarks>
-        /// register user
+        /// assign roles
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<RegisterUserResponse> RegisterUserEndpointAsync(RegisterUserCommand body);
+        System.Threading.Tasks.Task AssignRolesToUserEndpointAsync(string id, AssignUserRoleCommand body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// register user
+        /// assign roles
         /// </summary>
         /// <remarks>
-        /// register user
+        /// assign roles
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<RegisterUserResponse> RegisterUserEndpointAsync(RegisterUserCommand body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task AssignRolesToUserEndpointAsync(string id, AssignUserRoleCommand body, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
-        /// self register user
+        /// get user roles
         /// </summary>
         /// <remarks>
-        /// self register user
+        /// get user roles
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<RegisterUserResponse> SelfRegisterUserEndpointAsync(string tenant, RegisterUserCommand body);
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// self register user
-        /// </summary>
-        /// <remarks>
-        /// self register user
-        /// </remarks>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<RegisterUserResponse> SelfRegisterUserEndpointAsync(string tenant, RegisterUserCommand body, System.Threading.CancellationToken cancellationToken);
-
-        /// <summary>
-        /// update user profile
-        /// </summary>
-        /// <remarks>
-        /// update user profile
-        /// </remarks>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task UpdateUserEndpointAsync(UpdateUserCommand body);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserRoleDetail>> GetUserRolesEndpointAsync(string id);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// update user profile
+        /// get user roles
         /// </summary>
         /// <remarks>
-        /// update user profile
+        /// get user roles
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task UpdateUserEndpointAsync(UpdateUserCommand body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserRoleDetail>> GetUserRolesEndpointAsync(string id, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
-        /// Get current user information based on token
+        /// Changes password
         /// </summary>
         /// <remarks>
-        /// Get current user information based on token
+        /// Change password
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<UserDetail> GetMeEndpointAsync();
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Get current user information based on token
-        /// </summary>
-        /// <remarks>
-        /// Get current user information based on token
-        /// </remarks>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<UserDetail> GetMeEndpointAsync(System.Threading.CancellationToken cancellationToken);
-
-        /// <summary>
-        /// get users list
-        /// </summary>
-        /// <remarks>
-        /// get users list
-        /// </remarks>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserDetail>> GetUsersListEndpointAsync();
+        System.Threading.Tasks.Task ChangePasswordEndpointAsync(ChangePasswordCommand body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// get users list
+        /// Changes password
         /// </summary>
         /// <remarks>
-        /// get users list
+        /// Change password
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserDetail>> GetUsersListEndpointAsync(System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task ChangePasswordEndpointAsync(ChangePasswordCommand body, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// delete user profile
@@ -1596,6 +1554,48 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         System.Threading.Tasks.Task<UserDetail> GetUserEndpointAsync(string id, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
+        /// Disable user profile
+        /// </summary>
+        /// <remarks>
+        /// disable user profile
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task DisableUserEndpointAsync(string id);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Disable user profile
+        /// </summary>
+        /// <remarks>
+        /// disable user profile
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task DisableUserEndpointAsync(string id, System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Export a list of users with paging support
+        /// </summary>
+        /// <remarks>
+        /// Export a list of users with paging support
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<byte[]> ExportUsersEndpointAsync(UserListFilter body);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Export a list of users with paging support
+        /// </summary>
+        /// <remarks>
+        /// Export a list of users with paging support
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<byte[]> ExportUsersEndpointAsync(UserListFilter body, System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
         /// Forgot password
         /// </summary>
         /// <remarks>
@@ -1617,46 +1617,130 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         System.Threading.Tasks.Task ForgotPasswordEndpointAsync(string tenant, ForgotPasswordCommand body, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
-        /// Changes password
+        /// Confirm email
         /// </summary>
         /// <remarks>
-        /// Change password
+        /// Confirm email address for a user.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task ChangePasswordEndpointAsync(ChangePasswordCommand body);
+        System.Threading.Tasks.Task<StringTaskTask> GetConirmEmailEndpointAsync(string userId, string code, string tenant);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Changes password
+        /// Confirm email
         /// </summary>
         /// <remarks>
-        /// Change password
+        /// Confirm email address for a user.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task ChangePasswordEndpointAsync(ChangePasswordCommand body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<StringTaskTask> GetConirmEmailEndpointAsync(string userId, string code, string tenant, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
-        /// Reset password
+        /// Confirm email
         /// </summary>
         /// <remarks>
-        /// Resets the password using the token and new password provided.
+        /// Confirm email address for a user.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task ResetPasswordEndpointAsync(string tenant, ResetPasswordCommand body);
+        System.Threading.Tasks.Task ConirmEmailEndpointAsync(string tenant, EmailConfirmCommand body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Reset password
+        /// Confirm email
         /// </summary>
         /// <remarks>
-        /// Resets the password using the token and new password provided.
+        /// Confirm email address for a user.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task ResetPasswordEndpointAsync(string tenant, ResetPasswordCommand body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task ConirmEmailEndpointAsync(string tenant, EmailConfirmCommand body, System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Confirm phone number
+        /// </summary>
+        /// <remarks>
+        /// Confirm phone number for a user.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<StringTask> GetConfirmPhoneNumberEndpointAsync(string userId, string code);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Confirm phone number
+        /// </summary>
+        /// <remarks>
+        /// Confirm phone number for a user.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<StringTask> GetConfirmPhoneNumberEndpointAsync(string userId, string code, System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Get user profile by Name
+        /// </summary>
+        /// <remarks>
+        /// Get another user's profile details by userName.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<UserDetail> GetUserByEmailEndpointAsync(string email);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get user profile by Name
+        /// </summary>
+        /// <remarks>
+        /// Get another user's profile details by userName.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<UserDetail> GetUserByEmailEndpointAsync(string email, System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Get user profile by Name
+        /// </summary>
+        /// <remarks>
+        /// Get another user's profile details by userName.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<UserDetail> GetUserByNameEndpointAsync(string userName);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get user profile by Name
+        /// </summary>
+        /// <remarks>
+        /// Get another user's profile details by userName.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<UserDetail> GetUserByNameEndpointAsync(string userName, System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Get user profile by Phone Number
+        /// </summary>
+        /// <remarks>
+        /// Get another user's profile details by phone number.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<UserDetail> GetUserByPhoneNumberEndpointAsync(string phoneNumber);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get user profile by Phone Number
+        /// </summary>
+        /// <remarks>
+        /// Get another user's profile details by phone number.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<UserDetail> GetUserByPhoneNumberEndpointAsync(string phoneNumber, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Get current user permissions
@@ -1680,6 +1764,174 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         System.Threading.Tasks.Task<System.Collections.Generic.ICollection<string>> GetUserPermissionsAsync(System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
+        /// Get current user information based on token
+        /// </summary>
+        /// <remarks>
+        /// Get current user information based on token
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<UserDetail> GetMeEndpointAsync();
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get current user information based on token
+        /// </summary>
+        /// <remarks>
+        /// Get current user information based on token
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<UserDetail> GetMeEndpointAsync(System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
+        /// update user profile
+        /// </summary>
+        /// <remarks>
+        /// update user profile
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task UpdateUserEndpointAsync(string userId, UpdateUserCommand body);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// update user profile
+        /// </summary>
+        /// <remarks>
+        /// update user profile
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task UpdateUserEndpointAsync(string userId, UpdateUserCommand body, System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
+        /// get users list
+        /// </summary>
+        /// <remarks>
+        /// get users list
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserDetail>> GetUsersListEndpointAsync();
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// get users list
+        /// </summary>
+        /// <remarks>
+        /// get users list
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserDetail>> GetUsersListEndpointAsync(System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
+        /// register user
+        /// </summary>
+        /// <remarks>
+        /// register user
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<RegisterUserResponse> RegisterUserEndpointAsync(RegisterUserCommand body);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// register user
+        /// </summary>
+        /// <remarks>
+        /// register user
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<RegisterUserResponse> RegisterUserEndpointAsync(RegisterUserCommand body, System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Reset password
+        /// </summary>
+        /// <remarks>
+        /// Resets the password using the token and new password provided.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task ResetPasswordEndpointAsync(string tenant, ResetPasswordCommand body);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Reset password
+        /// </summary>
+        /// <remarks>
+        /// Resets the password using the token and new password provided.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task ResetPasswordEndpointAsync(string tenant, ResetPasswordCommand body, System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
+        /// get a list of users with paging support
+        /// </summary>
+        /// <remarks>
+        /// get a list of users with paging support
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<UserDetailPagedList> SearchUsersEndpointAsync(UserListFilter body);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// get a list of users with paging support
+        /// </summary>
+        /// <remarks>
+        /// get a list of users with paging support
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<UserDetailPagedList> SearchUsersEndpointAsync(UserListFilter body, System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
+        /// self register user
+        /// </summary>
+        /// <remarks>
+        /// self register user
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<RegisterUserResponse> SelfRegisterUserEndpointAsync(string tenant, RegisterUserCommand body);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// self register user
+        /// </summary>
+        /// <remarks>
+        /// self register user
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<RegisterUserResponse> SelfRegisterUserEndpointAsync(string tenant, RegisterUserCommand body, System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Send email to verify user
+        /// </summary>
+        /// <remarks>
+        /// Send email to verify user
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task SendVerificationEmailEndPointAsync(string id);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Send email to verify user
+        /// </summary>
+        /// <remarks>
+        /// Send email to verify user
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task SendVerificationEmailEndPointAsync(string id, System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
         /// Toggle a user's active status
         /// </summary>
         /// <remarks>
@@ -1701,46 +1953,25 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         System.Threading.Tasks.Task ToggleUserStatusEndpointAsync(string id, ToggleUserStatusCommand body, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
-        /// assign roles
+        /// update current user profile
         /// </summary>
         /// <remarks>
-        /// assign roles
+        /// Update profile of currently logged in user.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task AssignRolesToUserEndpointAsync(string id, AssignUserRoleCommand body);
+        System.Threading.Tasks.Task UpdateCurrentUserEndpointAsync(UpdateUserCommand body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// assign roles
+        /// update current user profile
         /// </summary>
         /// <remarks>
-        /// assign roles
+        /// Update profile of currently logged in user.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task AssignRolesToUserEndpointAsync(string id, AssignUserRoleCommand body, System.Threading.CancellationToken cancellationToken);
-
-        /// <summary>
-        /// get user roles
-        /// </summary>
-        /// <remarks>
-        /// get user roles
-        /// </remarks>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserRoleDetail>> GetUserRolesEndpointAsync(string id);
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// get user roles
-        /// </summary>
-        /// <remarks>
-        /// get user roles
-        /// </remarks>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserRoleDetail>> GetUserRolesEndpointAsync(string id, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task UpdateCurrentUserEndpointAsync(UpdateUserCommand body, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Get user's audit trail details
@@ -1762,6 +1993,42 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<System.Collections.Generic.ICollection<AuditTrail>> GetUserAuditTrailEndpointAsync(System.Guid id, System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
+        /// update online status
+        /// </summary>
+        /// <remarks>
+        /// Update profile of currently logged in user.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task LogoutCurrentUserEndpointAsync();
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// update online status
+        /// </summary>
+        /// <remarks>
+        /// Update profile of currently logged in user.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task LogoutCurrentUserEndpointAsync(System.Threading.CancellationToken cancellationToken);
+
+        /// <remarks>
+        /// Import a list of users
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ImportResponse> ImportUsersEndpointAsync(bool isUpdate, FileUploadCommand body);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <remarks>
+        /// Import a list of users
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<ImportResponse> ImportUsersEndpointAsync(bool isUpdate, FileUploadCommand body, System.Threading.CancellationToken cancellationToken);
 
     }
 
@@ -8213,29 +8480,32 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         }
 
         /// <summary>
-        /// register user
+        /// assign roles
         /// </summary>
         /// <remarks>
-        /// register user
+        /// assign roles
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<RegisterUserResponse> RegisterUserEndpointAsync(RegisterUserCommand body)
+        public virtual System.Threading.Tasks.Task AssignRolesToUserEndpointAsync(string id, AssignUserRoleCommand body)
         {
-            return RegisterUserEndpointAsync(body, System.Threading.CancellationToken.None);
+            return AssignRolesToUserEndpointAsync(id, body, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// register user
+        /// assign roles
         /// </summary>
         /// <remarks>
-        /// register user
+        /// assign roles
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<RegisterUserResponse> RegisterUserEndpointAsync(RegisterUserCommand body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task AssignRolesToUserEndpointAsync(string id, AssignUserRoleCommand body, System.Threading.CancellationToken cancellationToken)
         {
+            if (id == null)
+                throw new System.ArgumentNullException("id");
+
             if (body == null)
                 throw new System.ArgumentNullException("body");
 
@@ -8250,209 +8520,13 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
-                    // Operation Path: "api/users/register"
-                    urlBuilder_.Append("api/users/register");
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<RegisterUserResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// self register user
-        /// </summary>
-        /// <remarks>
-        /// self register user
-        /// </remarks>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<RegisterUserResponse> SelfRegisterUserEndpointAsync(string tenant, RegisterUserCommand body)
-        {
-            return SelfRegisterUserEndpointAsync(tenant, body, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// self register user
-        /// </summary>
-        /// <remarks>
-        /// self register user
-        /// </remarks>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<RegisterUserResponse> SelfRegisterUserEndpointAsync(string tenant, RegisterUserCommand body, System.Threading.CancellationToken cancellationToken)
-        {
-            if (body == null)
-                throw new System.ArgumentNullException("body");
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-
-                    if (tenant == null)
-                        throw new System.ArgumentNullException("tenant");
-                    request_.Headers.TryAddWithoutValidation("tenant", ConvertToString(tenant, System.Globalization.CultureInfo.InvariantCulture));
-                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
-                    var content_ = new System.Net.Http.ByteArrayContent(json_);
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
-                    request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("POST");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                
-                    // Operation Path: "api/users/self-register"
-                    urlBuilder_.Append("api/users/self-register");
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<RegisterUserResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// update user profile
-        /// </summary>
-        /// <remarks>
-        /// update user profile
-        /// </remarks>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task UpdateUserEndpointAsync(UpdateUserCommand body)
-        {
-            return UpdateUserEndpointAsync(body, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// update user profile
-        /// </summary>
-        /// <remarks>
-        /// update user profile
-        /// </remarks>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task UpdateUserEndpointAsync(UpdateUserCommand body, System.Threading.CancellationToken cancellationToken)
-        {
-            if (body == null)
-                throw new System.ArgumentNullException("body");
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
-                    var content_ = new System.Net.Http.ByteArrayContent(json_);
-                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
-                    request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("PUT");
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                
-                    // Operation Path: "api/users/profile"
-                    urlBuilder_.Append("api/users/profile");
+                    // Operation Path: "api/users/{id}/roles"
+                    urlBuilder_.Append("api/users/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/roles");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -8502,29 +8576,32 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         }
 
         /// <summary>
-        /// Get current user information based on token
+        /// get user roles
         /// </summary>
         /// <remarks>
-        /// Get current user information based on token
+        /// get user roles
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<UserDetail> GetMeEndpointAsync()
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserRoleDetail>> GetUserRolesEndpointAsync(string id)
         {
-            return GetMeEndpointAsync(System.Threading.CancellationToken.None);
+            return GetUserRolesEndpointAsync(id, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Get current user information based on token
+        /// get user roles
         /// </summary>
         /// <remarks>
-        /// Get current user information based on token
+        /// get user roles
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<UserDetail> GetMeEndpointAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserRoleDetail>> GetUserRolesEndpointAsync(string id, System.Threading.CancellationToken cancellationToken)
         {
+            if (id == null)
+                throw new System.ArgumentNullException("id");
+
             var client_ = _httpClient;
             var disposeClient_ = false;
             try
@@ -8536,8 +8613,10 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
-                    // Operation Path: "api/users/profile"
-                    urlBuilder_.Append("api/users/profile");
+                    // Operation Path: "api/users/{id}/roles"
+                    urlBuilder_.Append("api/users/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/roles");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -8564,7 +8643,7 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<UserDetail>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<UserRoleDetail>>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -8592,42 +8671,48 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         }
 
         /// <summary>
-        /// get users list
+        /// Changes password
         /// </summary>
         /// <remarks>
-        /// get users list
+        /// Change password
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserDetail>> GetUsersListEndpointAsync()
+        public virtual System.Threading.Tasks.Task ChangePasswordEndpointAsync(ChangePasswordCommand body)
         {
-            return GetUsersListEndpointAsync(System.Threading.CancellationToken.None);
+            return ChangePasswordEndpointAsync(body, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// get users list
+        /// Changes password
         /// </summary>
         /// <remarks>
-        /// get users list
+        /// Change password
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserDetail>> GetUsersListEndpointAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task ChangePasswordEndpointAsync(ChangePasswordCommand body, System.Threading.CancellationToken cancellationToken)
         {
+            if (body == null)
+                throw new System.ArgumentNullException("body");
+
             var client_ = _httpClient;
             var disposeClient_ = false;
             try
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
-                    // Operation Path: "api/users"
-                    urlBuilder_.Append("api/users");
+                    // Operation Path: "api/users/change-password"
+                    urlBuilder_.Append("api/users/change-password");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -8654,12 +8739,7 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<UserDetail>>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
+                            return;
                         }
                         else
                         {
@@ -8864,6 +8944,191 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         }
 
         /// <summary>
+        /// Disable user profile
+        /// </summary>
+        /// <remarks>
+        /// disable user profile
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task DisableUserEndpointAsync(string id)
+        {
+            return DisableUserEndpointAsync(id, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Disable user profile
+        /// </summary>
+        /// <remarks>
+        /// disable user profile
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task DisableUserEndpointAsync(string id, System.Threading.CancellationToken cancellationToken)
+        {
+            if (id == null)
+                throw new System.ArgumentNullException("id");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("DELETE");
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                
+                    // Operation Path: "api/users/disable/{id}"
+                    urlBuilder_.Append("api/users/disable/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Export a list of users with paging support
+        /// </summary>
+        /// <remarks>
+        /// Export a list of users with paging support
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<byte[]> ExportUsersEndpointAsync(UserListFilter body)
+        {
+            return ExportUsersEndpointAsync(body, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Export a list of users with paging support
+        /// </summary>
+        /// <remarks>
+        /// Export a list of users with paging support
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<byte[]> ExportUsersEndpointAsync(UserListFilter body, System.Threading.CancellationToken cancellationToken)
+        {
+            if (body == null)
+                throw new System.ArgumentNullException("body");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                
+                    // Operation Path: "api/users/export"
+                    urlBuilder_.Append("api/users/export");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<byte[]>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
         /// Forgot password
         /// </summary>
         /// <remarks>
@@ -8959,28 +9224,132 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         }
 
         /// <summary>
-        /// Changes password
+        /// Confirm email
         /// </summary>
         /// <remarks>
-        /// Change password
+        /// Confirm email address for a user.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task ChangePasswordEndpointAsync(ChangePasswordCommand body)
+        public virtual System.Threading.Tasks.Task<StringTaskTask> GetConirmEmailEndpointAsync(string userId, string code, string tenant)
         {
-            return ChangePasswordEndpointAsync(body, System.Threading.CancellationToken.None);
+            return GetConirmEmailEndpointAsync(userId, code, tenant, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Changes password
+        /// Confirm email
         /// </summary>
         /// <remarks>
-        /// Change password
+        /// Confirm email address for a user.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task ChangePasswordEndpointAsync(ChangePasswordCommand body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<StringTaskTask> GetConirmEmailEndpointAsync(string userId, string code, string tenant, System.Threading.CancellationToken cancellationToken)
+        {
+            if (userId == null)
+                throw new System.ArgumentNullException("userId");
+
+            if (code == null)
+                throw new System.ArgumentNullException("code");
+
+            if (tenant == null)
+                throw new System.ArgumentNullException("tenant");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                
+                    // Operation Path: "api/users/confirm-email"
+                    urlBuilder_.Append("api/users/confirm-email");
+                    urlBuilder_.Append('?');
+                    urlBuilder_.Append(System.Uri.EscapeDataString("userId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(userId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    urlBuilder_.Append(System.Uri.EscapeDataString("code")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(code, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    urlBuilder_.Append(System.Uri.EscapeDataString("tenant")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(tenant, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<StringTaskTask>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Confirm email
+        /// </summary>
+        /// <remarks>
+        /// Confirm email address for a user.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task ConirmEmailEndpointAsync(string tenant, EmailConfirmCommand body)
+        {
+            return ConirmEmailEndpointAsync(tenant, body, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Confirm email
+        /// </summary>
+        /// <remarks>
+        /// Confirm email address for a user.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task ConirmEmailEndpointAsync(string tenant, EmailConfirmCommand body, System.Threading.CancellationToken cancellationToken)
         {
             if (body == null)
                 throw new System.ArgumentNullException("body");
@@ -8991,6 +9360,10 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
+
+                    if (tenant == null)
+                        throw new System.ArgumentNullException("tenant");
+                    request_.Headers.TryAddWithoutValidation("tenant", ConvertToString(tenant, System.Globalization.CultureInfo.InvariantCulture));
                     var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
                     var content_ = new System.Net.Http.ByteArrayContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
@@ -8999,8 +9372,8 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
-                    // Operation Path: "api/users/change-password"
-                    urlBuilder_.Append("api/users/change-password");
+                    // Operation Path: "api/users/confirm-email"
+                    urlBuilder_.Append("api/users/confirm-email");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -9028,6 +9401,852 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
                         if (status_ == 200)
                         {
                             return;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Confirm phone number
+        /// </summary>
+        /// <remarks>
+        /// Confirm phone number for a user.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<StringTask> GetConfirmPhoneNumberEndpointAsync(string userId, string code)
+        {
+            return GetConfirmPhoneNumberEndpointAsync(userId, code, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Confirm phone number
+        /// </summary>
+        /// <remarks>
+        /// Confirm phone number for a user.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<StringTask> GetConfirmPhoneNumberEndpointAsync(string userId, string code, System.Threading.CancellationToken cancellationToken)
+        {
+            if (userId == null)
+                throw new System.ArgumentNullException("userId");
+
+            if (code == null)
+                throw new System.ArgumentNullException("code");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                
+                    // Operation Path: "api/users/confirm-phone-number"
+                    urlBuilder_.Append("api/users/confirm-phone-number");
+                    urlBuilder_.Append('?');
+                    urlBuilder_.Append(System.Uri.EscapeDataString("userId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(userId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    urlBuilder_.Append(System.Uri.EscapeDataString("code")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(code, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<StringTask>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Get user profile by Name
+        /// </summary>
+        /// <remarks>
+        /// Get another user's profile details by userName.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<UserDetail> GetUserByEmailEndpointAsync(string email)
+        {
+            return GetUserByEmailEndpointAsync(email, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get user profile by Name
+        /// </summary>
+        /// <remarks>
+        /// Get another user's profile details by userName.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<UserDetail> GetUserByEmailEndpointAsync(string email, System.Threading.CancellationToken cancellationToken)
+        {
+            if (email == null)
+                throw new System.ArgumentNullException("email");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                
+                    // Operation Path: "api/users/email/{email}"
+                    urlBuilder_.Append("api/users/email/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(email, System.Globalization.CultureInfo.InvariantCulture)));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<UserDetail>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Get user profile by Name
+        /// </summary>
+        /// <remarks>
+        /// Get another user's profile details by userName.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<UserDetail> GetUserByNameEndpointAsync(string userName)
+        {
+            return GetUserByNameEndpointAsync(userName, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get user profile by Name
+        /// </summary>
+        /// <remarks>
+        /// Get another user's profile details by userName.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<UserDetail> GetUserByNameEndpointAsync(string userName, System.Threading.CancellationToken cancellationToken)
+        {
+            if (userName == null)
+                throw new System.ArgumentNullException("userName");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                
+                    // Operation Path: "api/users/username/{userName}"
+                    urlBuilder_.Append("api/users/username/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(userName, System.Globalization.CultureInfo.InvariantCulture)));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<UserDetail>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Get user profile by Phone Number
+        /// </summary>
+        /// <remarks>
+        /// Get another user's profile details by phone number.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<UserDetail> GetUserByPhoneNumberEndpointAsync(string phoneNumber)
+        {
+            return GetUserByPhoneNumberEndpointAsync(phoneNumber, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get user profile by Phone Number
+        /// </summary>
+        /// <remarks>
+        /// Get another user's profile details by phone number.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<UserDetail> GetUserByPhoneNumberEndpointAsync(string phoneNumber, System.Threading.CancellationToken cancellationToken)
+        {
+            if (phoneNumber == null)
+                throw new System.ArgumentNullException("phoneNumber");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                
+                    // Operation Path: "api/users/phoneNumber/{phoneNumber}"
+                    urlBuilder_.Append("api/users/phoneNumber/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(phoneNumber, System.Globalization.CultureInfo.InvariantCulture)));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<UserDetail>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Get current user permissions
+        /// </summary>
+        /// <remarks>
+        /// Get current user permissions
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<string>> GetUserPermissionsAsync()
+        {
+            return GetUserPermissionsAsync(System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get current user permissions
+        /// </summary>
+        /// <remarks>
+        /// Get current user permissions
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<string>> GetUserPermissionsAsync(System.Threading.CancellationToken cancellationToken)
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                
+                    // Operation Path: "api/users/permissions"
+                    urlBuilder_.Append("api/users/permissions");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<string>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Get current user information based on token
+        /// </summary>
+        /// <remarks>
+        /// Get current user information based on token
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<UserDetail> GetMeEndpointAsync()
+        {
+            return GetMeEndpointAsync(System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Get current user information based on token
+        /// </summary>
+        /// <remarks>
+        /// Get current user information based on token
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<UserDetail> GetMeEndpointAsync(System.Threading.CancellationToken cancellationToken)
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                
+                    // Operation Path: "api/users/profile"
+                    urlBuilder_.Append("api/users/profile");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<UserDetail>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// update user profile
+        /// </summary>
+        /// <remarks>
+        /// update user profile
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task UpdateUserEndpointAsync(string userId, UpdateUserCommand body)
+        {
+            return UpdateUserEndpointAsync(userId, body, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// update user profile
+        /// </summary>
+        /// <remarks>
+        /// update user profile
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task UpdateUserEndpointAsync(string userId, UpdateUserCommand body, System.Threading.CancellationToken cancellationToken)
+        {
+            if (userId == null)
+                throw new System.ArgumentNullException("userId");
+
+            if (body == null)
+                throw new System.ArgumentNullException("body");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("PUT");
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                
+                    // Operation Path: "api/users/profile"
+                    urlBuilder_.Append("api/users/profile");
+                    urlBuilder_.Append('?');
+                    urlBuilder_.Append(System.Uri.EscapeDataString("userId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(userId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// get users list
+        /// </summary>
+        /// <remarks>
+        /// get users list
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserDetail>> GetUsersListEndpointAsync()
+        {
+            return GetUsersListEndpointAsync(System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// get users list
+        /// </summary>
+        /// <remarks>
+        /// get users list
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserDetail>> GetUsersListEndpointAsync(System.Threading.CancellationToken cancellationToken)
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                
+                    // Operation Path: "api/users"
+                    urlBuilder_.Append("api/users");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<UserDetail>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// register user
+        /// </summary>
+        /// <remarks>
+        /// register user
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<RegisterUserResponse> RegisterUserEndpointAsync(RegisterUserCommand body)
+        {
+            return RegisterUserEndpointAsync(body, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// register user
+        /// </summary>
+        /// <remarks>
+        /// register user
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<RegisterUserResponse> RegisterUserEndpointAsync(RegisterUserCommand body, System.Threading.CancellationToken cancellationToken)
+        {
+            if (body == null)
+                throw new System.ArgumentNullException("body");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                
+                    // Operation Path: "api/users/register"
+                    urlBuilder_.Append("api/users/register");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<RegisterUserResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
                         }
                         else
                         {
@@ -9145,42 +10364,49 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         }
 
         /// <summary>
-        /// Get current user permissions
+        /// get a list of users with paging support
         /// </summary>
         /// <remarks>
-        /// Get current user permissions
+        /// get a list of users with paging support
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<string>> GetUserPermissionsAsync()
+        public virtual System.Threading.Tasks.Task<UserDetailPagedList> SearchUsersEndpointAsync(UserListFilter body)
         {
-            return GetUserPermissionsAsync(System.Threading.CancellationToken.None);
+            return SearchUsersEndpointAsync(body, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Get current user permissions
+        /// get a list of users with paging support
         /// </summary>
         /// <remarks>
-        /// Get current user permissions
+        /// get a list of users with paging support
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<string>> GetUserPermissionsAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<UserDetailPagedList> SearchUsersEndpointAsync(UserListFilter body, System.Threading.CancellationToken cancellationToken)
         {
+            if (body == null)
+                throw new System.ArgumentNullException("body");
+
             var client_ = _httpClient;
             var disposeClient_ = false;
             try
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
                     request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
-                    // Operation Path: "api/users/permissions"
-                    urlBuilder_.Append("api/users/permissions");
+                    // Operation Path: "api/users/search"
+                    urlBuilder_.Append("api/users/search");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -9207,12 +10433,203 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<string>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<UserDetailPagedList>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// self register user
+        /// </summary>
+        /// <remarks>
+        /// self register user
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<RegisterUserResponse> SelfRegisterUserEndpointAsync(string tenant, RegisterUserCommand body)
+        {
+            return SelfRegisterUserEndpointAsync(tenant, body, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// self register user
+        /// </summary>
+        /// <remarks>
+        /// self register user
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<RegisterUserResponse> SelfRegisterUserEndpointAsync(string tenant, RegisterUserCommand body, System.Threading.CancellationToken cancellationToken)
+        {
+            if (body == null)
+                throw new System.ArgumentNullException("body");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+
+                    if (tenant == null)
+                        throw new System.ArgumentNullException("tenant");
+                    request_.Headers.TryAddWithoutValidation("tenant", ConvertToString(tenant, System.Globalization.CultureInfo.InvariantCulture));
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                
+                    // Operation Path: "api/users/self-register"
+                    urlBuilder_.Append("api/users/self-register");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<RegisterUserResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Send email to verify user
+        /// </summary>
+        /// <remarks>
+        /// Send email to verify user
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task SendVerificationEmailEndPointAsync(string id)
+        {
+            return SendVerificationEmailEndPointAsync(id, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Send email to verify user
+        /// </summary>
+        /// <remarks>
+        /// Send email to verify user
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task SendVerificationEmailEndPointAsync(string id, System.Threading.CancellationToken cancellationToken)
+        {
+            if (id == null)
+                throw new System.ArgumentNullException("id");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Content = new System.Net.Http.StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json");
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                
+                    // Operation Path: "api/users/{id}/verification-email"
+                    urlBuilder_.Append("api/users/");
+                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
+                    urlBuilder_.Append("/verification-email");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            return;
                         }
                         else
                         {
@@ -9331,32 +10748,29 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         }
 
         /// <summary>
-        /// assign roles
+        /// update current user profile
         /// </summary>
         /// <remarks>
-        /// assign roles
+        /// Update profile of currently logged in user.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task AssignRolesToUserEndpointAsync(string id, AssignUserRoleCommand body)
+        public virtual System.Threading.Tasks.Task UpdateCurrentUserEndpointAsync(UpdateUserCommand body)
         {
-            return AssignRolesToUserEndpointAsync(id, body, System.Threading.CancellationToken.None);
+            return UpdateCurrentUserEndpointAsync(body, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// assign roles
+        /// update current user profile
         /// </summary>
         /// <remarks>
-        /// assign roles
+        /// Update profile of currently logged in user.
         /// </remarks>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task AssignRolesToUserEndpointAsync(string id, AssignUserRoleCommand body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task UpdateCurrentUserEndpointAsync(UpdateUserCommand body, System.Threading.CancellationToken cancellationToken)
         {
-            if (id == null)
-                throw new System.ArgumentNullException("id");
-
             if (body == null)
                 throw new System.ArgumentNullException("body");
 
@@ -9370,14 +10784,12 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
                     var content_ = new System.Net.Http.ByteArrayContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
-                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Method = new System.Net.Http.HttpMethod("PUT");
 
                     var urlBuilder_ = new System.Text.StringBuilder();
                 
-                    // Operation Path: "api/users/{id}/roles"
-                    urlBuilder_.Append("api/users/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
-                    urlBuilder_.Append("/roles");
+                    // Operation Path: "api/users/profile/current"
+                    urlBuilder_.Append("api/users/profile/current");
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -9405,101 +10817,6 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
                         if (status_ == 200)
                         {
                             return;
-                        }
-                        else
-                        {
-                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
-                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <summary>
-        /// get user roles
-        /// </summary>
-        /// <remarks>
-        /// get user roles
-        /// </remarks>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserRoleDetail>> GetUserRolesEndpointAsync(string id)
-        {
-            return GetUserRolesEndpointAsync(id, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// get user roles
-        /// </summary>
-        /// <remarks>
-        /// get user roles
-        /// </remarks>
-        /// <returns>OK</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<UserRoleDetail>> GetUserRolesEndpointAsync(string id, System.Threading.CancellationToken cancellationToken)
-        {
-            if (id == null)
-                throw new System.ArgumentNullException("id");
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
-
-                    var urlBuilder_ = new System.Text.StringBuilder();
-                
-                    // Operation Path: "api/users/{id}/roles"
-                    urlBuilder_.Append("api/users/");
-                    urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(id, System.Globalization.CultureInfo.InvariantCulture)));
-                    urlBuilder_.Append("/roles");
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
-                        foreach (var item_ in response_.Headers)
-                            headers_[item_.Key] = item_.Value;
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<UserRoleDetail>>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
                         }
                         else
                         {
@@ -9590,6 +10907,188 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<AuditTrail>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// update online status
+        /// </summary>
+        /// <remarks>
+        /// Update profile of currently logged in user.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task LogoutCurrentUserEndpointAsync()
+        {
+            return LogoutCurrentUserEndpointAsync(System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// update online status
+        /// </summary>
+        /// <remarks>
+        /// Update profile of currently logged in user.
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task LogoutCurrentUserEndpointAsync(System.Threading.CancellationToken cancellationToken)
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Content = new System.Net.Http.StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json");
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                
+                    // Operation Path: "api/users/logout"
+                    urlBuilder_.Append("api/users/logout");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <remarks>
+        /// Import a list of users
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<ImportResponse> ImportUsersEndpointAsync(bool isUpdate, FileUploadCommand body)
+        {
+            return ImportUsersEndpointAsync(isUpdate, body, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <remarks>
+        /// Import a list of users
+        /// </remarks>
+        /// <returns>OK</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<ImportResponse> ImportUsersEndpointAsync(bool isUpdate, FileUploadCommand body, System.Threading.CancellationToken cancellationToken)
+        {
+            if (isUpdate == null)
+                throw new System.ArgumentNullException("isUpdate");
+
+            if (body == null)
+                throw new System.ArgumentNullException("body");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, JsonSerializerSettings);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+                
+                    // Operation Path: "api/users/import"
+                    urlBuilder_.Append("api/users/import");
+                    urlBuilder_.Append('?');
+                    urlBuilder_.Append(System.Uri.EscapeDataString("isUpdate")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(isUpdate, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ImportResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -9735,6 +11234,102 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class AggregateException
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("targetSite")]
+        public MethodBase? TargetSite { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public System.Collections.Generic.IDictionary<string, object> Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("innerException")]
+        public InnerException? InnerException { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("helpLink")]
+        public string? HelpLink { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("source")]
+        public string? Source { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("hResult")]
+        public int HResult { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("stackTrace")]
+        public string? StackTrace { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("innerExceptions")]
+        public System.Collections.Generic.ICollection<InnerException> InnerExceptions { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string Message { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class Assembly
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("definedTypes")]
+        public System.Collections.Generic.ICollection<TypeInfo> DefinedTypes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("exportedTypes")]
+        public System.Collections.Generic.ICollection<Type> ExportedTypes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("codeBase")]
+        [System.Obsolete]
+        public string? CodeBase { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("entryPoint")]
+        public MethodInfo? EntryPoint { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("fullName")]
+        public string? FullName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("imageRuntimeVersion")]
+        public string ImageRuntimeVersion { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isDynamic")]
+        public bool IsDynamic { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("location")]
+        public string Location { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("reflectionOnly")]
+        public bool ReflectionOnly { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isCollectible")]
+        public bool IsCollectible { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isFullyTrusted")]
+        public bool IsFullyTrusted { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("customAttributes")]
+        public System.Collections.Generic.ICollection<CustomAttributeData> CustomAttributes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("escapedCodeBase")]
+        [System.Obsolete]
+        public string EscapedCodeBase { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("manifestModule")]
+        public Module ManifestModule { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("modules")]
+        public System.Collections.Generic.ICollection<Module> Modules { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("globalAssemblyCache")]
+        [System.Obsolete]
+        public bool GlobalAssemblyCache { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("hostContext")]
+        public long HostContext { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("securityRuleSet")]
+        public SecurityRuleSet SecurityRuleSet { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class AssignUserRoleCommand
     {
 
@@ -9792,6 +11387,22 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum CallingConventions
+    {
+
+        Standard = 1,
+
+        VarArgs = 2,
+
+        Any = 3,
+
+        HasThis = 32,
+
+        ExplicitThis = 64,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class ChangePasswordCommand
     {
 
@@ -9819,6 +11430,108 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         FastTransaction = 3,
 
         IntCode = 4,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ConstructorInfo
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string Name { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("declaringType")]
+        public Type? DeclaringType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("reflectedType")]
+        public Type? ReflectedType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("module")]
+        public Module Module { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("customAttributes")]
+        public System.Collections.Generic.ICollection<CustomAttributeData> CustomAttributes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isCollectible")]
+        public bool IsCollectible { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("metadataToken")]
+        public int MetadataToken { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("attributes")]
+        public MethodAttributes Attributes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("methodImplementationFlags")]
+        public MethodImplAttributes MethodImplementationFlags { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("callingConvention")]
+        public CallingConventions CallingConvention { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isAbstract")]
+        public bool IsAbstract { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isConstructor")]
+        public bool IsConstructor { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isFinal")]
+        public bool IsFinal { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isHideBySig")]
+        public bool IsHideBySig { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isSpecialName")]
+        public bool IsSpecialName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isStatic")]
+        public bool IsStatic { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isVirtual")]
+        public bool IsVirtual { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isAssembly")]
+        public bool IsAssembly { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isFamily")]
+        public bool IsFamily { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isFamilyAndAssembly")]
+        public bool IsFamilyAndAssembly { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isFamilyOrAssembly")]
+        public bool IsFamilyOrAssembly { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isPrivate")]
+        public bool IsPrivate { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isPublic")]
+        public bool IsPublic { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isConstructedGenericMethod")]
+        public bool IsConstructedGenericMethod { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isGenericMethod")]
+        public bool IsGenericMethod { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isGenericMethodDefinition")]
+        public bool IsGenericMethodDefinition { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("containsGenericParameters")]
+        public bool ContainsGenericParameters { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("methodHandle")]
+        public RuntimeMethodHandle MethodHandle { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isSecurityCritical")]
+        public bool IsSecurityCritical { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isSecuritySafeCritical")]
+        public bool IsSecuritySafeCritical { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isSecurityTransparent")]
+        public bool IsSecurityTransparent { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("memberType")]
+        public MemberTypes MemberType { get; set; } = default!;
 
     }
 
@@ -10120,6 +11833,54 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CustomAttributeData
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("attributeType")]
+        public Type AttributeType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("constructor")]
+        public ConstructorInfo Constructor { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("constructorArguments")]
+        public System.Collections.Generic.ICollection<CustomAttributeTypedArgument> ConstructorArguments { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("namedArguments")]
+        public System.Collections.Generic.ICollection<CustomAttributeNamedArgument> NamedArguments { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CustomAttributeNamedArgument
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("memberInfo")]
+        public MemberInfo MemberInfo { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("typedValue")]
+        public CustomAttributeTypedArgument TypedValue { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("memberName")]
+        public string MemberName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isField")]
+        public bool IsField { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CustomAttributeTypedArgument
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("argumentType")]
+        public Type ArgumentType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("value")]
+        public object? Value { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class DimensionDto
     {
 
@@ -10201,6 +11962,21 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class EmailConfirmCommand
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("userId")]
+        public string UserId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public string Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("tenant")]
+        public string Tenant { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class EntityCodeDto
     {
 
@@ -10257,6 +12033,69 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
 
         [System.Text.Json.Serialization.JsonPropertyName("hasNext")]
         public bool HasNext { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum EventAttributes
+    {
+
+        None = 0,
+
+        SpecialName = 512,
+
+        RTSpecialName = 1024,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class EventInfo
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string Name { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("declaringType")]
+        public Type? DeclaringType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("reflectedType")]
+        public Type? ReflectedType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("module")]
+        public Module Module { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("customAttributes")]
+        public System.Collections.Generic.ICollection<CustomAttributeData> CustomAttributes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isCollectible")]
+        public bool IsCollectible { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("metadataToken")]
+        public int MetadataToken { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("memberType")]
+        public MemberTypes MemberType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("attributes")]
+        public EventAttributes Attributes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isSpecialName")]
+        public bool IsSpecialName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("addMethod")]
+        public MethodInfo? AddMethod { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("removeMethod")]
+        public MethodInfo? RemoveMethod { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("raiseMethod")]
+        public MethodInfo? RaiseMethod { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isMulticast")]
+        public bool IsMulticast { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("eventHandlerType")]
+        public Type? EventHandlerType { get; set; } = default!;
 
     }
 
@@ -10384,6 +12223,135 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum FieldAttributes
+    {
+
+        PrivateScope = 0,
+
+        Private = 1,
+
+        FamANDAssem = 2,
+
+        Assembly = 3,
+
+        Family = 4,
+
+        FamORAssem = 5,
+
+        Public = 6,
+
+        FieldAccessMask = 7,
+
+        Static = 16,
+
+        InitOnly = 32,
+
+        Literal = 64,
+
+        NotSerialized = 128,
+
+        HasFieldRVA = 256,
+
+        SpecialName = 512,
+
+        RTSpecialName = 1024,
+
+        HasFieldMarshal = 4096,
+
+        PinvokeImpl = 8192,
+
+        HasDefault = 32768,
+
+        ReservedMask = 38144,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class FieldInfo
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string Name { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("declaringType")]
+        public Type? DeclaringType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("reflectedType")]
+        public Type? ReflectedType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("module")]
+        public Module Module { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("customAttributes")]
+        public System.Collections.Generic.ICollection<CustomAttributeData> CustomAttributes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isCollectible")]
+        public bool IsCollectible { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("metadataToken")]
+        public int MetadataToken { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("memberType")]
+        public MemberTypes MemberType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("attributes")]
+        public FieldAttributes Attributes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("fieldType")]
+        public Type FieldType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isInitOnly")]
+        public bool IsInitOnly { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isLiteral")]
+        public bool IsLiteral { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isNotSerialized")]
+        [System.Obsolete]
+        public bool IsNotSerialized { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isPinvokeImpl")]
+        public bool IsPinvokeImpl { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isSpecialName")]
+        public bool IsSpecialName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isStatic")]
+        public bool IsStatic { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isAssembly")]
+        public bool IsAssembly { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isFamily")]
+        public bool IsFamily { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isFamilyAndAssembly")]
+        public bool IsFamilyAndAssembly { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isFamilyOrAssembly")]
+        public bool IsFamilyOrAssembly { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isPrivate")]
+        public bool IsPrivate { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isPublic")]
+        public bool IsPublic { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isSecurityCritical")]
+        public bool IsSecurityCritical { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isSecuritySafeCritical")]
+        public bool IsSecuritySafeCritical { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isSecurityTransparent")]
+        public bool IsSecurityTransparent { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("fieldHandle")]
+        public RuntimeFieldHandle FieldHandle { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class FileUploadCommand
     {
 
@@ -10425,6 +12393,28 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
 
         [System.Text.Json.Serialization.JsonPropertyName("email")]
         public string Email { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum GenericParameterAttributes
+    {
+
+        None = 0,
+
+        Covariant = 1,
+
+        Contravariant = 2,
+
+        VarianceMask = 3,
+
+        ReferenceTypeConstraint = 4,
+
+        NotNullableValueTypeConstraint = 8,
+
+        DefaultConstructorConstraint = 16,
+
+        SpecialConstraintMask = 28,
 
     }
 
@@ -10771,6 +12761,12 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ICustomAttributeProvider
+    {
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class ImportResponse
     {
 
@@ -10779,6 +12775,375 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
 
         [System.Text.Json.Serialization.JsonPropertyName("message")]
         public string? Message { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class IntPtr
+    {
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum LayoutKind
+    {
+
+        Sequential = 0,
+
+        Explicit = 2,
+
+        Auto = 3,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class MemberInfo
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("memberType")]
+        public MemberTypes MemberType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string Name { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("declaringType")]
+        public Type? DeclaringType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("reflectedType")]
+        public Type? ReflectedType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("module")]
+        public Module Module { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("customAttributes")]
+        public System.Collections.Generic.ICollection<CustomAttributeData> CustomAttributes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isCollectible")]
+        public bool IsCollectible { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("metadataToken")]
+        public int MetadataToken { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum MemberTypes
+    {
+
+        Constructor = 1,
+
+        Event = 2,
+
+        Field = 4,
+
+        Method = 8,
+
+        Property = 16,
+
+        TypeInfo = 32,
+
+        Custom = 64,
+
+        NestedType = 128,
+
+        All = 191,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum MethodAttributes
+    {
+
+        PrivateScope = 0,
+
+        ReuseSlot = 1,
+
+        Private = 2,
+
+        FamANDAssem = 3,
+
+        Assembly = 4,
+
+        Family = 5,
+
+        FamORAssem = 6,
+
+        Public = 7,
+
+        MemberAccessMask = 8,
+
+        UnmanagedExport = 16,
+
+        Static = 32,
+
+        Final = 64,
+
+        Virtual = 128,
+
+        HideBySig = 256,
+
+        NewSlot = 512,
+
+        VtableLayoutMask = 1024,
+
+        CheckAccessOnOverride = 2048,
+
+        Abstract = 4096,
+
+        SpecialName = 8192,
+
+        RTSpecialName = 16384,
+
+        PinvokeImpl = 32768,
+
+        HasSecurity = 53248,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class MethodBase
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("memberType")]
+        public MemberTypes MemberType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string Name { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("declaringType")]
+        public Type? DeclaringType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("reflectedType")]
+        public Type? ReflectedType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("module")]
+        public Module Module { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("customAttributes")]
+        public System.Collections.Generic.ICollection<CustomAttributeData> CustomAttributes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isCollectible")]
+        public bool IsCollectible { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("metadataToken")]
+        public int MetadataToken { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("attributes")]
+        public MethodAttributes Attributes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("methodImplementationFlags")]
+        public MethodImplAttributes MethodImplementationFlags { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("callingConvention")]
+        public CallingConventions CallingConvention { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isAbstract")]
+        public bool IsAbstract { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isConstructor")]
+        public bool IsConstructor { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isFinal")]
+        public bool IsFinal { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isHideBySig")]
+        public bool IsHideBySig { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isSpecialName")]
+        public bool IsSpecialName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isStatic")]
+        public bool IsStatic { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isVirtual")]
+        public bool IsVirtual { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isAssembly")]
+        public bool IsAssembly { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isFamily")]
+        public bool IsFamily { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isFamilyAndAssembly")]
+        public bool IsFamilyAndAssembly { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isFamilyOrAssembly")]
+        public bool IsFamilyOrAssembly { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isPrivate")]
+        public bool IsPrivate { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isPublic")]
+        public bool IsPublic { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isConstructedGenericMethod")]
+        public bool IsConstructedGenericMethod { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isGenericMethod")]
+        public bool IsGenericMethod { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isGenericMethodDefinition")]
+        public bool IsGenericMethodDefinition { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("containsGenericParameters")]
+        public bool ContainsGenericParameters { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("methodHandle")]
+        public RuntimeMethodHandle MethodHandle { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isSecurityCritical")]
+        public bool IsSecurityCritical { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isSecuritySafeCritical")]
+        public bool IsSecuritySafeCritical { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isSecurityTransparent")]
+        public bool IsSecurityTransparent { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum MethodImplAttributes
+    {
+
+        IL = 0,
+
+        Managed = 1,
+
+        Native = 2,
+
+        OPTIL = 3,
+
+        CodeTypeMask = 4,
+
+        Runtime = 8,
+
+        ManagedMask = 16,
+
+        Unmanaged = 32,
+
+        NoInlining = 64,
+
+        ForwardRef = 128,
+
+        Synchronized = 256,
+
+        NoOptimization = 512,
+
+        PreserveSig = 4096,
+
+        AggressiveInlining = 65535,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class MethodInfo
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string Name { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("declaringType")]
+        public Type? DeclaringType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("reflectedType")]
+        public Type? ReflectedType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("module")]
+        public Module Module { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("customAttributes")]
+        public System.Collections.Generic.ICollection<CustomAttributeData> CustomAttributes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isCollectible")]
+        public bool IsCollectible { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("metadataToken")]
+        public int MetadataToken { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("attributes")]
+        public MethodAttributes Attributes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("methodImplementationFlags")]
+        public MethodImplAttributes MethodImplementationFlags { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("callingConvention")]
+        public CallingConventions CallingConvention { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isAbstract")]
+        public bool IsAbstract { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isConstructor")]
+        public bool IsConstructor { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isFinal")]
+        public bool IsFinal { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isHideBySig")]
+        public bool IsHideBySig { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isSpecialName")]
+        public bool IsSpecialName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isStatic")]
+        public bool IsStatic { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isVirtual")]
+        public bool IsVirtual { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isAssembly")]
+        public bool IsAssembly { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isFamily")]
+        public bool IsFamily { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isFamilyAndAssembly")]
+        public bool IsFamilyAndAssembly { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isFamilyOrAssembly")]
+        public bool IsFamilyOrAssembly { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isPrivate")]
+        public bool IsPrivate { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isPublic")]
+        public bool IsPublic { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isConstructedGenericMethod")]
+        public bool IsConstructedGenericMethod { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isGenericMethod")]
+        public bool IsGenericMethod { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isGenericMethodDefinition")]
+        public bool IsGenericMethodDefinition { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("containsGenericParameters")]
+        public bool ContainsGenericParameters { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("methodHandle")]
+        public RuntimeMethodHandle MethodHandle { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isSecurityCritical")]
+        public bool IsSecurityCritical { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isSecuritySafeCritical")]
+        public bool IsSecuritySafeCritical { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isSecurityTransparent")]
+        public bool IsSecurityTransparent { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("memberType")]
+        public MemberTypes MemberType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("returnParameter")]
+        public ParameterInfo ReturnParameter { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("returnType")]
+        public Type ReturnType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("returnTypeCustomAttributes")]
+        public ICustomAttributeProvider ReturnTypeCustomAttributes { get; set; } = default!;
 
     }
 
@@ -10825,6 +13190,48 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class Module
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("assembly")]
+        public Assembly Assembly { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("fullyQualifiedName")]
+        public string FullyQualifiedName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string Name { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("mdStreamVersion")]
+        public int MdStreamVersion { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("moduleVersionId")]
+        public System.Guid ModuleVersionId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("scopeName")]
+        public string ScopeName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("moduleHandle")]
+        public ModuleHandle ModuleHandle { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("customAttributes")]
+        public System.Collections.Generic.ICollection<CustomAttributeData> CustomAttributes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("metadataToken")]
+        public int MetadataToken { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ModuleHandle
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("mdStreamVersion")]
+        public int MdStreamVersion { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class PaginationFilter
     {
 
@@ -10845,6 +13252,85 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
 
         [System.Text.Json.Serialization.JsonPropertyName("orderBy")]
         public System.Collections.Generic.ICollection<string>? OrderBy { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum ParameterAttributes
+    {
+
+        None = 0,
+
+        In = 1,
+
+        Out = 2,
+
+        Lcid = 4,
+
+        Retval = 8,
+
+        Optional = 16,
+
+        HasDefault = 4096,
+
+        HasFieldMarshal = 8192,
+
+        Reserved3 = 16384,
+
+        Reserved4 = 32768,
+
+        ReservedMask = 61440,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ParameterInfo
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("attributes")]
+        public ParameterAttributes Attributes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("member")]
+        public MemberInfo Member { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string? Name { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("parameterType")]
+        public Type ParameterType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("position")]
+        public int Position { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isIn")]
+        public bool IsIn { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isLcid")]
+        public bool IsLcid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOptional")]
+        public bool IsOptional { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOut")]
+        public bool IsOut { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isRetval")]
+        public bool IsRetval { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("defaultValue")]
+        public object? DefaultValue { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("rawDefaultValue")]
+        public object? RawDefaultValue { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("hasDefaultValue")]
+        public bool HasDefaultValue { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("customAttributes")]
+        public System.Collections.Generic.ICollection<CustomAttributeData> CustomAttributes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("metadataToken")]
+        public int MetadataToken { get; set; } = default!;
 
     }
 
@@ -10890,6 +13376,79 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
 
         [System.Text.Json.Serialization.JsonPropertyName("hasNext")]
         public bool HasNext { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum PropertyAttributes
+    {
+
+        None = 0,
+
+        SpecialName = 512,
+
+        RTSpecialName = 1024,
+
+        HasDefault = 4096,
+
+        Reserved2 = 8192,
+
+        Reserved3 = 16384,
+
+        Reserved4 = 32768,
+
+        ReservedMask = 62464,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class PropertyInfo
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string Name { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("declaringType")]
+        public Type? DeclaringType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("reflectedType")]
+        public Type? ReflectedType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("module")]
+        public Module Module { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("customAttributes")]
+        public System.Collections.Generic.ICollection<CustomAttributeData> CustomAttributes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isCollectible")]
+        public bool IsCollectible { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("metadataToken")]
+        public int MetadataToken { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("memberType")]
+        public MemberTypes MemberType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("propertyType")]
+        public Type PropertyType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("attributes")]
+        public PropertyAttributes Attributes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isSpecialName")]
+        public bool IsSpecialName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("canRead")]
+        public bool CanRead { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("canWrite")]
+        public bool CanWrite { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("getMethod")]
+        public MethodInfo? GetMethod { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("setMethod")]
+        public MethodInfo? SetMethod { get; set; } = default!;
 
     }
 
@@ -11155,6 +13714,33 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class RuntimeFieldHandle
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("value")]
+        public IntPtr Value { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class RuntimeMethodHandle
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("value")]
+        public IntPtr Value { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class RuntimeTypeHandle
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("value")]
+        public IntPtr Value { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class Search
     {
 
@@ -11335,6 +13921,144 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum SecurityRuleSet
+    {
+
+        None = 0,
+
+        Level1 = 1,
+
+        Level2 = 2,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class StringTask
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public int Id { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("exception")]
+        public AggregateException? Exception { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("status")]
+        public TaskStatus Status { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isCanceled")]
+        public bool IsCanceled { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isCompleted")]
+        public bool IsCompleted { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isCompletedSuccessfully")]
+        public bool IsCompletedSuccessfully { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("creationOptions")]
+        public TaskCreationOptions CreationOptions { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("asyncState")]
+        public object? AsyncState { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isFaulted")]
+        public bool IsFaulted { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("result")]
+        public string? Result { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class StringTaskTask
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public int Id { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("exception")]
+        public AggregateException? Exception { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("status")]
+        public TaskStatus Status { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isCanceled")]
+        public bool IsCanceled { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isCompleted")]
+        public bool IsCompleted { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isCompletedSuccessfully")]
+        public bool IsCompletedSuccessfully { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("creationOptions")]
+        public TaskCreationOptions CreationOptions { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("asyncState")]
+        public object? AsyncState { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isFaulted")]
+        public bool IsFaulted { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("result")]
+        public StringTask? Result { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class StructLayoutAttribute
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("typeId")]
+        public object TypeId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("value")]
+        public LayoutKind Value { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum TaskCreationOptions
+    {
+
+        None = 0,
+
+        PreferFairness = 1,
+
+        LongRunning = 2,
+
+        AttachedToParent = 4,
+
+        DenyChildAttach = 8,
+
+        HideScheduler = 16,
+
+        RunContinuationsAsynchronously = 64,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum TaskStatus
+    {
+
+        Created = 0,
+
+        WaitingForActivation = 1,
+
+        WaitingToRun = 2,
+
+        Running = 3,
+
+        WaitingForChildrenToComplete = 4,
+
+        RanToCompletion = 5,
+
+        Canceled = 6,
+
+        Faulted = 7,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class TenantDetail
     {
 
@@ -11439,6 +14163,543 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
 
         [System.Text.Json.Serialization.JsonPropertyName("refreshTokenExpiryTime")]
         public System.DateTime RefreshTokenExpiryTime { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class Type
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string Name { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("customAttributes")]
+        public System.Collections.Generic.ICollection<CustomAttributeData> CustomAttributes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isCollectible")]
+        public bool IsCollectible { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("metadataToken")]
+        public int MetadataToken { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isInterface")]
+        public bool IsInterface { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("memberType")]
+        public MemberTypes MemberType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("namespace")]
+        public string? Namespace { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("assemblyQualifiedName")]
+        public string? AssemblyQualifiedName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("fullName")]
+        public string? FullName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("assembly")]
+        public Assembly Assembly { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("module")]
+        public Module Module { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isNested")]
+        public bool IsNested { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("declaringType")]
+        public Type? DeclaringType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("declaringMethod")]
+        public MethodBase? DeclaringMethod { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("reflectedType")]
+        public Type? ReflectedType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("underlyingSystemType")]
+        public Type UnderlyingSystemType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isTypeDefinition")]
+        public bool IsTypeDefinition { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isArray")]
+        public bool IsArray { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isByRef")]
+        public bool IsByRef { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isPointer")]
+        public bool IsPointer { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isConstructedGenericType")]
+        public bool IsConstructedGenericType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isGenericParameter")]
+        public bool IsGenericParameter { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isGenericTypeParameter")]
+        public bool IsGenericTypeParameter { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isGenericMethodParameter")]
+        public bool IsGenericMethodParameter { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isGenericType")]
+        public bool IsGenericType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isGenericTypeDefinition")]
+        public bool IsGenericTypeDefinition { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isSZArray")]
+        public bool IsSZArray { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isVariableBoundArray")]
+        public bool IsVariableBoundArray { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isByRefLike")]
+        public bool IsByRefLike { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isFunctionPointer")]
+        public bool IsFunctionPointer { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isUnmanagedFunctionPointer")]
+        public bool IsUnmanagedFunctionPointer { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("hasElementType")]
+        public bool HasElementType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("genericTypeArguments")]
+        public System.Collections.Generic.ICollection<Type> GenericTypeArguments { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("genericParameterPosition")]
+        public int GenericParameterPosition { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("genericParameterAttributes")]
+        public GenericParameterAttributes GenericParameterAttributes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("attributes")]
+        public TypeAttributes Attributes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isAbstract")]
+        public bool IsAbstract { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isImport")]
+        public bool IsImport { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isSealed")]
+        public bool IsSealed { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isSpecialName")]
+        public bool IsSpecialName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isClass")]
+        public bool IsClass { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isNestedAssembly")]
+        public bool IsNestedAssembly { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isNestedFamANDAssem")]
+        public bool IsNestedFamANDAssem { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isNestedFamily")]
+        public bool IsNestedFamily { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isNestedFamORAssem")]
+        public bool IsNestedFamORAssem { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isNestedPrivate")]
+        public bool IsNestedPrivate { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isNestedPublic")]
+        public bool IsNestedPublic { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isNotPublic")]
+        public bool IsNotPublic { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isPublic")]
+        public bool IsPublic { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isAutoLayout")]
+        public bool IsAutoLayout { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isExplicitLayout")]
+        public bool IsExplicitLayout { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isLayoutSequential")]
+        public bool IsLayoutSequential { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isAnsiClass")]
+        public bool IsAnsiClass { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isAutoClass")]
+        public bool IsAutoClass { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isUnicodeClass")]
+        public bool IsUnicodeClass { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isCOMObject")]
+        public bool IsCOMObject { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isContextful")]
+        public bool IsContextful { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isEnum")]
+        public bool IsEnum { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isMarshalByRef")]
+        public bool IsMarshalByRef { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isPrimitive")]
+        public bool IsPrimitive { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isValueType")]
+        public bool IsValueType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isSignatureType")]
+        public bool IsSignatureType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isSecurityCritical")]
+        public bool IsSecurityCritical { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isSecuritySafeCritical")]
+        public bool IsSecuritySafeCritical { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isSecurityTransparent")]
+        public bool IsSecurityTransparent { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("structLayoutAttribute")]
+        public StructLayoutAttribute? StructLayoutAttribute { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("typeInitializer")]
+        public ConstructorInfo? TypeInitializer { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("typeHandle")]
+        public RuntimeTypeHandle TypeHandle { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("guid")]
+        public System.Guid Guid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("baseType")]
+        public Type? BaseType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isSerializable")]
+        [System.Obsolete]
+        public bool IsSerializable { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("containsGenericParameters")]
+        public bool ContainsGenericParameters { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isVisible")]
+        public bool IsVisible { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum TypeAttributes
+    {
+
+        NotPublic = 0,
+
+        AutoLayout = 1,
+
+        AnsiClass = 2,
+
+        Class = 3,
+
+        Public = 4,
+
+        NestedPublic = 5,
+
+        NestedPrivate = 6,
+
+        NestedFamily = 7,
+
+        NestedAssembly = 8,
+
+        NestedFamANDAssem = 16,
+
+        VisibilityMask = 24,
+
+        NestedFamORAssem = 32,
+
+        SequentialLayout = 128,
+
+        ExplicitLayout = 256,
+
+        LayoutMask = 1024,
+
+        Interface = 2048,
+
+        ClassSemanticsMask = 4096,
+
+        Abstract = 8192,
+
+        Sealed = 16384,
+
+        SpecialName = 65536,
+
+        RTSpecialName = 131072,
+
+        Import = 196608,
+
+        Serializable = 262144,
+
+        WindowsRuntime = 264192,
+
+        UnicodeClass = 1048576,
+
+        AutoClass = 12582912,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class TypeInfo
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string Name { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("customAttributes")]
+        public System.Collections.Generic.ICollection<CustomAttributeData> CustomAttributes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isCollectible")]
+        public bool IsCollectible { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("metadataToken")]
+        public int MetadataToken { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isInterface")]
+        public bool IsInterface { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("memberType")]
+        public MemberTypes MemberType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("namespace")]
+        public string? Namespace { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("assemblyQualifiedName")]
+        public string? AssemblyQualifiedName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("fullName")]
+        public string? FullName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("assembly")]
+        public Assembly Assembly { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("module")]
+        public Module Module { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isNested")]
+        public bool IsNested { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("declaringType")]
+        public Type? DeclaringType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("declaringMethod")]
+        public MethodBase? DeclaringMethod { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("reflectedType")]
+        public Type? ReflectedType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("underlyingSystemType")]
+        public Type UnderlyingSystemType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isTypeDefinition")]
+        public bool IsTypeDefinition { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isArray")]
+        public bool IsArray { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isByRef")]
+        public bool IsByRef { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isPointer")]
+        public bool IsPointer { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isConstructedGenericType")]
+        public bool IsConstructedGenericType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isGenericParameter")]
+        public bool IsGenericParameter { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isGenericTypeParameter")]
+        public bool IsGenericTypeParameter { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isGenericMethodParameter")]
+        public bool IsGenericMethodParameter { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isGenericType")]
+        public bool IsGenericType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isGenericTypeDefinition")]
+        public bool IsGenericTypeDefinition { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isSZArray")]
+        public bool IsSZArray { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isVariableBoundArray")]
+        public bool IsVariableBoundArray { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isByRefLike")]
+        public bool IsByRefLike { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isFunctionPointer")]
+        public bool IsFunctionPointer { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isUnmanagedFunctionPointer")]
+        public bool IsUnmanagedFunctionPointer { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("hasElementType")]
+        public bool HasElementType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("genericTypeArguments")]
+        public System.Collections.Generic.ICollection<Type> GenericTypeArguments { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("genericParameterPosition")]
+        public int GenericParameterPosition { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("genericParameterAttributes")]
+        public GenericParameterAttributes GenericParameterAttributes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("attributes")]
+        public TypeAttributes Attributes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isAbstract")]
+        public bool IsAbstract { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isImport")]
+        public bool IsImport { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isSealed")]
+        public bool IsSealed { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isSpecialName")]
+        public bool IsSpecialName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isClass")]
+        public bool IsClass { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isNestedAssembly")]
+        public bool IsNestedAssembly { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isNestedFamANDAssem")]
+        public bool IsNestedFamANDAssem { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isNestedFamily")]
+        public bool IsNestedFamily { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isNestedFamORAssem")]
+        public bool IsNestedFamORAssem { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isNestedPrivate")]
+        public bool IsNestedPrivate { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isNestedPublic")]
+        public bool IsNestedPublic { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isNotPublic")]
+        public bool IsNotPublic { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isPublic")]
+        public bool IsPublic { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isAutoLayout")]
+        public bool IsAutoLayout { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isExplicitLayout")]
+        public bool IsExplicitLayout { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isLayoutSequential")]
+        public bool IsLayoutSequential { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isAnsiClass")]
+        public bool IsAnsiClass { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isAutoClass")]
+        public bool IsAutoClass { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isUnicodeClass")]
+        public bool IsUnicodeClass { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isCOMObject")]
+        public bool IsCOMObject { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isContextful")]
+        public bool IsContextful { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isEnum")]
+        public bool IsEnum { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isMarshalByRef")]
+        public bool IsMarshalByRef { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isPrimitive")]
+        public bool IsPrimitive { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isValueType")]
+        public bool IsValueType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isSignatureType")]
+        public bool IsSignatureType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isSecurityCritical")]
+        public bool IsSecurityCritical { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isSecuritySafeCritical")]
+        public bool IsSecuritySafeCritical { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isSecurityTransparent")]
+        public bool IsSecurityTransparent { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("structLayoutAttribute")]
+        public StructLayoutAttribute? StructLayoutAttribute { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("typeInitializer")]
+        public ConstructorInfo? TypeInitializer { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("typeHandle")]
+        public RuntimeTypeHandle TypeHandle { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("guid")]
+        public System.Guid Guid { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("baseType")]
+        public Type? BaseType { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isSerializable")]
+        [System.Obsolete]
+        public bool IsSerializable { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("containsGenericParameters")]
+        public bool ContainsGenericParameters { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isVisible")]
+        public bool IsVisible { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("genericTypeParameters")]
+        public System.Collections.Generic.ICollection<Type> GenericTypeParameters { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("declaredConstructors")]
+        public System.Collections.Generic.ICollection<ConstructorInfo> DeclaredConstructors { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("declaredEvents")]
+        public System.Collections.Generic.ICollection<EventInfo> DeclaredEvents { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("declaredFields")]
+        public System.Collections.Generic.ICollection<FieldInfo> DeclaredFields { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("declaredMembers")]
+        public System.Collections.Generic.ICollection<MemberInfo> DeclaredMembers { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("declaredMethods")]
+        public System.Collections.Generic.ICollection<MethodInfo> DeclaredMethods { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("declaredNestedTypes")]
+        public System.Collections.Generic.ICollection<TypeInfo> DeclaredNestedTypes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("declaredProperties")]
+        public System.Collections.Generic.ICollection<PropertyInfo> DeclaredProperties { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("implementedInterfaces")]
+        public System.Collections.Generic.ICollection<Type> ImplementedInterfaces { get; set; } = default!;
 
     }
 
@@ -11755,6 +15016,42 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         [System.Text.Json.Serialization.JsonPropertyName("deleteCurrentImage")]
         public bool DeleteCurrentImage { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("userName")]
+        public string? UserName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isActive")]
+        public bool IsActive { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOnline")]
+        public bool? IsOnline { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("emailConfirmed")]
+        public bool EmailConfirmed { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("imageUrl")]
+        public System.Uri? ImageUrl { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("password")]
+        public string? Password { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("confirmPassword")]
+        public string? ConfirmPassword { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("lockoutEnd")]
+        public System.DateTime? LockoutEnd { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("createdBy")]
+        public string? CreatedBy { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("createdOn")]
+        public System.DateTime? CreatedOn { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("lastModifiedBy")]
+        public string? LastModifiedBy { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("lastModifiedOn")]
+        public System.DateTime? LastModifiedOn { get; set; } = default!;
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -11803,6 +15100,9 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
         [System.Text.Json.Serialization.JsonPropertyName("isActive")]
         public bool IsActive { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("isOnline")]
+        public bool IsOnline { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("emailConfirmed")]
         public bool EmailConfirmed { get; set; } = default!;
 
@@ -11811,6 +15111,78 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
 
         [System.Text.Json.Serialization.JsonPropertyName("imageUrl")]
         public System.Uri? ImageUrl { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("lockoutEnd")]
+        public System.DateTime? LockoutEnd { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isLocked")]
+        public bool IsLocked { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("createdBy")]
+        public string? CreatedBy { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("createdOn")]
+        public System.DateTime? CreatedOn { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("lastModifiedBy")]
+        public string? LastModifiedBy { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("lastModifiedOn")]
+        public System.DateTime? LastModifiedOn { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class UserDetailPagedList
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("items")]
+        public System.Collections.Generic.ICollection<UserDetail> Items { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("pageNumber")]
+        public int PageNumber { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("pageSize")]
+        public int PageSize { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("totalCount")]
+        public int TotalCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("totalPages")]
+        public int TotalPages { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("hasPrevious")]
+        public bool HasPrevious { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("hasNext")]
+        public bool HasNext { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class UserListFilter
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("advancedSearch")]
+        public Search? AdvancedSearch { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("keyword")]
+        public string? Keyword { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("advancedFilter")]
+        public Filter? AdvancedFilter { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("pageNumber")]
+        public int PageNumber { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("pageSize")]
+        public int PageSize { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("orderBy")]
+        public System.Collections.Generic.ICollection<string>? OrderBy { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isActive")]
+        public bool? IsActive { get; set; } = default!;
 
     }
 
@@ -11829,6 +15201,37 @@ namespace FSH.Starter.Blazor.Infrastructure.Api
 
         [System.Text.Json.Serialization.JsonPropertyName("enabled")]
         public bool Enabled { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))")]
+    // TODO(system.text.json): What to do here?
+    public partial class InnerException
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("targetSite")]
+        public MethodBase? TargetSite { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public System.Collections.Generic.IDictionary<string, object> Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("innerException")]
+        public InnerException? InnerException1 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("helpLink")]
+        public string? HelpLink { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("source")]
+        public string? Source { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("hResult")]
+        public int HResult { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("stackTrace")]
+        public string? StackTrace { get; set; } = default!;
 
     }
 

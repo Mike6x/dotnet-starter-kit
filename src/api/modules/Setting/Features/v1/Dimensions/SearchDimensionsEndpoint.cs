@@ -21,7 +21,7 @@ public static class SearchDimensionsEndpoint
         .WithSummary("Gets a list of dimension items with paging support")
         .WithDescription("Gets a list of dimension items with paging support")
         .Produces<PagedList<DimensionDto>>()
-        .RequirePermission("Permissions.Dimensions.View")
+        .RequirePermission("Permissions.Dimensions.Search")
         .MapToApiVersion(1);
     }
 }

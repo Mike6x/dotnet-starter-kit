@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using System.Text.Json;
 using Blazored.LocalStorage;
@@ -78,10 +79,12 @@ public sealed class JwtAuthenticationService : AuthenticationStateProvider, IAut
 
     public async Task LogoutAsync()
     {
+        await _client.LogoutCurrentUserEndpointAsync();
+        
         await ClearCacheAsync();
 
-        NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
-
+        NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());     
+      
         _navigation.NavigateTo("/login");
     }
 

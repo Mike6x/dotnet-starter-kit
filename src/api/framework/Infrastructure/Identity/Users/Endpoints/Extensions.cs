@@ -6,21 +6,43 @@ internal static class Extensions
 {
     public static IEndpointRouteBuilder MapUserEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapRegisterUserEndpoint();
-        app.MapSelfRegisterUserEndpoint();
-        app.MapUpdateUserEndpoint();
-        app.MapGetUsersListEndpoint();
-        app.MapDeleteUserEndpoint();
-        app.MapForgotPasswordEndpoint();
-        app.MapChangePasswordEndpoint();
-        app.MapResetPasswordEndpoint();
-        app.MapGetMeEndpoint();
-        app.MapGetUserEndpoint();
-        app.MapGetCurrentUserPermissionsEndpoint();
-        app.ToggleUserStatusEndpointEndpoint();
         app.MapAssignRolesToUserEndpoint();
+        app.MapChangePasswordEndpoint();
+        app.MapDeleteUserEndpoint();
+        app.MapDisableUserEndpoint();
+        app.MapExportUsersEndpoint();
+
+        app.MapForgotPasswordEndpoint();
+        app.MapGetCornfirmEmailEndpoint();
+        app.MapGetCornfirmPhoneNumberEndpoint();
+        app.MapCornfirmEmailEndpoint();
+
+        app.MapGetUserByEmailEndpoint();
+        app.MapGetUserByNameEndpoint();
+        app.MapGetUserByPhoneNumberEndpoint();
+        app.MapGetUserEndpoint();
+
+        app.MapGetCurrentUserPermissionsEndpoint();   
+        app.MapGetMeEndpoint(); 
         app.MapGetUserRolesEndpoint();
+        app.MapGetUsersListEndpoint();
+
+        app.MapRegisterUserEndpoint();
+        app.MapResetPasswordEndpoint();
+        app.MapSearchUsersEndpoint();
+
+        app.MapSelfRegisterUserEndpoint();
+        app.MapSendVerificationEmailEndPoint();
+        app.ToggleUserStatusEndpointEndpoint();
+        app.MapUpdateUserEndpoint();
+        app.MapUpdateCurrentUserEndpoint();
+   
         app.MapGetUserAuditTrailEndpoint();
+
+        app.MapLogoutCurrentUserEndpoint();
+        app.MapImportUsersEndpoint();
+
+        app.MapGetOtherUsersEndpoint();
         return app;
     }
 }

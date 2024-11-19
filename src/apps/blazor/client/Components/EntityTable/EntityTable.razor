@@ -75,7 +75,7 @@
                             {
                                 <MudButton DisableElevation Variant="Variant.Filled" OnClick="(() => DeleteSelectedAsync(_selectedItems))"
                                            StartIcon="@Icons.Material.Filled.Delete" IconColor="Color.Surface" Color="Color.Warning" Class="mt-0 mb-3" Style="margin-left: 5px;">
-                                    Remove
+                                    Delete
                                 </MudButton>
                             }
                             <MudButton DisableElevation Variant="Variant.Filled" OnClick="ReloadDataAsync"
@@ -162,7 +162,7 @@
                                          AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
                                     @if (CanUpdateEntity(context))
                                     {
-                                        <MudMenuItem @onclick="@(() => InvokeModal(context))">Edit</MudMenuItem>
+                                        <MudMenuItem Style="color:#004D40!important" @onclick="@(() => InvokeModal(context))">Edit</MudMenuItem>
                                     }
                                     @if (CanDeleteEntity(context))
                                     {

@@ -14,7 +14,12 @@ public static class ResetPasswordEndpoint
 {
     internal static RouteHandlerBuilder MapResetPasswordEndpoint(this IEndpointRouteBuilder endpoints)
     {
-        return endpoints.MapPost("/reset-password", async (ResetPasswordCommand command, [FromHeader(Name = TenantConstants.Identifier)] string tenant, IValidator<ResetPasswordCommand> validator, IUserService userService, CancellationToken cancellationToken) =>
+        return endpoints.MapPost("/reset-password", async (
+            ResetPasswordCommand command, 
+            [FromHeader(Name = TenantConstants.Identifier)] string tenant, 
+            IValidator<ResetPasswordCommand> validator, 
+            IUserService userService, 
+            CancellationToken cancellationToken) =>
         {
             ValidationResult result = await validator.ValidateAsync(command, cancellationToken);
             if (!result.IsValid)

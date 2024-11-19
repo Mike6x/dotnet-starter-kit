@@ -1,8 +1,8 @@
 ﻿using System.Collections.ObjectModel;
-using System.Security.Claims;
 using System.Text;
 using Finbuckle.MultiTenant.Abstractions;
 using FSH.Framework.Core.Caching;
+using FSH.Framework.Core.DataIO;
 using FSH.Framework.Core.Exceptions;
 using FSH.Framework.Core.Identity.Users.Abstractions;
 using FSH.Framework.Core.Identity.Users.Dtos;
@@ -35,7 +35,9 @@ internal sealed partial class UserService(
     IJobService jobService,
     IMailService mailService,
     IMultiTenantContextAccessor<FshTenantInfo> multiTenantContextAccessor,
-    IStorageService storageService
+    IStorageService storageService,
+    IDataExport dataExport,
+    IDataImport dataImport
     ) : IUserService
 {
     private void EnsureValidTenant()
@@ -45,21 +47,50 @@ internal sealed partial class UserService(
             throw new UnauthorizedException("invalid tenant");
         }
     }
-
-    public Task<string> ConfirmEmailAsync(string userId, string code, string tenant, CancellationToken cancellationToken)
+    
+    public async Task<string> ConfirmEmailAsync(string userId, string code, string tenant, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        EnsureValidTenant();
+
+        var user = await userManager.Users
+            .Where(u => u.Id == userId )
+            .FirstOrDefaultAsync(cancellationToken) ?? throw new NotFoundException($"User with Id: {userId} not found!");
+
+        if (user!.EmailConfirmed) return  $"Account: {userId}  already confirmed with E-Mail {user.Email} ";
+
+        code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
+        var result = await userManager.ConfirmEmailAsync(user, code);
+
+        return result.Succeeded
+            ? $"Account Confirmed for E-Mail {user.Email}. You can now use the /api/tokens endpoint to generate JWT."
+            : $"An error occurred while confirming {user.Email}";
+            // : throw new InternalServerException($"An error occurred while confirming {user.Email}")
+
     }
 
-    public Task<string> ConfirmPhoneNumberAsync(string userId, string code)
+    public async Task<string> ConfirmPhoneNumberAsync(string userId, string code)
     {
-        throw new NotImplementedException();
+        EnsureValidTenant();
+
+        var user = await userManager.FindByIdAsync(userId) ?? throw new NotFoundException($"User with Id: {userId} not found!");
+
+        if (string.IsNullOrEmpty(user.PhoneNumber)) throw new InternalServerException($"User with Id: {userId} have no phone number.");
+
+        var result = await userManager.ChangePhoneNumberAsync(user, user.PhoneNumber, code);
+
+        return result.Succeeded
+            ? user.PhoneNumberConfirmed
+                ? $"Account Confirmed for Phone Number {user.PhoneNumber}. You can now use the /api/tokens endpoint to generate JWT."
+                : $"Account Confirmed for Phone Number {user.PhoneNumber}. You should confirm your E-mail before using the /api/tokens endpoint to generate JWT."
+            : throw new InternalServerException($"An error occurred while confirming {user.PhoneNumber}");
+
     }
+
 
     public async Task<bool> ExistsWithEmailAsync(string email, string? exceptId = null)
     {
         EnsureValidTenant();
-        return await userManager.FindByEmailAsync(email.Normalize()) is FshUser user && user.Id != exceptId;
+        return await userManager.FindByEmailAsync(email.Normalize()) is { } user && user.Id != exceptId;
     }
 
     public async Task<bool> ExistsWithNameAsync(string name)
@@ -71,7 +102,7 @@ internal sealed partial class UserService(
     public async Task<bool> ExistsWithPhoneNumberAsync(string phoneNumber, string? exceptId = null)
     {
         EnsureValidTenant();
-        return await userManager.Users.FirstOrDefaultAsync(x => x.PhoneNumber == phoneNumber) is FshUser user && user.Id != exceptId;
+        return await userManager.Users.FirstOrDefaultAsync(x => x.PhoneNumber == phoneNumber) is { } user && user.Id != exceptId;
     }
 
     public async Task<UserDetail> GetAsync(string userId, CancellationToken cancellationToken)
@@ -81,7 +112,7 @@ internal sealed partial class UserService(
             .Where(u => u.Id == userId)
             .FirstOrDefaultAsync(cancellationToken);
 
-        _ = user ?? throw new NotFoundException("user not found");
+        _ = user ?? throw new NotFoundException($"User with Id: {userId} not found!");
 
         return user.Adapt<UserDetail>();
     }
@@ -95,11 +126,6 @@ internal sealed partial class UserService(
         return users.Adapt<List<UserDetail>>();
     }
 
-    public Task<string> GetOrCreateFromPrincipalAsync(ClaimsPrincipal principal)
-    {
-        throw new NotImplementedException();
-    }
-
     public async Task<RegisterUserResponse> RegisterAsync(RegisterUserCommand request, string origin, CancellationToken cancellationToken)
     {
         // create user entity
@@ -108,10 +134,11 @@ internal sealed partial class UserService(
             Email = request.Email,
             FirstName = request.FirstName,
             LastName = request.LastName,
-            UserName = request.UserName,
+            UserName = request.UserName ?? request.Email,
             PhoneNumber = request.PhoneNumber,
             IsActive = true,
             EmailConfirmed = true
+            // IsOnline = false
         };
 
         // register user
@@ -143,7 +170,7 @@ internal sealed partial class UserService(
     {
         var user = await userManager.Users.Where(u => u.Id == request.UserId).FirstOrDefaultAsync(cancellationToken);
 
-        _ = user ?? throw new NotFoundException("User Not Found.");
+        _ = user ?? throw new NotFoundException($"User With ID: {request.UserId} Not Found.");
 
         bool isAdmin = await userManager.IsInRoleAsync(user, FshRoles.Admin);
         if (isAdmin)
@@ -152,6 +179,16 @@ internal sealed partial class UserService(
         }
 
         user.IsActive = request.ActivateUser;
+
+        await userManager.UpdateAsync(user);
+    }
+
+
+    public async Task ChangeOnlineStatusAsync(string userId, bool isOnline, CancellationToken cancellationToken)
+    {
+        var user = await userManager.FindByIdAsync(userId) ?? throw new NotFoundException($"User With ID: {userId} Not Found.");
+
+        user.IsOnline = isOnline;
 
         await userManager.UpdateAsync(user);
     }
@@ -181,6 +218,8 @@ internal sealed partial class UserService(
             await userManager.SetPhoneNumberAsync(user, request.PhoneNumber);
         }
 
+         user.IsOnline = request.IsOnline ?? user.IsOnline;
+
         var result = await userManager.UpdateAsync(user);
         await signInManager.RefreshSignInAsync(user);
 
@@ -190,7 +229,60 @@ internal sealed partial class UserService(
         }
     }
 
-    public async Task DeleteAsync(string userId)
+    public async Task UpdateProfileAsync(UpdateUserCommand request, string userId, string origin)
+    {
+        var user = await userManager.FindByIdAsync(userId) ?? throw new NotFoundException("user not found");
+
+        Uri imageUri = user.ImageUrl ?? null!;
+        if (request.Image != null || request.DeleteCurrentImage)
+        {
+            user.ImageUrl = await storageService.UploadAsync<FshUser>(request.Image, FileType.Image);
+            if (request.DeleteCurrentImage && imageUri != null)
+            {
+                storageService.Remove(imageUri);
+            }
+        }
+
+        user.FirstName = request.FirstName;
+        user.LastName = request.LastName;
+        user.UserName = request.UserName ?? request.Email;
+        user.PhoneNumber = request.PhoneNumber;
+
+        user.IsOnline = request.IsOnline ?? user.IsOnline;
+        user.EmailConfirmed = request.IsActive && request.EmailConfirmed;
+        user.IsActive = request.IsActive;
+        user.LockoutEnd = request.LockoutEnd;
+
+        var result = await userManager.UpdateAsync(user);
+        
+        // send verification email
+        var messages = new List<string> { $"User {user.UserName} Updated." };
+               
+        if (result.Succeeded && request.IsActive && !request.EmailConfirmed)
+        {
+            await GenerateVerificationEmail(user, messages, origin);
+        }
+
+        // Change Password
+        if (result.Succeeded && request.Password != null && request.ConfirmPassword != null && request.Password == request.ConfirmPassword)
+        {
+            string? resetToken = await userManager.GeneratePasswordResetTokenAsync(user);
+            var resetPassResult = await userManager.ResetPasswordAsync(user, resetToken, request.Password);
+            if (!resetPassResult.Succeeded)
+            {
+                throw new InternalServerException("Change password failed");
+            }
+        }
+
+        await signInManager.RefreshSignInAsync(user);
+
+        if (!result.Succeeded)
+        {
+            throw new FshException("Update profile failed");
+        }
+    }
+
+    public async Task DisableAsync(string userId)
     {
         FshUser? user = await userManager.FindByIdAsync(userId);
 
@@ -212,7 +304,8 @@ internal sealed partial class UserService(
 
         string code = await userManager.GenerateEmailConfirmationTokenAsync(user);
         code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-        const string route = "api/users/confirm-email/";
+        //const string route = "api/users/confirm-email"
+        const string route = "confirm-email";
         var endpointUri = new Uri(string.Concat($"{origin}/", route));
         string verificationUri = QueryHelpers.AddQueryString(endpointUri.ToString(), QueryStringKeys.UserId, user.Id);
         verificationUri = QueryHelpers.AddQueryString(verificationUri, QueryStringKeys.Code, code);

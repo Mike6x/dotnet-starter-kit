@@ -45,7 +45,6 @@ public static class MobileCreateQuizResultEndpoint
                 .WithSummary("Creates a QuizResult item")
                 .WithDescription("Creates a QuizResult item")
                 .Produces(StatusCodes.Status200OK)
-               // .Produces<CreateQuizResultResponse>(StatusCodes.Status200OK)
                 .RequirePermission("Permissions.QuizResults.Create")
                 .AllowAnonymous()
                 .DisableAntiforgery()

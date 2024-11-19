@@ -48,8 +48,9 @@ public partial class Roles : ComponentBase
             deleteFunc: async id => await RolesClient.DeleteRoleEndpointAsync(id!),
             hasExtraActionsFunc: () => _canViewRoleClaims,
             canUpdateEntityFunc: e => !FshRoles.IsDefault(e.Name!),
-            canDeleteEntityFunc: e => !FshRoles.IsDefault(e.Name!),
-            exportAction: string.Empty);
+            canDeleteEntityFunc: e => !FshRoles.IsDefault(e.Name!)
+            // exportAction: string.Empty
+            );
     }
 
     private void ManagePermissions(string? roleId)

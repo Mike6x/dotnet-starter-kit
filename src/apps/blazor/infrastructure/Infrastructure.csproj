@@ -15,6 +15,7 @@
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" />
 		<PackageReference Include="Microsoft.Extensions.Http" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
 		<PackageReference Include="MudBlazor" />
 		<PackageReference Include="NSwag.MSBuild">
 		  <PrivateAssets>all</PrivateAssets>

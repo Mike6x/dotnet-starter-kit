@@ -21,7 +21,7 @@ public static class SearchEntityCodesEndpoint
         .WithSummary("Gets a list of EntityCode items with paging support")
         .WithDescription("Gets a list of EntityCode items with paging support")
         .Produces<PagedList<EntityCodeDto>>()
-        .RequirePermission("Permissions.EntityCodes.View")
+        .RequirePermission("Permissions.EntityCodes.Search")
         .MapToApiVersion(1);
     }
 }
