@@ -84,9 +84,17 @@ public sealed class TokenService : ITokenService
             throw new UnauthorizedException($"Your account is locked out until {logoutEndDate.Value.LocalDateTime.ToString()}.");
         }
 
-        return signInResult.Succeeded
-            ? await GenerateTokensAndUpdateUser(user, ipAddress)
-            : throw new UnauthorizedException("Wrong Password.");
+        if (!signInResult.Succeeded)
+        {
+            throw new UnauthorizedException("Wrong Password.");
+        }
+        else
+        {
+            user.IsOnline = true;
+            await _userManager.UpdateAsync(user);
+
+            return await GenerateTokensAndUpdateUser(user, ipAddress);
+        }
     }
 
     // public async Task<TokenResponse> GetTokenAsync(TokenGenerationCommand request, string ipAddress, CancellationToken cancellationToken)
@@ -262,4 +270,5 @@ public sealed class TokenService : ITokenService
             return false;
         }
     }
+
 }

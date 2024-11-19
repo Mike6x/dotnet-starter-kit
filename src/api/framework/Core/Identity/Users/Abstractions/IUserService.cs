@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using FSH.Framework.Core.DataIO;
 using FSH.Framework.Core.Identity.Users.Dtos;
 using FSH.Framework.Core.Identity.Users.Features.AssignUserRole;
 using FSH.Framework.Core.Identity.Users.Features.ChangePassword;
@@ -9,6 +10,7 @@ using FSH.Framework.Core.Identity.Users.Features.ResetPassword;
 using FSH.Framework.Core.Identity.Users.Features.ToggleUserStatus;
 using FSH.Framework.Core.Identity.Users.Features.UpdateUser;
 using FSH.Framework.Core.Paging;
+using FSH.Framework.Core.Storage.File.Features;
 
 namespace FSH.Framework.Core.Identity.Users.Abstractions;
 public interface IUserService
@@ -52,14 +54,17 @@ public interface IUserService
     
     
     #region My Customize
-    Task<PagedList<UserDetail>> SearchAsync(UserListFilter filter, CancellationToken cancellationToken);
+    Task<PagedList<UserDetail>> SearchAsync(SearchUsersRequest request, CancellationToken cancellationToken);
     Task<UserDetail> GetByNameAsync(string name, CancellationToken cancellationToken);
     Task<UserDetail> GetByEmailAsync(string email, CancellationToken cancellationToken);
     Task<UserDetail> GetByPhoneAsync(string phone, CancellationToken cancellationToken);
     
     Task DeleteAsync(string userId);
-    Task<byte[]> ExportAsync(UserListFilter filter, CancellationToken cancellationToken);
+    Task<byte[]> ExportAsync(ExportUsersRequest request, CancellationToken cancellationToken);
+    Task<ImportResponse> ImportAsync(FileUploadCommand uploadFile, bool isUpdate,string origin, CancellationToken cancellationToken);
 
     Task SendVerificationEmailAsync(string userId, string origin, CancellationToken cancellationToken);
+
+    Task ChangeOnlineStatusAsync(string userId, bool isOnline, CancellationToken cancellationToken) ;
     #endregion
 }

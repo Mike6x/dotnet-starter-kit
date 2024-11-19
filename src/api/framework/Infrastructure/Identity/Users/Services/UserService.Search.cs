@@ -11,9 +11,9 @@ namespace FSH.Framework.Infrastructure.Identity.Users.Services
     internal partial class UserService
     {
         #region My Customize
-        public async Task<PagedList<UserDetail>> SearchAsync(UserListFilter filter, CancellationToken cancellationToken)
+        public async Task<PagedList<UserDetail>> SearchAsync(SearchUsersRequest request, CancellationToken cancellationToken)
         {
-            var spec = new EntitiesByPaginationFilterSpec<FshUser>(filter);
+            var spec = new EntitiesByPaginationFilterSpec<FshUser>(request);
 
             var users = await userManager.Users
                 .WithSpecification(spec)
@@ -23,7 +23,7 @@ namespace FSH.Framework.Infrastructure.Identity.Users.Services
             int count = await userManager.Users
                 .CountAsync(cancellationToken);
 
-            return new PagedList<UserDetail>(users, filter.PageNumber, filter.PageSize, count);
+            return new PagedList<UserDetail>(users, request.PageNumber, request.PageSize, count);
         }
 
         #endregion

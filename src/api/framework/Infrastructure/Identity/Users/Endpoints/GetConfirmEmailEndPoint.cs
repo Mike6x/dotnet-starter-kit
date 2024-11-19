@@ -1,18 +1,15 @@
-using Azure.Core;
 using Finbuckle.MultiTenant;
 using FluentValidation;
 using FSH.Framework.Core.Exceptions;
 using FSH.Framework.Core.Identity.Users.Abstractions;
 using FSH.Framework.Core.Tenant.Abstractions;
 using FSH.Framework.Core.Tenant.Dtos;
-using FSH.Framework.Infrastructure.Auth.Policy;
 using FSH.Framework.Infrastructure.Tenant;
 using Mapster;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using Shared.Authorization;
 
 namespace FSH.Framework.Infrastructure.Identity.Users.Endpoints
 {

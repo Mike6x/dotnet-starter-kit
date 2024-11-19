@@ -15,6 +15,7 @@ internal static class Extensions
         app.MapForgotPasswordEndpoint();
         app.MapGetCornfirmEmailEndpoint();
         app.MapGetCornfirmPhoneNumberEndpoint();
+        app.MapCornfirmEmailEndpoint();
 
         app.MapGetUserByEmailEndpoint();
         app.MapGetUserByNameEndpoint();
@@ -37,6 +38,11 @@ internal static class Extensions
         app.MapUpdateCurrentUserEndpoint();
    
         app.MapGetUserAuditTrailEndpoint();
+
+        app.MapLogoutCurrentUserEndpoint();
+        app.MapImportUsersEndpoint();
+
+        app.MapGetOtherUsersEndpoint();
         return app;
     }
 }

@@ -18,7 +18,7 @@ internal sealed partial class UserService
         var user = await userManager.FindByEmailAsync(request.Email) ?? throw new NotFoundException("user not found");
         if (!await userManager.IsEmailConfirmedAsync(user))
         {
-            throw new InvalidOperationException("user not confirm");
+            throw new InvalidOperationException("user email not yet confirmed");
         }
 
         var token = await userManager.GeneratePasswordResetTokenAsync(user);

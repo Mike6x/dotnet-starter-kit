@@ -36,7 +36,8 @@ internal sealed partial class UserService(
     IMailService mailService,
     IMultiTenantContextAccessor<FshTenantInfo> multiTenantContextAccessor,
     IStorageService storageService,
-    IDataExport dataExport
+    IDataExport dataExport,
+    IDataImport dataImport
     ) : IUserService
 {
     private void EnsureValidTenant()
@@ -62,7 +63,9 @@ internal sealed partial class UserService(
 
         return result.Succeeded
             ? $"Account Confirmed for E-Mail {user.Email}. You can now use the /api/tokens endpoint to generate JWT."
-            : throw new InternalServerException($"An error occurred while confirming {user.Email}");
+            : $"An error occurred while confirming {user.Email}";
+            // : throw new InternalServerException($"An error occurred while confirming {user.Email}")
+
     }
 
     public async Task<string> ConfirmPhoneNumberAsync(string userId, string code)
@@ -80,6 +83,7 @@ internal sealed partial class UserService(
                 ? $"Account Confirmed for Phone Number {user.PhoneNumber}. You can now use the /api/tokens endpoint to generate JWT."
                 : $"Account Confirmed for Phone Number {user.PhoneNumber}. You should confirm your E-mail before using the /api/tokens endpoint to generate JWT."
             : throw new InternalServerException($"An error occurred while confirming {user.PhoneNumber}");
+
     }
 
 
@@ -179,6 +183,16 @@ internal sealed partial class UserService(
         await userManager.UpdateAsync(user);
     }
 
+
+    public async Task ChangeOnlineStatusAsync(string userId, bool isOnline, CancellationToken cancellationToken)
+    {
+        var user = await userManager.FindByIdAsync(userId) ?? throw new NotFoundException($"User With ID: {userId} Not Found.");
+
+        user.IsOnline = isOnline;
+
+        await userManager.UpdateAsync(user);
+    }
+
     public async Task UpdateAsync(UpdateUserCommand request, string userId)
     {
         var user = await userManager.FindByIdAsync(userId);
@@ -234,18 +248,10 @@ internal sealed partial class UserService(
         user.UserName = request.UserName ?? request.Email;
         user.PhoneNumber = request.PhoneNumber;
 
-        // ???
-        // user.PhoneNumber = request.PhoneNumber;
-        // string? phoneNumber = await userManager.GetPhoneNumberAsync(user);
-        // if (request.PhoneNumber != phoneNumber)
-        // {
-        //     await userManager.SetPhoneNumberAsync(user, request.PhoneNumber);
-        // }
         user.IsOnline = request.IsOnline ?? user.IsOnline;
         user.EmailConfirmed = request.IsActive && request.EmailConfirmed;
         user.IsActive = request.IsActive;
         user.LockoutEnd = request.LockoutEnd;
-        // user.IsOnline = request.IsOnline ?? user.IsOnline;
 
         var result = await userManager.UpdateAsync(user);
         
@@ -298,7 +304,8 @@ internal sealed partial class UserService(
 
         string code = await userManager.GenerateEmailConfirmationTokenAsync(user);
         code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-        const string route = "api/users/confirm-email";
+        //const string route = "api/users/confirm-email"
+        const string route = "confirm-email";
         var endpointUri = new Uri(string.Concat($"{origin}/", route));
         string verificationUri = QueryHelpers.AddQueryString(endpointUri.ToString(), QueryStringKeys.UserId, user.Id);
         verificationUri = QueryHelpers.AddQueryString(verificationUri, QueryStringKeys.Code, code);

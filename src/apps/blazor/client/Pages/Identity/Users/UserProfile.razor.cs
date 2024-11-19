@@ -37,6 +37,8 @@ public partial class UserProfile
     private char _firstLetterOfName;
     private Uri? _imageUrl;
 
+    private bool isOnline => _profileModel.IsOnline?? false;
+
     private bool IsLocked { get; set; }
     private DateTime? LockoutEndDate { get; set; }
     private TimeSpan? LockoutEndTime { get; set; }
@@ -55,7 +57,7 @@ public partial class UserProfile
             _profileModel.PhoneNumber = user.PhoneNumber ?? string.Empty;
             _profileModel.IsActive = _isActive = user.IsActive;
 
-            _profileModel.IsOnline = user.IsActive; //IsOnline
+            _profileModel.IsOnline = user.IsOnline;
             _profileModel.EmailConfirmed = user.EmailConfirmed;
 
              _profileModel.ImageUrl = user.ImageUrl;
@@ -159,6 +161,20 @@ public partial class UserProfile
          else { Toast.Add("Internal error.", Severity.Error); }
     }
 
+    public async Task ClearOnlineStatus()
+    {
+        if(_profileModel.IsOnline == true)
+        {
+            _profileModel.IsOnline  = false;
+
+            if (await ApiHelper.ExecuteCallGuardedAsync(
+                () => UsersClient.UpdateUserEndpointAsync(Id!, _profileModel), Toast))
+            {
+                Toast.Add("User status is offline now.", Severity.Success);
+                await OnInitializedAsync();
+            }
+        }
+    }
 
     private async Task UpdateUserAsync()
     {

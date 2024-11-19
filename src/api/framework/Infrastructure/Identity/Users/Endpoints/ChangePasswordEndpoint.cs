@@ -33,7 +33,7 @@ public static class ChangePasswordEndpoint
             }
 
             await userService.ChangePasswordAsync(command, userId);
-            return Results.Ok("password reset email sent");
+            return Results.Ok("password have changed");
         })
         .WithName(nameof(ChangePasswordEndpoint))
         .WithSummary("Changes password")

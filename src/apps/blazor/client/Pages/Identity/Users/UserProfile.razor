@@ -136,8 +136,17 @@ else
                                 StartIcon="@Icons.Material.Filled.MarkEmailUnread" Style="margin-right: 5px;">Verify Email</MudButton>
                             <MudButton OnClick="SendRecoveryPasswordEmailAsync" Variant="Variant.Filled" Color="Color.Success"
                                 StartIcon="@Icons.Material.Filled.MarkEmailUnread" Style="margin-right: 5px;">Recovery Pass</MudButton>
+                            @if (IsLocked)
+                            {
                             <MudButton OnClick="UnlockUserAsync" Disabled="@(!IsLocked)" Variant="Variant.Filled" Color="Color.Tertiary"
                                 StartIcon="@Icons.Material.Filled.LockReset" Style="margin-right: 5px;">Unlock</MudButton>
+                            }
+                            @if (isOnline)
+                            {
+                            <MudButton OnClick="ClearOnlineStatus" Disabled="@(!isOnline)" Variant="Variant.Filled" Color="Color.Tertiary"
+                                StartIcon="@Icons.Material.Filled.LockReset" Style="margin-right: 5px;">Clear Online</MudButton>
+                            }
+
                             <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Secondary"
                                 StartIcon="@Icons.Material.Filled.SystemUpdateAlt" Style="margin-right: 5px;">Update</MudButton>
                         </MudCardActions>

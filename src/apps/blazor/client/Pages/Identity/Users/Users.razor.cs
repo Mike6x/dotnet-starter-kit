@@ -55,7 +55,7 @@ public partial class Users : ComponentBase
             // updateAction: string.Empty,
             // deleteAction: string.Empty,
             // exportAction: string.Empty,
-            importAction: string.Empty,
+            // importAction: string.Empty,
             fields: new()
             {
                 new(user => user.UserName, "UserName"),
@@ -68,7 +68,7 @@ public partial class Users : ComponentBase
                 new(user => user.EmailConfirmed, "Email Confirmed", Type: typeof(bool)),
                 // new(user => user.LockoutEnd, "LockoutEnd", Type: typeof(DateTime)),
                 new(user => user.IsLocked, "Lockout", Type: typeof(bool)),
-                new(user => user.IsActive, "Online", Type: typeof(bool))               
+                new(user => user.IsOnline, "Online", Type: typeof(bool))               
             },
             idFunc: user => user.Id,
             loadDataFunc: async () => (await UsersClient.GetUsersListEndpointAsync()).ToList(),
@@ -104,7 +104,7 @@ public partial class Users : ComponentBase
                          
                 return await UsersClient.ExportUsersEndpointAsync(dataFilter);
             },
-           
+            importFunc: async (fileUploadModel, isUpdate) => await UsersClient.ImportUsersEndpointAsync(isUpdate, fileUploadModel),
             hasExtraActionsFunc: () => true);
     }
 

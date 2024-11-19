@@ -11,9 +11,9 @@ namespace FSH.Framework.Infrastructure.Identity.Users.Endpoints
     {
         internal static RouteHandlerBuilder MapExportUsersEndpoint(this IEndpointRouteBuilder endpoints)
         {
-            return endpoints.MapPost("/export", (UserListFilter filter, IUserService service, CancellationToken cancellationToken) =>
+            return endpoints.MapPost("/export", (ExportUsersRequest request, IUserService service, CancellationToken cancellationToken) =>
             {
-                return service.ExportAsync(filter, cancellationToken);
+                return service.ExportAsync(request, cancellationToken);
             })
             .WithName(nameof(ExportUsersEndpoint))
             .WithSummary("Export a list of users with paging support")

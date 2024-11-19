@@ -17,9 +17,12 @@ namespace FSH.Framework.Infrastructure.Identity.Users.Endpoints
                 [FromServices] IUserService userService,
                 CancellationToken cancellationToken) =>
                 {
-                    var origin = $"{context.Request.Scheme}://{context.Request.Host.Value}{context.Request.PathBase.Value}";
+                    // using with get endpoint
+                    // var origin = $"{context.Request.Scheme}://{context.Request.Host.Value}{context.Request.PathBase.Value}"
 
-                    await userService.SendVerificationEmailAsync(id, origin, cancellationToken);
+                    var originUrl = context.Request.Headers.Origin;
+
+                    await userService.SendVerificationEmailAsync(id, originUrl!, cancellationToken);
                     return Results.Ok();
                 })
                 .WithName(nameof(SendVerificationEmailEndPoint))
