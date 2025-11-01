@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<RootNamespace>FSH.Framework.PlayGround.API</RootNamespace>
+		<AssemblyName>FSH.Framework.PlayGround.API</AssemblyName>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Web\Web.csproj" />
+	</ItemGroup>
+
+</Project>

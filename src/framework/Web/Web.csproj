@@ -4,5 +4,10 @@
 		<RootNamespace>FSH.Framework.Web</RootNamespace>
 		<AssemblyName>FSH.Framework.Web</AssemblyName>
 	</PropertyGroup>
+	
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+		<PackageReference Include="Scalar.AspNetCore" />
+	</ItemGroup>
 
 </Project>
