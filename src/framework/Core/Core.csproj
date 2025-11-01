@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+	    <RootNamespace>FSH.Framework.Core</RootNamespace>
+	    <AssemblyName>FSH.Framework.Core</AssemblyName>
+    </PropertyGroup>
+
+	<ItemGroup>
+		<Folder Include="Auditing\" />
+		<Folder Include="Multitenancy\" />
+		<Folder Include="Caching\" />
+		<Folder Include="Identity\" />
+		<Folder Include="Mediator\" />
+		<Folder Include="Mailing\" />
+		<Folder Include="Jobs\" />
+		<Folder Include="Runtime\" />
+		<Folder Include="Storage\" />
+	</ItemGroup>
+
+</Project>
