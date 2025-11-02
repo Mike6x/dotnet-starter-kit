@@ -8,14 +8,13 @@ using Scalar.AspNetCore;
 namespace FSH.Framework.Web.OpenApi;
 public static class Extensions
 {
-    private const string SectionName = "OpenApi";
     public static IServiceCollection EnableApiDocs(this IServiceCollection services, IConfiguration configuration)
     {
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(configuration);
 
         // Bind options from appsettings
-        services.Configure<OpenApiOptions>(configuration.GetSection(SectionName));
+        services.Configure<OpenApiOptions>(configuration.GetSection(OpenApiOptions.SectionName));
 
         // Minimal OpenAPI generator (ASP.NET Core 8)
         services.AddOpenApi(options =>

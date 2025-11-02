@@ -7,7 +7,6 @@
 
 	<ItemGroup>
 		<Folder Include="Auditing\" />
-		<Folder Include="Identity\Roles\" />
 		<Folder Include="Caching\" />
 		<Folder Include="Mailing\" />
 		<Folder Include="Jobs\" />
