@@ -6,7 +6,24 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Folder Include="Persistence\Migrations\" />
+		<Folder Include="Caching\" />
+		<Folder Include="Jobs\" />
+		<Folder Include="Messaging\" />
+		<Folder Include="Mailing\" />
+		<Folder Include="Time\" />
+		<Folder Include="Storage\" />
+		<Folder Include="Persistence\Migrations\PostgreSQL\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="FluentValidation" />
+	  <PackageReference Include="Mediator.Abstractions" />
+	  <PackageReference Include="Mediator.SourceGenerator">
+	    <PrivateAssets>all</PrivateAssets>
+	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
+	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+	  <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
 	</ItemGroup>
 
 </Project>

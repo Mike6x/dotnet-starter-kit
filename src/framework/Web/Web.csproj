@@ -6,8 +6,24 @@
 	</PropertyGroup>
 	
 	<ItemGroup>
+		<PackageReference Include="Mediator.Abstractions" />
+		<PackageReference Include="Mediator.SourceGenerator">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" />
 		<PackageReference Include="Scalar.AspNetCore" />
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <Folder Include="Abstractions\" />
+	  <Folder Include="Health\" />
+	  <Folder Include="RateLimiting\" />
+	  <Folder Include="ProblemDetails\" />
+	  <Folder Include="Versioning\" />
+	  <Folder Include="Observability\Logging\" />
+	  <Folder Include="Observability\Metrics\" />
+	  <Folder Include="Observability\Traces\" />
 	</ItemGroup>
 
 </Project>

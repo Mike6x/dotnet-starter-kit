@@ -7,15 +7,22 @@
 
 	<ItemGroup>
 		<Folder Include="Auditing\" />
+		<Folder Include="Identity\Tokens\" />
 		<Folder Include="Identity\Roles\" />
 		<Folder Include="Identity\Users\" />
 		<Folder Include="Multitenancy\" />
 		<Folder Include="Caching\" />
-		<Folder Include="Mediator\" />
 		<Folder Include="Mailing\" />
 		<Folder Include="Jobs\" />
+		<Folder Include="Exceptions\" />
+		<Folder Include="Time\" />
 		<Folder Include="Runtime\" />
 		<Folder Include="Storage\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Mediator.Abstractions" />
+	  <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
 	</ItemGroup>
 
 </Project>

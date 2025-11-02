@@ -1,5 +1,5 @@
 ﻿namespace FSH.Framework.Core.Domain;
-public abstract class EntityBase<TId> : IEntity<TId>, IHasDomainEvents
+public abstract class BaseEntity<TId> : IEntity<TId>, IHasDomainEvents
 {
     private readonly List<IDomainEvent> _domainEvents = [];
 
