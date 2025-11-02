@@ -85,8 +85,9 @@ public static class Extensions
             var configuration = app.Configuration;
             options
                 .WithTitle(configuration["OpenApi:Title"] ?? "FSH API")
-                .WithTheme(Scalar.AspNetCore.ScalarTheme.Default)
+                .WithTheme(Scalar.AspNetCore.ScalarTheme.Alternate)
                 .EnableDarkMode()
+                .HideModels()
                 .WithOpenApiRoutePattern(openApiPath)
                 .AddPreferredSecuritySchemes("Bearer");
         });
