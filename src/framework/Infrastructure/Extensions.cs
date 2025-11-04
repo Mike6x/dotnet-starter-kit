@@ -1,11 +1,13 @@
 ﻿using FSH.Framework.Core;
 using FSH.Framework.Core.Origin;
 using FSH.Framework.Infrastructure.Identity;
-using FSH.Framework.Infrastructure.Mediator;
+using FSH.Framework.Infrastructure.Multitenancy;
 using FSH.Framework.Infrastructure.Persistence.Extensions;
 using FSH.Framework.Web;
 using FSH.Framework.Web.Cors;
 using FSH.Framework.Web.Identity;
+using FSH.Framework.Web.Mediator;
+using FSH.Framework.Web.MultiTenancy;
 using FSH.Framework.Web.OpenApi;
 using FSH.Web.Endpoints.Health;
 using Microsoft.AspNetCore.Builder;
@@ -37,6 +39,7 @@ public static class Extensions
         };
 
         builder.Services.EnableMediator(assemblies);
+        builder.Services.RegisterMultitenancy(builder.Configuration);
         builder.Services.RegisterIdentity();
         return builder;
     }
@@ -51,7 +54,9 @@ public static class Extensions
         app.UseStaticFiles();
         app.UseAuthentication();
         app.UseAuthorization();
+        app.ConfigureMultitenancy();
         app.MapIdentityEndpoints();
+        app.MapMultitenancyEndpoints();
         app.MapHealthCheckEndpoints();
         return app;
     }

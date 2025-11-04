@@ -44,7 +44,7 @@ public static class PermissionConstants
                       where !_all.Any(p => p.Name == permission.Name)
                       select permission);
     }
-
+    public const string RequiredPermissionPolicyName = "RequiredPermission";
     public static IReadOnlyList<FshPermission> All => _all.AsReadOnly();
     public static IReadOnlyList<FshPermission> Root => [.. _all.Where(p => p.IsRoot)];
     public static IReadOnlyList<FshPermission> Admin => [.. _all.Where(p => !p.IsRoot)];

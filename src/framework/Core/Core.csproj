@@ -10,10 +10,8 @@
 		<Folder Include="Caching\" />
 		<Folder Include="Mailing\" />
 		<Folder Include="Jobs\" />
-		<Folder Include="Exceptions\" />
 		<Folder Include="Time\" />
 		<Folder Include="Runtime\" />
-		<Folder Include="Storage\" />
 	</ItemGroup>
 
 	<ItemGroup>

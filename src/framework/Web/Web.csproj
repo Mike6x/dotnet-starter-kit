@@ -6,6 +6,8 @@
 	</PropertyGroup>
 	
 	<ItemGroup>
+		<PackageReference Include="Asp.Versioning.Http" />
+		<PackageReference Include="FluentValidation" />
 		<PackageReference Include="Mediator.Abstractions" />
 		<PackageReference Include="Mediator.SourceGenerator">
 		  <PrivateAssets>all</PrivateAssets>

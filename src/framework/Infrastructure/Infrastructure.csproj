@@ -21,11 +21,13 @@
 	  <PackageReference Include="Finbuckle.MultiTenant.AspNetCore" />
 	  <PackageReference Include="Finbuckle.MultiTenant.EntityFrameworkCore" />
 	  <PackageReference Include="FluentValidation" />
+	  <PackageReference Include="Mapster" />
 	  <PackageReference Include="Mediator.Abstractions" />
-	  <PackageReference Include="Mediator.SourceGenerator">
+	  <PackageReference Include="Mediator.SourceGenerator" OutputItemType="Analyzer" ReferenceOutputAssembly="false">
 	    <PrivateAssets>all</PrivateAssets>
 	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	  </PackageReference>
+	  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
 	  <PackageReference Include="Microsoft.AspNetCore.Identity" />
 	  <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
 	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />

@@ -1,12 +1,13 @@
-﻿using FSH.Framework.Infrastructure.Mediator.Behaviors;
+﻿using FSH.Framework.Web.Mediator.Behaviors;
 using Mediator;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
-namespace FSH.Framework.Infrastructure.Mediator;
+namespace FSH.Framework.Web.Mediator;
 public static class Extensions
 {
-    public static IServiceCollection EnableMediator(this IServiceCollection services, params Assembly[] featureAssemblies)
+    public static IServiceCollection
+        EnableMediator(this IServiceCollection services, params Assembly[] featureAssemblies)
     {
         ArgumentNullException.ThrowIfNull(services);
 
@@ -22,7 +23,7 @@ public static class Extensions
 
         services.AddMediator(o =>
         {
-            o.ServiceLifetime = ServiceLifetime.Singleton;
+            o.ServiceLifetime = ServiceLifetime.Transient;
             o.Assemblies = assemblyReferences;
         });
 

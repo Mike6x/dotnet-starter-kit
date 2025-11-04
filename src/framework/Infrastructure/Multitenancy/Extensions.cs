@@ -1,13 +1,72 @@
 ﻿using Finbuckle.MultiTenant;
 using Finbuckle.MultiTenant.Abstractions;
+using Finbuckle.MultiTenant.Stores.DistributedCacheStore;
+using FSH.Framework.Core.Identity.Claims;
 using FSH.Framework.Core.Multitenancy;
+using FSH.Framework.Core.Persistence;
+using FSH.Framework.Infrastructure.Multitenancy.Persistence;
 using FSH.Framework.Infrastructure.Persistence;
+using FSH.Framework.Infrastructure.Persistence.Extensions;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FSH.Framework.Infrastructure.Multitenancy;
 public static class Extensions
 {
+    public static IServiceCollection RegisterMultitenancy(this IServiceCollection services, IConfiguration config)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        services.AddTransient<IConnectionStringValidator, ConnectionStringValidator>();
+
+        services.BindDbContext<TenantDbContext>();
+
+        services
+            .AddMultiTenant<FshTenantInfo>(options =>
+            {
+                options.Events.OnTenantResolveCompleted = async context =>
+                {
+                    if (context.MultiTenantContext.StoreInfo is null) return;
+                    if (context.MultiTenantContext.StoreInfo.StoreType != typeof(DistributedCacheStore<FshTenantInfo>))
+                    {
+                        var sp = ((HttpContext)context.Context!).RequestServices;
+                        var distributedStore = sp
+                            .GetRequiredService<IEnumerable<IMultiTenantStore<FshTenantInfo>>>()
+                            .FirstOrDefault(s => s.GetType() == typeof(DistributedCacheStore<FshTenantInfo>));
+
+                        await distributedStore!.TryAddAsync(context.MultiTenantContext.TenantInfo!);
+                    }
+                    await Task.CompletedTask;
+                };
+            })
+            .WithClaimStrategy(ClaimConstants.Tenant)
+            .WithHeaderStrategy(MultiTenancyConstants.Identifier)
+            .WithDelegateStrategy(async context =>
+            {
+                if (context is not HttpContext httpContext) return null;
+
+                if (!httpContext.Request.Query.TryGetValue("tenant", out var tenantIdentifier) ||
+                    string.IsNullOrEmpty(tenantIdentifier))
+                    return null;
+
+                return await Task.FromResult(tenantIdentifier.ToString());
+            })
+            .WithDistributedCacheStore(TimeSpan.FromMinutes(60))
+            .WithEFCoreStore<TenantDbContext, FshTenantInfo>();
+
+        services.AddScoped<ITenantService, TenantService>();
+        return services;
+    }
+
+    public static WebApplication ConfigureMultitenancy(this WebApplication app)
+    {
+        app.ConfigureMultiTenantDatabases();
+
+        return app;
+    }
     private static IEnumerable<FshTenantInfo> TenantStoreSetup(IApplicationBuilder app)
     {
         var scope = app.ApplicationServices.CreateScope();
