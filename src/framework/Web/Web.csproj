@@ -15,6 +15,9 @@
 		</PackageReference>
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" />
 		<PackageReference Include="Scalar.AspNetCore" />
+		<PackageReference Include="Serilog" />
+		<PackageReference Include="Serilog.AspNetCore" />
+		<PackageReference Include="Serilog.Enrichers.CorrelationId" />
 	</ItemGroup>
 	
 	<ItemGroup>
@@ -22,7 +25,6 @@
 	  <Folder Include="RateLimiting\" />
 	  <Folder Include="ProblemDetails\" />
 	  <Folder Include="Versioning\" />
-	  <Folder Include="Observability\Logging\" />
 	  <Folder Include="Observability\Metrics\" />
 	  <Folder Include="Observability\Traces\" />
 	</ItemGroup>

@@ -7,9 +7,6 @@
 
 	<ItemGroup>
 		<Folder Include="Auditing\" />
-		<Folder Include="Caching\" />
-		<Folder Include="Mailing\" />
-		<Folder Include="Jobs\" />
 		<Folder Include="Time\" />
 		<Folder Include="Runtime\" />
 	</ItemGroup>

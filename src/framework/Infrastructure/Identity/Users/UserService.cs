@@ -1,8 +1,11 @@
 ﻿using Finbuckle.MultiTenant.Abstractions;
+using FSH.Framework.Core.Caching;
 using FSH.Framework.Core.Common;
 using FSH.Framework.Core.Exceptions;
 using FSH.Framework.Core.Identity.Roles;
 using FSH.Framework.Core.Identity.Users;
+using FSH.Framework.Core.Jobs;
+using FSH.Framework.Core.Mailing;
 using FSH.Framework.Core.Multitenancy;
 using FSH.Framework.Core.Storage;
 using FSH.Framework.Infrastructure.Identity.Data;

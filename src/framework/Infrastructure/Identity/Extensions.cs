@@ -10,6 +10,7 @@ using FSH.Framework.Infrastructure.Identity.Persistence;
 using FSH.Framework.Infrastructure.Identity.Roles;
 using FSH.Framework.Infrastructure.Identity.Tokens;
 using FSH.Framework.Infrastructure.Identity.Users;
+using FSH.Framework.Infrastructure.Identity.Users.Services;
 using FSH.Framework.Infrastructure.Persistence;
 using FSH.Framework.Infrastructure.Persistence.Extensions;
 using FSH.Infrastructure.Identity;

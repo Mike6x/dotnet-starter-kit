@@ -1,7 +1,6 @@
 ﻿namespace FSH.Framework.Web.OpenApi;
 public sealed class OpenApiOptions
 {
-    public const string SectionName = "OpenApi";
     public required string Title { get; init; }
     public string Version { get; init; } = "v1";
     public required string Description { get; init; }

@@ -14,7 +14,8 @@ public static class HealthEndpoints
     {
         var group = app.MapGroup("/health")
                        .WithTags("Health")
-                       .WithOpenApi();
+                       .WithOpenApi()
+                       .AllowAnonymous();
 
 
         // Liveness: only process up (no external deps)

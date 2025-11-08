@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<RootNamespace>FSH.PlayGround.API</RootNamespace>
+		<AssemblyName>FSH.PlayGround.API</AssemblyName>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+	    <PrivateAssets>all</PrivateAssets>
+	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\..\..\framework\Infrastructure\Infrastructure.csproj" />
+	  <ProjectReference Include="..\..\..\framework\Web\Web.csproj" />
+	  <ProjectReference Include="..\migrations\Migrations.PostgreSQL\Migrations.PostgreSQL.csproj" />
+	</ItemGroup>
+
+</Project>

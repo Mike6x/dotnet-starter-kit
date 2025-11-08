@@ -3,6 +3,7 @@
 namespace FSH.Framework.Core.Persistence;
 public class DatabaseOptions : IValidatableObject
 {
+    public const string Section = "Database";
     public string Provider { get; set; } = DbProviders.PostgreSQL;
     public string ConnectionString { get; set; } = string.Empty;
     public string MigrationsAssembly { get; set; } = string.Empty;

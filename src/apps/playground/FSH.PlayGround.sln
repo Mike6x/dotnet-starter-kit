@@ -1,0 +1,66 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayGround.API", "PlayGround.API\PlayGround.API.csproj", "{37DBEFA3-C431-E668-6DF8-3F4677977199}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Migrations", "Migrations", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framework", "Framework", "{0606A194-9596-487E-9F32-CCD4431D641B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "..\..\framework\Core\Core.csproj", "{56D32F58-2F36-26C5-8713-133BBF4F4D3D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "..\..\framework\Infrastructure\Infrastructure.csproj", "{674B1C31-F624-C124-8B18-E2BE27B2F148}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web", "..\..\framework\Web\Web.csproj", "{FB87F7FD-2DCB-42BE-D3C4-30A287F799C6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Migrations.PostgreSQL", "migrations\Migrations.PostgreSQL\Migrations.PostgreSQL.csproj", "{F697312E-6011-4A38-A318-901E108988CF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{37DBEFA3-C431-E668-6DF8-3F4677977199}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37DBEFA3-C431-E668-6DF8-3F4677977199}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37DBEFA3-C431-E668-6DF8-3F4677977199}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37DBEFA3-C431-E668-6DF8-3F4677977199}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56D32F58-2F36-26C5-8713-133BBF4F4D3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56D32F58-2F36-26C5-8713-133BBF4F4D3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56D32F58-2F36-26C5-8713-133BBF4F4D3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56D32F58-2F36-26C5-8713-133BBF4F4D3D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{674B1C31-F624-C124-8B18-E2BE27B2F148}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{674B1C31-F624-C124-8B18-E2BE27B2F148}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{674B1C31-F624-C124-8B18-E2BE27B2F148}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{674B1C31-F624-C124-8B18-E2BE27B2F148}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB87F7FD-2DCB-42BE-D3C4-30A287F799C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB87F7FD-2DCB-42BE-D3C4-30A287F799C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB87F7FD-2DCB-42BE-D3C4-30A287F799C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB87F7FD-2DCB-42BE-D3C4-30A287F799C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F697312E-6011-4A38-A318-901E108988CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F697312E-6011-4A38-A318-901E108988CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F697312E-6011-4A38-A318-901E108988CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F697312E-6011-4A38-A318-901E108988CF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{56D32F58-2F36-26C5-8713-133BBF4F4D3D} = {0606A194-9596-487E-9F32-CCD4431D641B}
+		{674B1C31-F624-C124-8B18-E2BE27B2F148} = {0606A194-9596-487E-9F32-CCD4431D641B}
+		{FB87F7FD-2DCB-42BE-D3C4-30A287F799C6} = {0606A194-9596-487E-9F32-CCD4431D641B}
+		{F697312E-6011-4A38-A318-901E108988CF} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {86130A56-412C-46F6-9C7B-95D1F1C4AE29}
+	EndGlobalSection
+EndGlobal
