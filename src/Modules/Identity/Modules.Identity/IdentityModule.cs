@@ -1,0 +1,78 @@
+﻿using Asp.Versioning;
+using FSH.Framework.Core.Context;
+using FSH.Framework.Identity.Core.Roles;
+using FSH.Framework.Identity.Core.Tokens;
+using FSH.Framework.Identity.Core.Users;
+using FSH.Framework.Identity.Infrastructure.Tokens;
+using FSH.Framework.Identity.Infrastructure.Users;
+using FSH.Framework.Identity.v1.Tokens.TokenGeneration;
+using FSH.Framework.Infrastructure.Auth.Jwt;
+using FSH.Framework.Infrastructure.Identity.Roles;
+using FSH.Framework.Infrastructure.Identity.Roles.Endpoints;
+using FSH.Framework.Infrastructure.Identity.Users.Services;
+using FSH.Framework.Persistence;
+using FSH.Framework.Web.Modules;
+using FSH.Modules.Identity.Authorization;
+using FSH.Modules.Identity.Authorization.Jwt;
+using FSH.Modules.Identity.Data;
+using FSH.Modules.Identity.Features.v1.Roles;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
+namespace FSH.Modules.Identity;
+
+public class IdentityModule : IModule
+{
+
+
+    public void ConfigureServices(IHostApplicationBuilder builder)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        var services = builder.Services;
+
+        services.AddScoped<CurrentUserMiddleware>();
+        services.AddSingleton<IAuthorizationMiddlewareResultHandler, PathAwareAuthorizationHandler>();
+        services.AddScoped<ICurrentUser, CurrentUser>();
+        services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped(sp => (ICurrentUserInitializer)sp.GetRequiredService<ICurrentUser>());
+        services.AddTransient<IUserService, UserService>();
+        services.AddTransient<IRoleService, RoleService>();
+        services.BindDbContext<IdentityDbContext>();
+        services.AddScoped<IDbInitializer, IdentityDbInitializer>();
+        services.AddIdentity<FshUser, FshRole>(options =>
+        {
+            options.Password.RequiredLength = IdentityModuleConstants.PasswordLength;
+            options.Password.RequireDigit = false;
+            options.Password.RequireLowercase = false;
+            options.Password.RequireNonAlphanumeric = false;
+            options.Password.RequireUppercase = false;
+            options.User.RequireUniqueEmail = true;
+        })
+           .AddEntityFrameworkStores<IdentityDbContext>()
+           .AddDefaultTokenProviders();
+        services.ConfigureJwtAuth();
+    }
+
+    public void MapEndpoints(IEndpointRouteBuilder endpoints)
+    {
+        var apiVersionSet = endpoints.NewApiVersionSet()
+            .HasApiVersion(new ApiVersion(1))
+            .ReportApiVersions()
+            .Build();
+
+        var group = endpoints
+            .MapGroup("api/v{version:apiVersion}/identity")
+            .WithTags("Identity")
+            .WithOpenApi()
+            .WithApiVersionSet(apiVersionSet);
+
+        TokenGenerationEndpoint.Map(group).AllowAnonymous();
+        GetRolesEndpoint.MapGetRolesEndpoint(group);
+        GetRoleByIdEndpoint.MapGetRoleEndpoint(group);
+    }
+}

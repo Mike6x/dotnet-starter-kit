@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<RootNamespace>FSH.Modules.Identity</RootNamespace>
+		<AssemblyName>FSH.Modules.Identity</AssemblyName>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\..\BuildingBlocks\Persistence\Persistence.csproj" />
+	  <ProjectReference Include="..\..\..\BuildingBlocks\Web\Web.csproj" />
+	</ItemGroup>
+
+</Project>

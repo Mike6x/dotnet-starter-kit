@@ -1,0 +1,8 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<RootNamespace>FSH.Modules.Auditing.Contracts</RootNamespace>
+		<AssemblyName>FSH.Modules.Auditing.Contracts</AssemblyName>
+	</PropertyGroup>
+
+</Project>

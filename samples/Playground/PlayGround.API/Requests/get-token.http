@@ -1,0 +1,9 @@
+POST https://localhost:7030/api/identity/token
+Accept-Language: en-US
+tenant: root
+Content-Type: application/json
+
+{
+  "email": "admin@root.com",
+  "password": "123Pa$$word!"
+}

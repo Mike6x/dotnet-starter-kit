@@ -1,0 +1,10 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<RootNamespace>FSH.Modules.Multitenancy.Contracts</RootNamespace>
+		<AssemblyName>FSH.Modules.Multitenancy.Contracts</AssemblyName>
+	</PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Mediator.Abstractions" />
+  </ItemGroup>
+
+</Project>

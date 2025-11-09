@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<RootNamespace>FSH.Modules.Identity.Contracts</RootNamespace>
+		<AssemblyName>FSH.Modules.Identity.Contracts</AssemblyName>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\..\BuildingBlocks\Storage\Storage.csproj" />
+	</ItemGroup>
+
+</Project>

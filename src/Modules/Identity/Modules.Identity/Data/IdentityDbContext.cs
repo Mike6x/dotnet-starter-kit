@@ -1,0 +1,45 @@
+﻿using Finbuckle.MultiTenant.Abstractions;
+using Finbuckle.MultiTenant.EntityFrameworkCore;
+using FSH.Framework.Identity.Infrastructure.Users;
+using FSH.Framework.Persistence;
+using FSH.Framework.Shared.Multitenancy;
+using FSH.Framework.Shared.Persistence;
+using FSH.Modules.Identity.Features.v1.RoleClaims;
+using FSH.Modules.Identity.Features.v1.Roles;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+
+namespace FSH.Modules.Identity.Data;
+
+public class IdentityDbContext : MultiTenantIdentityDbContext<FshUser,
+    FshRole,
+    string,
+    IdentityUserClaim<string>,
+    IdentityUserRole<string>,
+    IdentityUserLogin<string>,
+    FshRoleClaim,
+    IdentityUserToken<string>>
+{
+    private readonly DatabaseOptions _settings;
+    private new AppTenantInfo TenantInfo { get; set; }
+    public IdentityDbContext(IMultiTenantContextAccessor<AppTenantInfo> multiTenantContextAccessor, DbContextOptions<IdentityDbContext> options, IOptions<DatabaseOptions> settings) : base(multiTenantContextAccessor, options)
+    {
+        _settings = settings.Value;
+        TenantInfo = multiTenantContextAccessor.MultiTenantContext.TenantInfo!;
+    }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+        builder.ApplyConfigurationsFromAssembly(typeof(IdentityDbContext).Assembly);
+    }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if (!string.IsNullOrWhiteSpace(TenantInfo?.ConnectionString))
+        {
+            optionsBuilder.ConfigureDatabase(_settings.Provider, TenantInfo.ConnectionString, _settings.MigrationsAssembly);
+        }
+    }
+}
