@@ -9,9 +9,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace FSH.Framework.Jobs;
 
-internal static class Extensions
+public static class Extensions
 {
-    internal static IServiceCollection AddFshJobs(this IServiceCollection services)
+    public static IServiceCollection AddFshJobs(this IServiceCollection services)
     {
         services.AddHangfireServer(options =>
         {

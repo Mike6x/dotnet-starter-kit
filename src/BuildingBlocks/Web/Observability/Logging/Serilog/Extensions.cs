@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
 using Serilog.Filters;
@@ -7,12 +7,12 @@ namespace FSH.Framework.Web.Observability.Logging.Serilog;
 
 public static class Extensions
 {
-    public static WebApplicationBuilder AddHeroLogging(this WebApplicationBuilder builder)
+    public static IHostApplicationBuilder AddHeroLogging(this IHostApplicationBuilder builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
-        builder.Host.UseSerilog((context, logger) =>
+        builder.Services.AddSerilog((context, logger) =>
         {
-            logger.ReadFrom.Configuration(context.Configuration);
+            logger.ReadFrom.Configuration(builder.Configuration);
             logger.Enrich.FromLogContext();
             logger.Enrich.WithCorrelationId();
             logger

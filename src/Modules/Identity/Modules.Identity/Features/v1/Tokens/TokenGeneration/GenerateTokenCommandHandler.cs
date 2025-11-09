@@ -13,7 +13,7 @@ public sealed class GenerateTokenCommandHandler(IIdentityService identityService
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        var identityResult = await identityService.ValidateCredentialsAsync(request.Email, request.Password, null, cancellationToken);
+        var identityResult = await identityService.ValidateCredentialsAsync(request.Email, request.Password, cancellationToken);
 
         if (identityResult is null)
             throw new UnauthorizedAccessException("Invalid credentials.");

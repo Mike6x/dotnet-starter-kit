@@ -4,7 +4,7 @@ using Mediator;
 
 namespace FSH.Modules.Identity.Features.v1.Users.AssignUserRoles;
 
-internal sealed class AssignUserRolesCommandHandler(IUserService _userService)
+public sealed class AssignUserRolesCommandHandler(IUserService _userService)
     : ICommandHandler<AssignUserRolesCommand, string>
 {
     public async ValueTask<string> Handle(AssignUserRolesCommand command, CancellationToken cancellationToken)

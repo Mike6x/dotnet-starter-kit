@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using System.ComponentModel;
 
 namespace FSH.Framework.Identity.v1.Tokens.TokenGeneration;
 
@@ -18,7 +19,10 @@ public static class GenerateTokenEndpoint
 
         return endpoint.MapPost("/token",
             [AllowAnonymous] async Task<Results<Ok<TokenResponse>, UnauthorizedHttpResult, ProblemHttpResult>>
-            ([FromBody] GenerateTokenCommand command, [FromServices] IMediator mediator, CancellationToken ct) =>
+            ([FromBody] GenerateTokenCommand command,
+            [DefaultValue("root")][FromHeader] string tenant,
+            [FromServices] IMediator mediator,
+            CancellationToken ct) =>
             {
                 var token = await mediator.Send(command, ct);
                 return token is null

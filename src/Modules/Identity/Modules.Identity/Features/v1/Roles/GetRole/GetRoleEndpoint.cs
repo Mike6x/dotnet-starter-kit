@@ -8,9 +8,9 @@ namespace FSH.Modules.Identity.Features.v1.Roles.GetRole;
 
 public static class GetRoleByIdEndpoint
 {
-    public static RouteHandlerBuilder MapGetRoleEndpoint(this IEndpointRouteBuilder endpoints)
+    public static RouteHandlerBuilder MapGetRoleByIdEndpoint(this IEndpointRouteBuilder endpoints)
     {
-        return endpoints.MapGet("/{id:guid}", async (string id, IRoleService roleService) =>
+        return endpoints.MapGet("/roles/{id:guid}", async (string id, IRoleService roleService) =>
         {
             return await roleService.GetRoleAsync(id);
         })

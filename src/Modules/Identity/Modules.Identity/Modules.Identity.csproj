@@ -4,8 +4,11 @@
 		<RootNamespace>FSH.Modules.Identity</RootNamespace>
 		<AssemblyName>FSH.Modules.Identity</AssemblyName>
 	</PropertyGroup>
-
 	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="Mediator.Abstractions" />
 	  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
 	</ItemGroup>
 

@@ -10,7 +10,7 @@ public static class GetRolesEndpoint
 {
     public static RouteHandlerBuilder MapGetRolesEndpoint(this IEndpointRouteBuilder endpoints)
     {
-        return endpoints.MapGet("/", async (IRoleService roleService) =>
+        return endpoints.MapGet("/roles", async (IRoleService roleService) =>
         {
             return await roleService.GetRolesAsync();
         })

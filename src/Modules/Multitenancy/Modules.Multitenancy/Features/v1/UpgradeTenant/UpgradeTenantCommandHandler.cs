@@ -4,7 +4,7 @@ using Mediator;
 
 namespace FSH.Modules.Multitenancy.Features.v1.UpgradeTenant;
 
-internal sealed class UpgradeTenantCommandHandler(ITenantService service)
+public sealed class UpgradeTenantCommandHandler(ITenantService service)
     : ICommandHandler<UpgradeTenantCommand, UpgradeTenantCommandResponse>
 {
     public async ValueTask<UpgradeTenantCommandResponse> Handle(UpgradeTenantCommand command, CancellationToken cancellationToken)

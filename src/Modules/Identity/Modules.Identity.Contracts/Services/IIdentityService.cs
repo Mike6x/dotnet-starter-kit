@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 
 namespace FSH.Modules.Identity.Contracts.Services;
+
 public interface IIdentityService
 {
     /// <summary>
@@ -12,7 +13,7 @@ public interface IIdentityService
     /// <param name="ct">Cancellation token</param>
     /// <returns>Subject ID and claims, or null if invalid</returns>
     Task<(string Subject, IEnumerable<Claim> Claims)?>
-        ValidateCredentialsAsync(string email, string password, string? tenant = null, CancellationToken ct = default);
+        ValidateCredentialsAsync(string email, string password, CancellationToken ct = default);
 
     /// <summary>
     /// Validates a refresh token and returns its claims if valid.

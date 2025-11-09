@@ -11,12 +11,9 @@
 	
 	<ItemGroup>
 		<PackageReference Include="Asp.Versioning.Http" />
+		<PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" />
 		<PackageReference Include="FluentValidation" />
 		<PackageReference Include="Mediator.Abstractions" />
-		<PackageReference Include="Mediator.SourceGenerator">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" />
 		<PackageReference Include="Scalar.AspNetCore" />
 		<PackageReference Include="Serilog" />
@@ -27,13 +24,16 @@
 	<ItemGroup>
 	  <Folder Include="RateLimiting\" />
 	  <Folder Include="ProblemDetails\" />
-	  <Folder Include="Versioning\" />
 	  <Folder Include="Observability\Metrics\" />
 	  <Folder Include="Observability\Traces\" />
 	</ItemGroup>
 	
 	<ItemGroup>
+	  <ProjectReference Include="..\Caching\Caching.csproj" />
 	  <ProjectReference Include="..\Core\Core.csproj" />
+	  <ProjectReference Include="..\Jobs\Jobs.csproj" />
+	  <ProjectReference Include="..\Mailing\Mailing.csproj" />
+	  <ProjectReference Include="..\Persistence\Persistence.csproj" />
 	</ItemGroup>
 
 </Project>

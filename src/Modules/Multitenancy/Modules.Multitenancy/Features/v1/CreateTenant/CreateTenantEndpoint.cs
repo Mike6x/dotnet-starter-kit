@@ -17,8 +17,8 @@ public static class CreateTenantEndpoint
             [FromServices] IMediator mediator)
             => await mediator.Send(command))
                                 .WithName(nameof(CreateTenantEndpoint))
-                                .WithSummary("activate tenant")
+                                .WithSummary("create tenant")
                                 .RequirePermission("Permissions.Tenants.Create")
-                                .WithDescription("activate tenant");
+                                .WithDescription("create tenant");
     }
 }

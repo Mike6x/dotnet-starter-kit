@@ -3,6 +3,8 @@ using FSH.Framework.Core.Context;
 using FSH.Framework.Identity.v1.Tokens.TokenGeneration;
 using FSH.Framework.Infrastructure.Identity.Users.Services;
 using FSH.Framework.Persistence;
+using FSH.Framework.Storage.Local;
+using FSH.Framework.Storage.Services;
 using FSH.Framework.Web.Modules;
 using FSH.Modules.Identity.Authorization;
 using FSH.Modules.Identity.Authorization.Jwt;
@@ -31,7 +33,6 @@ public class IdentityModule : IModule
     {
         ArgumentNullException.ThrowIfNull(builder);
         var services = builder.Services;
-
         services.AddScoped<CurrentUserMiddleware>();
         services.AddSingleton<IAuthorizationMiddlewareResultHandler, PathAwareAuthorizationHandler>();
         services.AddScoped<ICurrentUser, CurrentUserService>();
@@ -39,6 +40,8 @@ public class IdentityModule : IModule
         services.AddScoped(sp => (ICurrentUserInitializer)sp.GetRequiredService<ICurrentUser>());
         services.AddTransient<IUserService, UserService>();
         services.AddTransient<IRoleService, RoleService>();
+        services.AddTransient<IStorageService, LocalStorageService>();
+        services.AddScoped<IIdentityService, IdentityService>();
         services.BindDbContext<IdentityDbContext>();
         services.AddScoped<IDbInitializer, IdentityDbInitializer>();
         services.AddIdentity<FshUser, FshRole>(options =>
@@ -68,8 +71,8 @@ public class IdentityModule : IModule
             .WithOpenApi()
             .WithApiVersionSet(apiVersionSet);
 
-        GenerateTokenEndpoint.MapGenerateTokenEndpoint(group).AllowAnonymous();
-        GetRolesEndpoint.MapGetRolesEndpoint(group);
-        GetRoleByIdEndpoint.MapGetRoleEndpoint(group);
+        group.MapGenerateTokenEndpoint().AllowAnonymous();
+        group.MapGetRoleByIdEndpoint();
+        group.MapGetRolesEndpoint();
     }
 }
