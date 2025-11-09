@@ -1,7 +1,9 @@
 ﻿using FluentValidation;
-using FSH.Framework.Core.Storage;
+using FSH.Framework.Storage;
+using FSH.Framework.Storage.DTOs;
 
-namespace FSH.Framework.Identity.v1.Users;
+namespace FSH.Modules.Identity.Features.v1.Users;
+
 public class UserImageValidator : AbstractValidator<FileUploadRequest>
 {
     public UserImageValidator(FileType fileType)

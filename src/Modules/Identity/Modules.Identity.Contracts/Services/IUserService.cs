@@ -1,6 +1,9 @@
-﻿using System.Security.Claims;
+﻿using FSH.Framework.Storage.DTOs;
+using FSH.Modules.Identity.Contracts.DTOs;
+using System.Security.Claims;
 
-namespace FSH.Modules.Identity.Contracts.DTOs;
+namespace FSH.Modules.Identity.Contracts.Services;
+
 public interface IUserService
 {
     Task<bool> ExistsWithNameAsync(string name);

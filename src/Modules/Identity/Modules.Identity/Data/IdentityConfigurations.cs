@@ -1,7 +1,7 @@
 ﻿using Finbuckle.MultiTenant;
-using FSH.Framework.Identity.Infrastructure.Users;
 using FSH.Modules.Identity.Features.v1.RoleClaims;
 using FSH.Modules.Identity.Features.v1.Roles;
+using FSH.Modules.Identity.Features.v1.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

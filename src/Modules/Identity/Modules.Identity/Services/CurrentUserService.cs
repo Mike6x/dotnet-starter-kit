@@ -1,10 +1,11 @@
-﻿using FSH.Framework.Core.ExecutionContext;
-using FSH.Framework.Shared.Extensions;
-using FSH.Modules.Common.Core.Exceptions;
+﻿using FSH.Framework.Core.Context;
+using FSH.Framework.Core.Exceptions;
+using FSH.Framework.Shared.Identity.Claims;
 using System.Security.Claims;
 
-namespace FSH.Framework.Identity.Infrastructure.Users;
-public class CurrentUser : ICurrentUser, ICurrentUserInitializer
+namespace FSH.Modules.Identity.Services;
+
+public class CurrentUserService : ICurrentUser, ICurrentUserInitializer
 {
     private ClaimsPrincipal? _user;
 

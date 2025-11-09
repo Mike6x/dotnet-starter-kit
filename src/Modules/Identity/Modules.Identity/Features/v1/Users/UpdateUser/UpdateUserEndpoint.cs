@@ -1,15 +1,16 @@
 ﻿using FSH.Framework.Core.Exceptions;
-using FSH.Framework.Identity.Contracts.v1.Users.UpdateUser;
-using FSH.Framework.Identity.Core.Users;
-using FSH.Framework.Shared.Extensions;
 using FSH.Framework.Shared.Identity.Authorization;
+using FSH.Framework.Shared.Identity.Claims;
+using FSH.Modules.Identity.Contracts.Services;
+using FSH.Modules.Identity.Contracts.v1.Users.UpdateUser;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using System.Security.Claims;
 
-namespace FSH.Framework.Infrastructure.Identity.Users.Endpoints;
+namespace FSH.Modules.Identity.Features.v1.Users.UpdateUser;
+
 public static class UpdateUserEndpoint
 {
     internal static RouteHandlerBuilder MapUpdateUserEndpoint(this IEndpointRouteBuilder endpoints)

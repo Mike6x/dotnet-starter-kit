@@ -1,19 +1,20 @@
 ﻿using Finbuckle.MultiTenant.Abstractions;
+using FSH.Framework.Caching;
+using FSH.Framework.Core.Common;
 using FSH.Framework.Core.Exceptions;
-using FSH.Framework.Core.Jobs;
-using FSH.Framework.Core.Mail;
-using FSH.Framework.Core.Storage;
-using FSH.Framework.Identity.Core.Roles;
-using FSH.Framework.Identity.Core.Users;
-using FSH.Framework.Identity.Infrastructure.Users;
-using FSH.Framework.Infrastructure.Constants;
+using FSH.Framework.Jobs.Services;
+using FSH.Framework.Mailing;
+using FSH.Framework.Mailing.Services;
 using FSH.Framework.Shared.Constants;
 using FSH.Framework.Shared.Multitenancy;
-using FSH.Modules.Common.Core.Caching;
-using FSH.Modules.Common.Core.Exceptions;
-using FSH.Modules.Common.Shared.Constants;
+using FSH.Framework.Storage;
+using FSH.Framework.Storage.DTOs;
+using FSH.Framework.Storage.Services;
+using FSH.Modules.Identity.Contracts.DTOs;
+using FSH.Modules.Identity.Contracts.Services;
 using FSH.Modules.Identity.Data;
 using FSH.Modules.Identity.Features.v1.Roles;
+using FSH.Modules.Identity.Features.v1.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
@@ -31,7 +32,7 @@ internal sealed partial class UserService(
     ICacheService cache,
     IJobService jobService,
     IMailService mailService,
-    IMultiTenantContextAccessor<FshTenantInfo> multiTenantContextAccessor,
+    IMultiTenantContextAccessor<AppTenantInfo> multiTenantContextAccessor,
     IStorageService storageService
     ) : IUserService
 {
@@ -254,7 +255,7 @@ internal sealed partial class UserService(
         string verificationUri = QueryHelpers.AddQueryString(endpointUri.ToString(), QueryStringKeys.UserId, user.Id);
         verificationUri = QueryHelpers.AddQueryString(verificationUri, QueryStringKeys.Code, code);
         verificationUri = QueryHelpers.AddQueryString(verificationUri,
-            MutiTenancyConstants.Identifier,
+            MultitenancyConstants.Identifier,
             multiTenantContextAccessor?.MultiTenantContext?.TenantInfo?.Id!);
         return verificationUri;
     }
@@ -274,9 +275,9 @@ internal sealed partial class UserService(
 
             // Check if user is not Root Tenant Admin
             // Edge Case : there are chances for other tenants to have users with the same email as that of Root Tenant Admin. Probably can add a check while User Registration
-            if (user.Email == MutiTenancyConstants.Root.EmailAddress)
+            if (user.Email == MultitenancyConstants.Root.EmailAddress)
             {
-                if (multiTenantContextAccessor?.MultiTenantContext?.TenantInfo?.Id == MutiTenancyConstants.Root.Id)
+                if (multiTenantContextAccessor?.MultiTenantContext?.TenantInfo?.Id == MultitenancyConstants.Root.Id)
                 {
                     throw new CustomException("action not permitted");
                 }

@@ -1,21 +1,18 @@
 ﻿using Asp.Versioning;
 using FSH.Framework.Core.Context;
-using FSH.Framework.Identity.Core.Roles;
-using FSH.Framework.Identity.Core.Tokens;
-using FSH.Framework.Identity.Core.Users;
-using FSH.Framework.Identity.Infrastructure.Tokens;
-using FSH.Framework.Identity.Infrastructure.Users;
 using FSH.Framework.Identity.v1.Tokens.TokenGeneration;
-using FSH.Framework.Infrastructure.Auth.Jwt;
-using FSH.Framework.Infrastructure.Identity.Roles;
-using FSH.Framework.Infrastructure.Identity.Roles.Endpoints;
 using FSH.Framework.Infrastructure.Identity.Users.Services;
 using FSH.Framework.Persistence;
 using FSH.Framework.Web.Modules;
 using FSH.Modules.Identity.Authorization;
 using FSH.Modules.Identity.Authorization.Jwt;
+using FSH.Modules.Identity.Contracts.Services;
 using FSH.Modules.Identity.Data;
 using FSH.Modules.Identity.Features.v1.Roles;
+using FSH.Modules.Identity.Features.v1.Roles.GetRole;
+using FSH.Modules.Identity.Features.v1.Roles.GetRoles;
+using FSH.Modules.Identity.Features.v1.Users;
+using FSH.Modules.Identity.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -37,7 +34,7 @@ public class IdentityModule : IModule
 
         services.AddScoped<CurrentUserMiddleware>();
         services.AddSingleton<IAuthorizationMiddlewareResultHandler, PathAwareAuthorizationHandler>();
-        services.AddScoped<ICurrentUser, CurrentUser>();
+        services.AddScoped<ICurrentUser, CurrentUserService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped(sp => (ICurrentUserInitializer)sp.GetRequiredService<ICurrentUser>());
         services.AddTransient<IUserService, UserService>();
@@ -71,7 +68,7 @@ public class IdentityModule : IModule
             .WithOpenApi()
             .WithApiVersionSet(apiVersionSet);
 
-        TokenGenerationEndpoint.Map(group).AllowAnonymous();
+        GenerateTokenEndpoint.MapGenerateTokenEndpoint(group).AllowAnonymous();
         GetRolesEndpoint.MapGetRolesEndpoint(group);
         GetRoleByIdEndpoint.MapGetRoleEndpoint(group);
     }

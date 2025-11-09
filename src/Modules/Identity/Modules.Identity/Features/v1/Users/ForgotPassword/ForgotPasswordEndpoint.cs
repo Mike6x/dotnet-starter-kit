@@ -1,22 +1,28 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
-using FSH.Framework.Identity.Core.Users;
-using FSH.Framework.Identity.Endpoints.v1.Users.ForgotPassword;
-using FSH.Modules.Common.Core.Origin;
-using FSH.Modules.Common.Shared.Constants;
+using FSH.Framework.Shared.Multitenancy;
+using FSH.Framework.Web.Origin;
+using FSH.Modules.Identity.Contracts.Services;
+using FSH.Modules.Identity.Contracts.v1.Users.ForgotPassword;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Options;
 
-namespace FSH.Framework.Infrastructure.Identity.Users.Endpoints;
+namespace FSH.Modules.Identity.Features.v1.Users.ForgotPassword;
 
 public static class ForgotPasswordEndpoint
 {
     internal static RouteHandlerBuilder MapForgotPasswordEndpoint(this IEndpointRouteBuilder endpoints)
     {
-        return endpoints.MapPost("/forgot-password", async (HttpRequest request, [FromHeader(Name = MutiTenancyConstants.Identifier)] string tenant, [FromBody] ForgotPasswordCommand command, IOptions<OriginOptions> settings, IValidator<ForgotPasswordCommand> validator, IUserService userService, CancellationToken cancellationToken) =>
+        return endpoints.MapPost("/forgot-password", async (HttpRequest request,
+            [FromHeader(Name = MultitenancyConstants.Identifier)] string tenant,
+            [FromBody] ForgotPasswordCommand command,
+            IOptions<OriginOptions> settings,
+            IValidator<ForgotPasswordCommand> validator,
+            IUserService userService,
+            CancellationToken cancellationToken) =>
         {
             ValidationResult result = await validator.ValidateAsync(command, cancellationToken);
             if (!result.IsValid)

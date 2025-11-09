@@ -1,4 +1,6 @@
-﻿namespace FSH.Framework.Identity.Core.Roles;
+﻿using FSH.Modules.Identity.Contracts.DTOs;
+
+namespace FSH.Modules.Identity.Contracts.Services;
 
 public interface IRoleService
 {

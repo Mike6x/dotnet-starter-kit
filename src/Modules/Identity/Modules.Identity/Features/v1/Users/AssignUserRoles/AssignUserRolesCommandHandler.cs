@@ -1,13 +1,15 @@
-﻿using FSH.Framework.Identity.Contracts.v1.Users.AssignUserRoles;
-using FSH.Framework.Identity.Core.Users;
-using FSH.Modules.Common.Core.Messaging.CQRS;
+﻿using FSH.Modules.Identity.Contracts.Services;
+using FSH.Modules.Identity.Contracts.v1.Users.AssignUserRoles;
+using Mediator;
 
-namespace FSH.Framework.Identity.v1.Users.AssignUserRoles;
+namespace FSH.Modules.Identity.Features.v1.Users.AssignUserRoles;
+
 internal sealed class AssignUserRolesCommandHandler(IUserService _userService)
     : ICommandHandler<AssignUserRolesCommand, string>
 {
-    public async Task<string> HandleAsync(
-        AssignUserRolesCommand request,
-        CancellationToken cancellationToken = default) =>
-        await _userService.AssignRolesAsync(request.UserId, request.UserRoles, cancellationToken);
+    public async ValueTask<string> Handle(AssignUserRolesCommand command, CancellationToken cancellationToken)
+    {
+        return await _userService.AssignRolesAsync(command.UserId, command.UserRoles, cancellationToken);
+    }
+
 }

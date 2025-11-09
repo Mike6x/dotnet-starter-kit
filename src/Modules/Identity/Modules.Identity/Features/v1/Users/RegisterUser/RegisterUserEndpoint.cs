@@ -1,11 +1,12 @@
-﻿using FSH.Framework.Identity.Core.Users;
-using FSH.Framework.Identity.Endpoints.v1.Users.RegisterUser;
-using FSH.Framework.Shared.Identity.Authorization;
+﻿using FSH.Framework.Shared.Identity.Authorization;
+using FSH.Modules.Identity.Contracts.Services;
+using FSH.Modules.Identity.Contracts.v1.Users.RegisterUser;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace FSH.Framework.Infrastructure.Identity.Users.Endpoints;
+namespace FSH.Modules.Identity.Features.v1.Users.RegisterUser;
+
 public static class RegisterUserEndpoint
 {
     internal static RouteHandlerBuilder MapRegisterUserEndpoint(this IEndpointRouteBuilder endpoints)

@@ -1,19 +1,20 @@
-﻿using FSH.Framework.Identity.Core.Users;
-using FSH.Framework.Identity.Endpoints.v1.Users.RegisterUser;
-using FSH.Framework.Shared.Identity.Authorization;
-using FSH.Modules.Common.Shared.Constants;
+﻿using FSH.Framework.Shared.Identity.Authorization;
+using FSH.Framework.Shared.Multitenancy;
+using FSH.Modules.Identity.Contracts.Services;
+using FSH.Modules.Identity.Contracts.v1.Users.RegisterUser;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 
 namespace FSH.Framework.Infrastructure.Identity.Users.Endpoints;
+
 public static class SelfRegisterUserEndpoint
 {
     internal static RouteHandlerBuilder MapSelfRegisterUserEndpoint(this IEndpointRouteBuilder endpoints)
     {
         return endpoints.MapPost("/self-register", (RegisterUserCommand request,
-            [FromHeader(Name = MutiTenancyConstants.Identifier)] string tenant,
+            [FromHeader(Name = MultitenancyConstants.Identifier)] string tenant,
             IUserService service,
             HttpContext context,
             CancellationToken cancellationToken) =>

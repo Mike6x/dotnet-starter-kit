@@ -1,9 +1,10 @@
-﻿using FSH.Framework.Core.Exceptions;
+﻿using FSH.Framework.Caching;
+using FSH.Framework.Core.Exceptions;
 using FSH.Framework.Shared.Constants;
-using FSH.Modules.Common.Core.Caching;
 using Microsoft.EntityFrameworkCore;
 
 namespace FSH.Framework.Infrastructure.Identity.Users.Services;
+
 internal sealed partial class UserService
 {
     public async Task<List<string>?> GetPermissionsAsync(string userId, CancellationToken cancellationToken)
@@ -23,7 +24,7 @@ internal sealed partial class UserService
                     .ToListAsync(cancellationToken))
                 {
                     permissions.AddRange(await db.RoleClaims
-                        .Where(rc => rc.RoleId == role.Id && rc.ClaimType == FshClaims.Permission)
+                        .Where(rc => rc.RoleId == role.Id && rc.ClaimType == ClaimConstants.Permission)
                         .Select(rc => rc.ClaimValue!)
                         .ToListAsync(cancellationToken));
                 }

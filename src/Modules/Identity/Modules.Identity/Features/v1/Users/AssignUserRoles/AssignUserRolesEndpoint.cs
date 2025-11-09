@@ -1,10 +1,11 @@
-﻿using FSH.Framework.Core.Messaging.CQRS;
-using FSH.Framework.Identity.Contracts.v1.Users.AssignUserRoles;
+﻿using FSH.Modules.Identity.Contracts.v1.Users.AssignUserRoles;
+using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace FSH.Framework.Identity.v1.Users.AssignUserRoles;
+namespace FSH.Modules.Identity.Features.v1.Users.AssignUserRoles;
+
 public static class AssignUserRolesEndpoint
 {
     internal static RouteHandlerBuilder MapEndpoint(this IEndpointRouteBuilder endpoints)
@@ -12,10 +13,10 @@ public static class AssignUserRolesEndpoint
         return endpoints.MapPost("/{id:guid}/roles", async (AssignUserRolesCommand command,
             HttpContext context,
             string id,
-            ICommandDispatcher dispatcher,
+            IMediator mediator,
             CancellationToken cancellationToken) =>
         {
-            var result = await dispatcher.SendAsync(command, cancellationToken);
+            var result = await mediator.Send(command, cancellationToken);
             return Results.Ok(result);
         })
         .WithName(nameof(AssignUserRolesEndpoint))

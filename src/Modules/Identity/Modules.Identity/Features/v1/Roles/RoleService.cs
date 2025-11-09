@@ -1,22 +1,20 @@
 ﻿using Finbuckle.MultiTenant.Abstractions;
+using FSH.Framework.Core.Context;
 using FSH.Framework.Core.Exceptions;
-using FSH.Framework.Core.ExecutionContext;
-using FSH.Framework.Identity.Core.Roles;
-using FSH.Framework.Identity.v1.RoleClaims;
 using FSH.Framework.Shared.Constants;
 using FSH.Framework.Shared.Multitenancy;
-using FSH.Modules.Common.Core.Exceptions;
-using FSH.Modules.Common.Shared.Constants;
+using FSH.Modules.Identity.Contracts.DTOs;
+using FSH.Modules.Identity.Contracts.Services;
 using FSH.Modules.Identity.Data;
-using FSH.Modules.Identity.Features.v1.Roles;
+using FSH.Modules.Identity.Features.v1.RoleClaims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace FSH.Framework.Infrastructure.Identity.Roles;
+namespace FSH.Modules.Identity.Features.v1.Roles;
 
 public class RoleService(RoleManager<FshRole> roleManager,
     IdentityDbContext context,
-    IMultiTenantContextAccessor<FshTenantInfo> multiTenantContextAccessor,
+    IMultiTenantContextAccessor<AppTenantInfo> multiTenantContextAccessor,
     ICurrentUser currentUser) : IRoleService
 {
     private readonly RoleManager<FshRole> _roleManager = roleManager;
@@ -71,7 +69,7 @@ public class RoleService(RoleManager<FshRole> roleManager,
         _ = role ?? throw new NotFoundException("role not found");
 
         role.Permissions = await context.RoleClaims
-            .Where(c => c.RoleId == id && c.ClaimType == FshClaims.Permission)
+            .Where(c => c.RoleId == id && c.ClaimType == ClaimConstants.Permission)
             .Select(c => c.ClaimValue!)
             .ToListAsync(cancellationToken);
 
@@ -87,7 +85,7 @@ public class RoleService(RoleManager<FshRole> roleManager,
             throw new CustomException("operation not permitted");
         }
 
-        if (multiTenantContextAccessor?.MultiTenantContext?.TenantInfo?.Id != MutiTenancyConstants.Root.Id)
+        if (multiTenantContextAccessor?.MultiTenantContext?.TenantInfo?.Id != MultitenancyConstants.Root.Id)
         {
             // Remove Root Permissions if the Role is not created for Root Tenant.
             permissions.RemoveAll(u => u.StartsWith("Permissions.Root.", StringComparison.InvariantCultureIgnoreCase));
@@ -114,7 +112,7 @@ public class RoleService(RoleManager<FshRole> roleManager,
                 context.RoleClaims.Add(new FshRoleClaim
                 {
                     RoleId = role.Id,
-                    ClaimType = FshClaims.Permission,
+                    ClaimType = ClaimConstants.Permission,
                     ClaimValue = permission,
                     CreatedBy = currentUser.GetUserId().ToString()
                 });

@@ -1,15 +1,16 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
-using FSH.Framework.Identity.Contracts.v1.Users.ChangePassword;
-using FSH.Framework.Identity.Core.Users;
-using FSH.Framework.Shared.Extensions;
-using FSH.Modules.Common.Core.Origin;
+using FSH.Framework.Shared.Identity.Claims;
+using FSH.Framework.Web.Origin;
+using FSH.Modules.Identity.Contracts.Services;
+using FSH.Modules.Identity.Contracts.v1.Users.ChangePassword;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Options;
 
-namespace FSH.Framework.Infrastructure.Identity.Users.Endpoints;
+namespace FSH.Modules.Identity.Features.v1.Users.ChangePassword;
+
 public static class ChangePasswordEndpoint
 {
     internal static RouteHandlerBuilder MapChangePasswordEndpoint(this IEndpointRouteBuilder endpoints)

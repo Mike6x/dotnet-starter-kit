@@ -1,8 +1,9 @@
 ﻿using FluentValidation;
-using FSH.Framework.Core.Storage;
-using FSH.Framework.Identity.Contracts.v1.Users.UpdateUser;
+using FSH.Framework.Storage;
+using FSH.Modules.Identity.Contracts.v1.Users.UpdateUser;
 
-namespace FSH.Framework.Identity.v1.Users.UpdateUser;
+namespace FSH.Modules.Identity.Features.v1.Users.UpdateUser;
+
 public class UpdateUserCommandValidator : AbstractValidator<UpdateUserCommand>
 {
     public UpdateUserCommandValidator()

@@ -1,7 +1,8 @@
-﻿using FSH.Framework.Shared.Identity.Claims;
+﻿using FSH.Framework.Shared.Constants;
 using System.Security.Claims;
 
 namespace FSH.Framework.Shared.Identity.Claims;
+
 public static class ClaimsPrincipalExtensions
 {
     // Retrieves the email claim

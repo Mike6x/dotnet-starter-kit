@@ -1,10 +1,11 @@
-﻿using FSH.Framework.Identity.Core.Roles;
-using FSH.Framework.Shared.Identity.Authorization;
+﻿using FSH.Framework.Shared.Identity.Authorization;
+using FSH.Modules.Identity.Contracts.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace FSH.Framework.Infrastructure.Identity.Roles.Endpoints;
+namespace FSH.Modules.Identity.Features.v1.Roles.GetRoles;
+
 public static class GetRolesEndpoint
 {
     public static RouteHandlerBuilder MapGetRolesEndpoint(this IEndpointRouteBuilder endpoints)

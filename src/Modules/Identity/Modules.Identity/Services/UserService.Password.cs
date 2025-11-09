@@ -1,11 +1,11 @@
 ﻿using FSH.Framework.Core.Exceptions;
-using FSH.Framework.Core.Mail;
-using FSH.Modules.Common.Core.Exceptions;
+using FSH.Framework.Mailing;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Collections.ObjectModel;
 using System.Text;
 
 namespace FSH.Framework.Infrastructure.Identity.Users.Services;
+
 internal sealed partial class UserService
 {
     public async Task ForgotPasswordAsync(string email, string origin, CancellationToken cancellationToken)
