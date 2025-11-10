@@ -17,7 +17,7 @@ public static class ResetPasswordEndpoint
         return endpoints.MapPost("/reset-password",
             async ([FromBody] ResetPasswordCommand command,
             [FromHeader(Name = MultitenancyConstants.Identifier)] string tenant,
-            IValidator<ResetPasswordCommand> validator,
+            [FromServices] IValidator<ResetPasswordCommand> validator,
             IUserService userService, CancellationToken cancellationToken) =>
         {
             ValidationResult result = await validator.ValidateAsync(command, cancellationToken);

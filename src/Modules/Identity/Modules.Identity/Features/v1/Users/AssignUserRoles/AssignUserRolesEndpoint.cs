@@ -8,7 +8,7 @@ namespace FSH.Modules.Identity.Features.v1.Users.AssignUserRoles;
 
 public static class AssignUserRolesEndpoint
 {
-    internal static RouteHandlerBuilder MapEndpoint(this IEndpointRouteBuilder endpoints)
+    internal static RouteHandlerBuilder MapAssignUserRolesEndpoint(this IEndpointRouteBuilder endpoints)
     {
         return endpoints.MapPost("/{id:guid}/roles", async (AssignUserRolesCommand command,
             HttpContext context,

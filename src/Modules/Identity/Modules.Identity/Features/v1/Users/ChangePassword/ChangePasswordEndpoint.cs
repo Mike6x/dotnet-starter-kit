@@ -6,6 +6,7 @@ using FSH.Modules.Identity.Contracts.Services;
 using FSH.Modules.Identity.Contracts.v1.Users.ChangePassword;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Options;
 
@@ -18,8 +19,8 @@ public static class ChangePasswordEndpoint
         return endpoints.MapPost("/change-password", async (ChangePasswordCommand command,
             HttpContext context,
             IOptions<OriginOptions> settings,
-            IValidator<ChangePasswordCommand> validator,
-            IUserService userService,
+            [FromServices] IValidator<ChangePasswordCommand> validator,
+             IUserService userService,
             CancellationToken cancellationToken) =>
         {
             ValidationResult result = await validator.ValidateAsync(command, cancellationToken);

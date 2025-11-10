@@ -1,6 +1,7 @@
 ﻿using Asp.Versioning;
 using FSH.Framework.Core.Context;
 using FSH.Framework.Identity.v1.Tokens.TokenGeneration;
+using FSH.Framework.Infrastructure.Identity.Users.Endpoints;
 using FSH.Framework.Infrastructure.Identity.Users.Services;
 using FSH.Framework.Persistence;
 using FSH.Framework.Storage.Local;
@@ -11,9 +12,26 @@ using FSH.Modules.Identity.Authorization.Jwt;
 using FSH.Modules.Identity.Contracts.Services;
 using FSH.Modules.Identity.Data;
 using FSH.Modules.Identity.Features.v1.Roles;
+using FSH.Modules.Identity.Features.v1.Roles.DeleteRole;
 using FSH.Modules.Identity.Features.v1.Roles.GetRole;
 using FSH.Modules.Identity.Features.v1.Roles.GetRoles;
+using FSH.Modules.Identity.Features.v1.Roles.GetRoleWithPermissions;
+using FSH.Modules.Identity.Features.v1.Roles.UpdateRolePermissions;
+using FSH.Modules.Identity.Features.v1.Roles.UpsertRole;
 using FSH.Modules.Identity.Features.v1.Users;
+using FSH.Modules.Identity.Features.v1.Users.AssignUserRoles;
+using FSH.Modules.Identity.Features.v1.Users.ChangePassword;
+using FSH.Modules.Identity.Features.v1.Users.ConfirmEmail;
+using FSH.Modules.Identity.Features.v1.Users.DeleteUser;
+using FSH.Modules.Identity.Features.v1.Users.GetUser;
+using FSH.Modules.Identity.Features.v1.Users.GetUserPermissions;
+using FSH.Modules.Identity.Features.v1.Users.GetUserProfile;
+using FSH.Modules.Identity.Features.v1.Users.GetUserRoles;
+using FSH.Modules.Identity.Features.v1.Users.GetUsers;
+using FSH.Modules.Identity.Features.v1.Users.RegisterUser;
+using FSH.Modules.Identity.Features.v1.Users.ResetPassword;
+using FSH.Modules.Identity.Features.v1.Users.ToggleUserStatus;
+using FSH.Modules.Identity.Features.v1.Users.UpdateUser;
 using FSH.Modules.Identity.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -71,8 +89,31 @@ public class IdentityModule : IModule
             .WithOpenApi()
             .WithApiVersionSet(apiVersionSet);
 
+        // tokens
         group.MapGenerateTokenEndpoint().AllowAnonymous();
-        group.MapGetRoleByIdEndpoint();
+
+        // roles
         group.MapGetRolesEndpoint();
+        group.MapGetRoleByIdEndpoint();
+        group.MapDeleteRoleEndpoint();
+        group.MapGetRolePermissionsEndpoint();
+        group.MapUpdateRolePermissionsEndpoint();
+        group.MapCreateOrUpdateRoleEndpoint();
+
+        // users
+        group.MapAssignUserRolesEndpoint();
+        group.MapChangePasswordEndpoint();
+        group.MapConfirmEmailEndpoint();
+        group.MapDeleteUserEndpoint();
+        group.MapGetUserEndpoint();
+        group.MapGetCurrentUserPermissionsEndpoint();
+        group.MapGetMeEndpoint();
+        group.MapGetUserRolesEndpoint();
+        group.MapGetUsersListEndpoint();
+        group.MapRegisterUserEndpoint();
+        group.MapResetPasswordEndpoint();
+        group.MapSelfRegisterUserEndpoint();
+        group.ToggleUserStatusEndpointEndpoint();
+        group.MapUpdateUserEndpoint();
     }
 }
