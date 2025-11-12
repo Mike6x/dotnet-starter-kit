@@ -29,9 +29,9 @@ public static class GenerateTokenEndpoint
                     ? TypedResults.Unauthorized()
                     : TypedResults.Ok(token);
             })
-            .WithName("GenerateToken")
-            .WithSummary("Generate access & refresh tokens")
-            .WithDescription("Accepts credentials and returns JWT access token plus refresh token.")
+            .WithName("IssueJwtTokens")
+            .WithSummary("Issue JWT access and refresh tokens")
+            .WithDescription("Submit credentials to receive a JWT access token and a refresh token. Provide the 'tenant' header to select the tenant context (defaults to 'root').")
             .Produces<TokenResponse>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status401Unauthorized)
             .Produces(StatusCodes.Status400BadRequest)
