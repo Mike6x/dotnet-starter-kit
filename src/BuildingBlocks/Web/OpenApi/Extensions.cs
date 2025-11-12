@@ -2,10 +2,11 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Scalar.AspNetCore;
 
 namespace FSH.Framework.Web.OpenApi;
+
 public static class Extensions
 {
     public static IServiceCollection EnableApiDocs(this IServiceCollection services, IConfiguration configuration)
@@ -45,23 +46,15 @@ public static class Extensions
 
                 // JWT Bearer security (for auth’d endpoints in Scalar)
                 document.Components ??= new OpenApiComponents();
-                document.Components.SecuritySchemes["Bearer"] = new OpenApiSecurityScheme
+                document.Components.SecuritySchemes ??= new Dictionary<string, IOpenApiSecurityScheme>();
+                document.Components.SecuritySchemes.Add("Bearer", new OpenApiSecurityScheme
                 {
-                    Type = SecuritySchemeType.Http,
-                    Scheme = "bearer",
-                    BearerFormat = "JWT",
-                    Description = "Input: Bearer {token}",
                     In = ParameterLocation.Header,
-                    Name = "Authorization"
-                };
-
-                document.SecurityRequirements.Add(new OpenApiSecurityRequirement
-                {
-                    [new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference
-                        { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
-                    }] = Array.Empty<string>()
+                    Scheme = "bearer",
+                    Description = "Input: Bearer {token}",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    BearerFormat = "JWT"
                 });
 
                 await Task.CompletedTask;
