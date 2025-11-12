@@ -2,16 +2,10 @@
 using System.Text;
 using System.Text.Json;
 
-namespace FSH.Modules.Auditing.Contracts;
+namespace FSH.Modules.Auditing;
 
 internal static class HttpBodyReader
 {
-    private static readonly JsonSerializerOptions JsonOpts = new()
-    {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        WriteIndented = false
-    };
-
     public static async Task<(object? preview, int size)> ReadRequestAsync(HttpContext ctx, int maxBytes, CancellationToken ct)
     {
         if (ctx.Request.Body is null || ctx.Request.ContentLength == 0) return (null, 0);

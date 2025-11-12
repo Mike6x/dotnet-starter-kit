@@ -1,10 +1,8 @@
-﻿using FSH.Modules.Auditing;
-using FSH.Modules.Auditing.Contracts;
-using FSH.Modules.Auditing.Persistence;
+﻿using FSH.Modules.Auditing.Contracts;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace FSH.Auditing.Storage;
+namespace FSH.Modules.Auditing.Persistence;
 
 /// <summary>
 /// Persists audit envelopes into SQL using EF Core.

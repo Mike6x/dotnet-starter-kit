@@ -1,9 +1,8 @@
 ﻿using FSH.Modules.Auditing.Contracts;
-using FSH.Modules.Auditing.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
-namespace FSH.Auditing;
+namespace FSH.Modules.Auditing.Persistence;
 
 /// <summary>
 /// Captures EF Core entity changes at SaveChanges to produce an EntityChange event.

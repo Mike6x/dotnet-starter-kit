@@ -1,5 +1,4 @@
-﻿using FSH.Auditing.Storage;
-using FSH.Framework.Persistence;
+﻿using FSH.Framework.Persistence;
 using FSH.Framework.Web.Modules;
 using FSH.Modules.Auditing.Contracts;
 using FSH.Modules.Auditing.Persistence;

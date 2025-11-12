@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using FSH.Modules.Auditing.Contracts;
+using Microsoft.AspNetCore.Http;
 using System.Diagnostics;
 using System.Security.Claims;
 
-namespace FSH.Modules.Auditing.Contracts;
+namespace FSH.Modules.Auditing;
 
 public sealed class HttpAuditScope : IAuditScope
 {

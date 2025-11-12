@@ -1,9 +1,8 @@
-﻿using System.Security.Cryptography;
-using System.Text;
+﻿using FSH.Modules.Auditing.Contracts;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
-namespace FSH.Modules.Auditing.Contracts;
+namespace FSH.Modules.Auditing;
 
 /// <summary>
 /// Simple masking by field-name convention or attributes.
@@ -55,12 +54,4 @@ public sealed class JsonMaskingService : IAuditMaskingService
 
     private static bool ShouldMask(string key)
         => _maskKeywords.Any(k => key.Contains(k, StringComparison.OrdinalIgnoreCase));
-
-    // Optionally hash instead of mask — demonstration:
-    private static string HashValue(string text)
-    {
-        using var sha = SHA256.Create();
-        var bytes = sha.ComputeHash(Encoding.UTF8.GetBytes(text));
-        return Convert.ToHexString(bytes[..8]) + "…";
-    }
 }

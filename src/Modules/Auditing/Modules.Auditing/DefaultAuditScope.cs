@@ -1,4 +1,6 @@
-﻿namespace FSH.Modules.Auditing.Contracts;
+﻿using FSH.Modules.Auditing.Contracts;
+
+namespace FSH.Modules.Auditing;
 
 /// <summary>
 /// Immutable, minimal scope implementation. Create per request/operation.

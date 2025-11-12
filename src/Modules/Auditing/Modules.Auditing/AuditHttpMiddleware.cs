@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿// Modules.Auditing/AuditHttpMiddleware.cs
+using FSH.Modules.Auditing.Contracts;
+using Microsoft.AspNetCore.Http;
 using System.Diagnostics;
 
-namespace FSH.Modules.Auditing.Contracts;
+namespace FSH.Modules.Auditing;
 
 public sealed class AuditHttpMiddleware
 {
@@ -22,15 +24,14 @@ public sealed class AuditHttpMiddleware
 
         var sw = Stopwatch.StartNew();
 
-        // Capture request body (optional)
         object? reqPreview = null;
         int reqSize = 0;
-        if (_opts.CaptureBodies && _opts.IsJsonLike(ctx.Request.ContentType))
+        if (_opts.CaptureBodies &&
+            ContentTypeHelper.IsJsonLike(ctx.Request.ContentType, _opts.AllowedContentTypes))
         {
             (reqPreview, reqSize) = await HttpBodyReader.ReadRequestAsync(ctx, _opts.MaxRequestBytes, ctx.RequestAborted);
         }
 
-        // Swap response body to capture
         var originalBody = ctx.Response.Body;
         await using var tee = new MemoryStream();
         await using var respBuffer = new MemoryStream();
@@ -44,21 +45,21 @@ public sealed class AuditHttpMiddleware
             object? respPreview = null;
             int respSize = 0;
 
-            if (_opts.CaptureBodies && _opts.IsJsonLike(ctx.Response.ContentType))
+            if (_opts.CaptureBodies &&
+                ContentTypeHelper.IsJsonLike(ctx.Response.ContentType, _opts.AllowedContentTypes))
             {
-                // copy tee -> buffer, then buffer -> original
                 tee.Position = 0;
                 await tee.CopyToAsync(respBuffer, ctx.RequestAborted);
-                (respPreview, respSize) = await HttpBodyReader.ReadResponseAsync(respBuffer, _opts.MaxResponseBytes, ctx.RequestAborted);
+                (respPreview, respSize) = await HttpBodyReader.ReadResponseAsync(
+                    respBuffer, _opts.MaxResponseBytes, ctx.RequestAborted);
             }
 
-            // write captured body back to client
             respBuffer.Position = 0;
             ctx.Response.Body = originalBody;
             if (respBuffer.Length > 0)
                 await respBuffer.CopyToAsync(originalBody, ctx.RequestAborted);
 
-            await Audit.ForActivity(ActivityKind.Http, ctx.GetRoutePattern() ?? ctx.Request.Path)
+            await Audit.ForActivity(Contracts.ActivityKind.Http, ctx.GetRoutePattern() ?? ctx.Request.Path)
                 .WithActivityResult(
                     statusCode: ctx.Response.StatusCode,
                     durationMs: (int)sw.Elapsed.TotalMilliseconds,
@@ -79,14 +80,14 @@ public sealed class AuditHttpMiddleware
             var sev = ExceptionSeverityClassifier.Classify(ex);
             if (sev >= _opts.MinExceptionSeverity)
             {
-                await Audit.ForException(ex, ExceptionArea.Api, routeOrLocation: ctx.GetRoutePattern() ?? ctx.Request.Path, severity: sev)
+                await Audit.ForException(ex, ExceptionArea.Api,
+                        routeOrLocation: ctx.GetRoutePattern() ?? ctx.Request.Path, severity: sev)
                     .WithSource("API")
                     .WithTenant((_publisher.CurrentScope?.TenantId) ?? null)
                     .WithUser(_publisher.CurrentScope?.UserId, _publisher.CurrentScope?.UserName)
                     .WriteAsync(ctx.RequestAborted);
             }
 
-            // Restore body before rethrowing
             ctx.Response.Body = originalBody;
             throw;
         }
@@ -98,14 +99,4 @@ public sealed class AuditHttpMiddleware
         return _opts.ExcludePathStartsWith.Any(prefix =>
             path.StartsWith(prefix, StringComparison.OrdinalIgnoreCase));
     }
-}
-
-internal static class HttpContextRoutingExtensions
-{
-    public static string? GetRoutePattern(this HttpContext ctx)
-        => ctx.GetEndpoint() switch
-        {
-            Microsoft.AspNetCore.Routing.RouteEndpoint re => re.RoutePattern.RawText,
-            _ => null
-        };
 }

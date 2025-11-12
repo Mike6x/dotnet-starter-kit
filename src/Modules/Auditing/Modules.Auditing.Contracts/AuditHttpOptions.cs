@@ -1,6 +1,4 @@
-﻿using Microsoft.Net.Http.Headers;
-
-namespace FSH.Modules.Auditing.Contracts;
+﻿namespace FSH.Modules.Auditing.Contracts;
 
 public sealed class AuditHttpOptions
 {
@@ -22,11 +20,4 @@ public sealed class AuditHttpOptions
         };
 
     public AuditSeverity MinExceptionSeverity { get; set; } = AuditSeverity.Error;
-
-    internal bool IsJsonLike(string? contentType)
-    {
-        if (string.IsNullOrWhiteSpace(contentType)) return false;
-        var parsed = new MediaTypeHeaderValue(contentType);
-        return AllowedContentTypes.Contains(parsed.MediaType.Value ?? "");
-    }
 }

@@ -1,6 +1,7 @@
-﻿using System.Threading.Channels;
+﻿using FSH.Modules.Auditing.Contracts;
+using System.Threading.Channels;
 
-namespace FSH.Modules.Auditing.Contracts;
+namespace FSH.Modules.Auditing;
 
 /// <summary>
 /// Non-blocking publisher using a bounded channel. Writer is used on request path; reader is drained by a background worker.

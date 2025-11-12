@@ -1,6 +1,7 @@
-﻿using System.Diagnostics;
+﻿using FSH.Modules.Auditing.Contracts;
+using System.Diagnostics;
 
-namespace FSH.Modules.Auditing.Contracts;
+namespace FSH.Modules.Auditing;
 
 /// <summary>
 /// Fluent entry-point to create and publish audit events.
@@ -40,7 +41,7 @@ public static class Audit
                 ? AuditSeverity.Warning : AuditSeverity.Information,
             payload: new SecurityEventPayload(action, null, null, null, null, null));
 
-    public static Builder ForActivity(ActivityKind kind, string name)
+    public static Builder ForActivity(Contracts.ActivityKind kind, string name)
         => new Builder(
             eventType: AuditEventType.Activity,
             severity: AuditSeverity.Information,
