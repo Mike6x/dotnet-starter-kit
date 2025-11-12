@@ -14,9 +14,9 @@ public static class GetTenantsEndpoint
     {
         return endpoints.MapGet("/", (IMediator mediator)
             => mediator.Send(new GetTenantsQuery()))
-                                .WithName(nameof(GetTenantsEndpoint))
-                                .WithSummary("get tenants")
+                                .WithName("ListTenants")
+                                .WithSummary("List tenants")
                                 .RequirePermission(MultitenancyConstants.Permissions.View)
-                                .WithDescription("get tenants");
+                                .WithDescription("Retrieve all tenants.");
     }
 }

@@ -13,9 +13,9 @@ public static class ConfirmEmailEndpoint
         {
             return service.ConfirmEmailAsync(userId, code, tenant, default);
         })
-        .WithName(nameof(ConfirmEmailEndpoint))
-        .WithSummary("confirm user email")
-        .WithDescription("confirm user email")
+        .WithName("ConfirmEmail")
+        .WithSummary("Confirm user email")
+        .WithDescription("Confirm a user's email address.")
         .AllowAnonymous();
     }
 }

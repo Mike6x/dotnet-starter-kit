@@ -28,9 +28,9 @@ public static class UpdateUserEndpoint
                 request.Image,
                 request.DeleteCurrentImage);
         })
-        .WithName(nameof(UpdateUserEndpoint))
-        .WithSummary("update user profile")
+        .WithName("UpdateUserProfile")
+        .WithSummary("Update user profile")
         .RequirePermission("Permissions.Users.Update")
-        .WithDescription("update user profile");
+        .WithDescription("Update profile details for the authenticated user.");
     }
 }

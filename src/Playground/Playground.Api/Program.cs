@@ -1,6 +1,7 @@
 ﻿using FSH.Framework.Tenant.Features.v1.GetTenantById;
 using FSH.Framework.Web;
 using FSH.Framework.Web.Modules;
+using FSH.Modules.Auditing;
 using FSH.Modules.Identity;
 using FSH.Modules.Identity.Contracts.v1.Tokens.TokenGeneration;
 using FSH.Modules.Identity.Features.v1.Tokens.TokenGeneration;
@@ -23,7 +24,8 @@ builder.Services.AddMediator(o =>
 var moduleAssemblies = new Assembly[]
 {
     typeof(IdentityModule).Assembly,
-    typeof(MultitenancyModule).Assembly
+    typeof(MultitenancyModule).Assembly,
+    typeof(AuditingModule).Assembly
 };
 
 builder.AddFshPlatform(o =>

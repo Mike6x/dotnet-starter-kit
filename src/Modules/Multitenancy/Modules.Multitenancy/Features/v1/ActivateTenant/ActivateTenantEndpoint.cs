@@ -14,9 +14,9 @@ public static class ActivateTenantEndpoint
     {
         return endpoints.MapPost("/{id}/activate", async ([FromServices] IMediator mediator, string id)
             => await mediator.Send(new ActivateTenantCommand(id)))
-                                .WithName(nameof(ActivateTenantEndpoint))
-                                .WithSummary("Activate Tenant")
+                                .WithName("ActivateTenant")
+                                .WithSummary("Activate tenant")
                                 .RequirePermission("Permissions.Tenants.Update")
-                                .WithDescription("Activate Tenant");
+                                .WithDescription("Activate a tenant.");
     }
 }

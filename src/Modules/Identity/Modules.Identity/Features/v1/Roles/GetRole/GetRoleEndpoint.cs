@@ -14,9 +14,9 @@ public static class GetRoleByIdEndpoint
         {
             return await roleService.GetRoleAsync(id);
         })
-        .WithName(nameof(GetRoleByIdEndpoint))
-        .WithSummary("Get role details by ID")
+        .WithName("GetRole")
+        .WithSummary("Get role by ID")
         .RequirePermission("Permissions.Roles.View")
-        .WithDescription("Retrieve the details of a role by its ID.");
+        .WithDescription("Retrieve details of a specific role by its unique identifier.");
     }
 }

@@ -21,8 +21,8 @@ public static class GetUserProfileEndpoint
 
             return await service.GetAsync(userId, cancellationToken);
         })
-        .WithName("GetMeEndpoint")
-        .WithSummary("Get current user information based on token")
-        .WithDescription("Get current user information based on token");
+        .WithName("GetCurrentUserProfile")
+        .WithSummary("Get current user profile")
+        .WithDescription("Retrieve the authenticated user's profile from the access token.");
     }
 }

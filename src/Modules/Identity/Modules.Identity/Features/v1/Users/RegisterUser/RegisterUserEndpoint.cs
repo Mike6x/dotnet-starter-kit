@@ -27,9 +27,9 @@ public static class RegisterUserEndpoint
                 origin,
                 cancellationToken);
         })
-        .WithName(nameof(RegisterUserEndpoint))
-        .WithSummary("register user")
+        .WithName("RegisterUser")
+        .WithSummary("Register user")
         .RequirePermission("Permissions.Users.Create")
-        .WithDescription("register user");
+        .WithDescription("Create a new user account.");
     }
 }

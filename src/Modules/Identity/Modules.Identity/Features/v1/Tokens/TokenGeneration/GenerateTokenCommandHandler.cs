@@ -1,25 +1,96 @@
-﻿using FSH.Modules.Identity.Contracts.DTOs;
+﻿using FSH.Modules.Auditing.Contracts;
+using FSH.Modules.Identity.Contracts.DTOs;
 using FSH.Modules.Identity.Contracts.Services;
 using FSH.Modules.Identity.Contracts.v1.Tokens.TokenGeneration;
 using Mediator;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace FSH.Modules.Identity.Features.v1.Tokens.TokenGeneration;
 
-public sealed class GenerateTokenCommandHandler(IIdentityService identityService, ITokenService tokenService)
+public sealed class GenerateTokenCommandHandler
     : ICommandHandler<GenerateTokenCommand, TokenResponse>
 {
+    private readonly IIdentityService _identityService;
+    private readonly ITokenService _tokenService;
+    private readonly ISecurityAudit _securityAudit;
+    private readonly IHttpContextAccessor _http;
 
-    public async ValueTask<TokenResponse> Handle(GenerateTokenCommand request, CancellationToken cancellationToken)
+    public GenerateTokenCommandHandler(
+        IIdentityService identityService,
+        ITokenService tokenService,
+        ISecurityAudit securityAudit,
+        IHttpContextAccessor http)
+    {
+        _identityService = identityService;
+        _tokenService = tokenService;
+        _securityAudit = securityAudit;
+        _http = http;
+    }
+
+    public async ValueTask<TokenResponse> Handle(
+        GenerateTokenCommand request,
+        CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        var identityResult = await identityService.ValidateCredentialsAsync(request.Email, request.Password, cancellationToken);
+        // Gather context for auditing
+        var http = _http.HttpContext;
+        var ip = http?.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+        var ua = http?.Request.Headers.UserAgent.ToString() ?? "unknown";
+        var clientId = http?.Request.Headers["X-Client-Id"].ToString();
+        if (string.IsNullOrWhiteSpace(clientId)) clientId = "web";
+
+        // Validate credentials
+        var identityResult = await _identityService
+            .ValidateCredentialsAsync(request.Email, request.Password, cancellationToken);
 
         if (identityResult is null)
-            throw new UnauthorizedAccessException("Invalid credentials.");
+        {
+            // 1) Audit failed login BEFORE throwing
+            await _securityAudit.LoginFailedAsync(
+                subjectIdOrName: request.Email,
+                clientId: clientId!,
+                reason: "InvalidCredentials",
+                ip: ip,
+                ct: cancellationToken);
 
+            throw new UnauthorizedAccessException("Invalid credentials.");
+        }
+
+        // Unpack subject + claims
         var (subject, claims) = identityResult.Value;
 
-        return await tokenService.IssueAsync(subject, claims, null, cancellationToken);
+        // 2) Audit successful login
+        await _securityAudit.LoginSucceededAsync(
+            userId: subject,
+            userName: claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value ?? request.Email,
+            clientId: clientId!,
+            ip: ip,
+            userAgent: ua,
+            ct: cancellationToken);
+
+        // Issue token
+        var token = await _tokenService.IssueAsync(subject, claims, /*extra*/ null, cancellationToken);
+
+        // 3) Audit token issuance with a fingerprint (never raw token)
+        var fingerprint = Sha256Short(token.AccessToken);
+        await _securityAudit.TokenIssuedAsync(
+            userId: subject,
+            userName: claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value ?? request.Email,
+            clientId: clientId!,
+            tokenFingerprint: fingerprint,
+            expiresUtc: token.AccessTokenExpiresAt,
+            ct: cancellationToken);
+
+        return token;
+    }
+
+    private static string Sha256Short(string value)
+    {
+        using var sha = System.Security.Cryptography.SHA256.Create();
+        var hash = sha.ComputeHash(System.Text.Encoding.UTF8.GetBytes(value));
+        // short printable fingerprint; store only this
+        return Convert.ToHexString(hash.AsSpan(0, 8));
     }
 }

@@ -23,9 +23,9 @@ public static class UpdateRolePermissionsEndpoint
             var response = await roleService.UpdatePermissionsAsync(request.RoleId, request.Permissions);
             return Results.Ok(response);
         })
-        .WithName(nameof(UpdateRolePermissionsEndpoint))
-        .WithSummary("update role permissions")
+        .WithName("UpdateRolePermissions")
+        .WithSummary("Update role permissions")
         .RequirePermission("Permissions.Roles.Create")
-        .WithDescription("update role permissions");
+        .WithDescription("Replace the set of permissions assigned to a role.");
     }
 }

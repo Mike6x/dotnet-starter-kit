@@ -5,4 +5,9 @@
 		<AssemblyName>FSH.Modules.Auditing</AssemblyName>
 	</PropertyGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\..\..\BuildingBlocks\Persistence\Persistence.csproj" />
+	  <ProjectReference Include="..\Modules.Auditing.Contracts\Modules.Auditing.Contracts.csproj" />
+	</ItemGroup>
+
 </Project>

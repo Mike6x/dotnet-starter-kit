@@ -14,9 +14,9 @@ public static class GetUserEndpoint
         {
             return service.GetAsync(id, CancellationToken.None);
         })
-        .WithName(nameof(GetUserEndpoint))
-        .WithSummary("Get user profile by ID")
+        .WithName("GetUser")
+        .WithSummary("Get user by ID")
         .RequirePermission("Permissions.Users.View")
-        .WithDescription("Get another user's profile details by user ID.");
+        .WithDescription("Retrieve a user's profile details by unique user identifier.");
     }
 }

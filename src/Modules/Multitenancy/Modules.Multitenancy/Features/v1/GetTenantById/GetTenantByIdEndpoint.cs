@@ -13,9 +13,9 @@ public static class GetTenantByIdEndpoint
     {
         return endpoints.MapGet("/{id}", (IMediator mediator, string id)
             => mediator.Send(new GetTenantByIdQuery(id)))
-                                .WithName(nameof(GetTenantByIdEndpoint))
-                                .WithSummary("get tenant by id")
+                                .WithName("GetTenant")
+                                .WithSummary("Get tenant")
                                 .RequirePermission("Permissions.Tenants.View")
-                                .WithDescription("get tenant by id");
+                                .WithDescription("Retrieve tenant details by unique identifier.");
     }
 }

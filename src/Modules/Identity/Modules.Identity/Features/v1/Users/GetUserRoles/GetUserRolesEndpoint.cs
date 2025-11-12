@@ -14,9 +14,9 @@ public static class GetUserRolesEndpoint
         {
             return service.GetUserRolesAsync(id, CancellationToken.None);
         })
-        .WithName(nameof(GetUserRolesEndpoint))
-        .WithSummary("get user roles")
+        .WithName("GetUserRoles")
+        .WithSummary("Get user roles")
         .RequirePermission("Permissions.Users.View")
-        .WithDescription("get user roles");
+        .WithDescription("Retrieve the roles assigned to a specific user.");
     }
 }

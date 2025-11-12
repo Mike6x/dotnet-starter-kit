@@ -30,10 +30,10 @@ public static class SelfRegisterUserEndpoint
                 origin,
                 cancellationToken);
         })
-        .WithName(nameof(SelfRegisterUserEndpoint))
-        .WithSummary("self register user")
+        .WithName("SelfRegisterUser")
+        .WithSummary("Self register user")
         .RequirePermission("Permissions.Users.Create")
-        .WithDescription("self register user")
+        .WithDescription("Allow a user to self-register.")
         .AllowAnonymous();
     }
 }

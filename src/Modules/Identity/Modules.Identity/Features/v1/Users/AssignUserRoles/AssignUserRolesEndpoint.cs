@@ -19,8 +19,8 @@ public static class AssignUserRolesEndpoint
             var result = await mediator.Send(command, cancellationToken);
             return Results.Ok(result);
         })
-        .WithName(nameof(AssignUserRolesEndpoint))
-        .WithSummary("assign roles")
-        .WithDescription("assign roles");
+        .WithName("AssignUserRoles")
+        .WithSummary("Assign roles to user")
+        .WithDescription("Assign one or more roles to a user.");
     }
 }

@@ -4,4 +4,4 @@ public sealed record TokenResponse(
     string AccessToken,
     string RefreshToken,
     DateTime RefreshTokenExpiresAt,
-    DateTime? AccessTokenExpiresAt = null);
+    DateTime AccessTokenExpiresAt);

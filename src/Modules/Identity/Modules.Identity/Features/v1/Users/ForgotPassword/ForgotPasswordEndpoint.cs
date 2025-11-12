@@ -42,9 +42,9 @@ public static class ForgotPasswordEndpoint
             await userService.ForgotPasswordAsync(command.Email, origin.OriginUrl.ToString(), cancellationToken);
             return Results.Ok("Password reset email sent.");
         })
-        .WithName(nameof(ForgotPasswordEndpoint))
-        .WithSummary("Forgot password")
-        .WithDescription("Generates a password reset token and sends it via email.")
+        .WithName("RequestPasswordReset")
+        .WithSummary("Request password reset")
+        .WithDescription("Generate a password reset token and send it via email.")
         .AllowAnonymous();
     }
 

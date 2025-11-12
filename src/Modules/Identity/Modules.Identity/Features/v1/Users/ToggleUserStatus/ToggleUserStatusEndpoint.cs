@@ -26,9 +26,9 @@ public static class ToggleUserStatusEndpoint
             await userService.ToggleStatusAsync(command.ActivateUser, command.UserId, cancellationToken);
             return Results.Ok();
         })
-        .WithName(nameof(ToggleUserStatusEndpoint))
-        .WithSummary("Toggle a user's active status")
-        .WithDescription("Toggle a user's active status")
+        .WithName("ToggleUserStatus")
+        .WithSummary("Toggle user status")
+        .WithDescription("Activate or deactivate a user account.")
         .AllowAnonymous();
     }
 

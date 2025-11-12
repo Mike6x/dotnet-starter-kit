@@ -14,9 +14,9 @@ public static class UpgradeTenantEndpoint
     {
         return endpoints.MapPost("/upgrade", ([FromBody] UpgradeTenantCommand command, IMediator dispatcher)
             => dispatcher.Send(command))
-                            .WithName(nameof(UpgradeTenantEndpoint))
-                            .WithSummary("upgrade tenant subscription")
+                            .WithName("UpgradeTenant")
+                            .WithSummary("Upgrade tenant subscription")
                             .RequirePermission("Permissions.Tenants.Update")
-                            .WithDescription("upgrade tenant subscription");
+                            .WithDescription("Extend or upgrade a tenant's subscription.");
     }
 }

@@ -14,9 +14,9 @@ public static class GetRolesEndpoint
         {
             return await roleService.GetRolesAsync();
         })
-        .WithName(nameof(GetRolesEndpoint))
-        .WithSummary("Get a list of all roles")
+        .WithName("ListRoles")
+        .WithSummary("List all roles")
         .RequirePermission("Permissions.Roles.View")
-        .WithDescription("Retrieve a list of all roles available in the system.");
+        .WithDescription("Retrieve all roles available for the current tenant.");
     }
 }

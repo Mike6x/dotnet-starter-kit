@@ -16,9 +16,9 @@ public static class CreateOrUpdateRoleEndpoint
         {
             return await roleService.CreateOrUpdateRoleAsync(request.Id, request.Name, request.Description);
         })
-        .WithName(nameof(CreateOrUpdateRoleEndpoint))
-        .WithSummary("Create or update a role")
+        .WithName("CreateOrUpdateRole")
+        .WithSummary("Create or update role")
         .RequirePermission("Permissions.Roles.Create")
-        .WithDescription("Create a new role or update an existing role.");
+        .WithDescription("Create a new role or update an existing role's name and description.");
     }
 }

@@ -14,9 +14,9 @@ public static class GetRolePermissionsEndpoint
         {
             return await roleService.GetWithPermissionsAsync(id, cancellationToken);
         })
-        .WithName(nameof(GetRolePermissionsEndpoint))
-        .WithSummary("get role permissions")
+        .WithName("GetRolePermissions")
+        .WithSummary("Get role permissions")
         .RequirePermission("Permissions.Roles.View")
-        .WithDescription("get role permissions");
+        .WithDescription("Retrieve a role along with its assigned permissions.");
     }
 }

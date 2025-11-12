@@ -77,7 +77,6 @@ public sealed class MultitenancyModule : IModule
 
         var group = endpoints.MapGroup("api/v{version:apiVersion}/tenants")
             .WithTags("Tenants")
-            .WithOpenApi()
             .WithApiVersionSet(versionSet);
 
         DisableTenantEndpoint.Map(group);

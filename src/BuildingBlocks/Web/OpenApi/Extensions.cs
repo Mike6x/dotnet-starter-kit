@@ -20,6 +20,7 @@ public static class Extensions
         // Minimal OpenAPI generator (ASP.NET Core 8)
         services.AddOpenApi(options =>
         {
+            options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
             options.AddDocumentTransformer(async (document, context, ct) =>
             {
                 var provider = context.ApplicationServices;
@@ -43,20 +44,6 @@ public static class Extensions
                         Url = openApi.License.Url
                     }
                 };
-
-                // JWT Bearer security (for auth’d endpoints in Scalar)
-                document.Components ??= new OpenApiComponents();
-                document.Components.SecuritySchemes ??= new Dictionary<string, IOpenApiSecurityScheme>();
-                document.Components.SecuritySchemes.Add("Bearer", new OpenApiSecurityScheme
-                {
-                    In = ParameterLocation.Header,
-                    Scheme = "bearer",
-                    Description = "Input: Bearer {token}",
-                    Name = "Authorization",
-                    Type = SecuritySchemeType.ApiKey,
-                    BearerFormat = "JWT"
-                });
-
                 await Task.CompletedTask;
             });
         });

@@ -21,8 +21,8 @@ public static class GetUserPermissionsEndpoint
 
             return await service.GetPermissionsAsync(userId, cancellationToken);
         })
-        .WithName("GetUserPermissions")
+        .WithName("GetCurrentUserPermissions")
         .WithSummary("Get current user permissions")
-        .WithDescription("Get current user permissions");
+        .WithDescription("Retrieve permissions for the authenticated user.");
     }
 }

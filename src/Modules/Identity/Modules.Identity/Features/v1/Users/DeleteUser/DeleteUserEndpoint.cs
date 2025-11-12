@@ -14,9 +14,9 @@ public static class DeleteUserEndpoint
         {
             return service.DeleteAsync(id);
         })
-        .WithName(nameof(DeleteUserEndpoint))
-        .WithSummary("delete user profile")
+        .WithName("DeleteUser")
+        .WithSummary("Delete user")
         .RequirePermission("Permissions.Users.Delete")
-        .WithDescription("delete user profile");
+        .WithDescription("Delete a user by unique identifier.");
     }
 }

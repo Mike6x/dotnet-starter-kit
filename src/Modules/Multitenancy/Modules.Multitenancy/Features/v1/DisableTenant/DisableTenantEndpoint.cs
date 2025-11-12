@@ -13,9 +13,9 @@ public static class DisableTenantEndpoint
     {
         return endpoints.MapPost("/{id}/deactivate", (IMediator mediator, string id)
             => mediator.Send(new DisableTenantCommand(id)))
-                                .WithName(nameof(DisableTenantEndpoint))
-                                .WithSummary("deactivate tenant")
+                                .WithName("DeactivateTenant")
+                                .WithSummary("Deactivate tenant")
                                 .RequirePermission("Permissions.Tenants.Update")
-                                .WithDescription("deactivate tenant");
+                                .WithDescription("Deactivate a tenant.");
     }
 }

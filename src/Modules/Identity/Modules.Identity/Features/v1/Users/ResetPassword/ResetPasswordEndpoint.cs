@@ -29,9 +29,9 @@ public static class ResetPasswordEndpoint
             await userService.ResetPasswordAsync(command.Email, command.Password, command.Token, cancellationToken);
             return Results.Ok("Password has been reset.");
         })
-        .WithName(nameof(ResetPasswordEndpoint))
+        .WithName("ResetPassword")
         .WithSummary("Reset password")
-        .WithDescription("Resets the password using the token and new password provided.")
+        .WithDescription("Reset the user's password using the provided verification token.")
         .AllowAnonymous();
     }
 
