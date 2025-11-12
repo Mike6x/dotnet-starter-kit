@@ -12,60 +12,122 @@ using FSH.Framework.Web.Origin;
 using FSH.Framework.Web.Versioning;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
-using System.Reflection;
 
 namespace FSH.Framework.Web;
 
 public static class Extensions
 {
-    public static IHostApplicationBuilder UseFullStackHero(this IHostApplicationBuilder builder, params Assembly[] moduleAssemblies)
+    public static IHostApplicationBuilder AddFshPlatform(this IHostApplicationBuilder builder, Action<FshPlatformOptions>? configure = null)
     {
         ArgumentNullException.ThrowIfNull(builder);
+
+        var options = new FshPlatformOptions();
+        configure?.Invoke(options);
+
         builder.AddHeroLogging();
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddDatabaseOptions(builder.Configuration);
-        builder.Services.EnableCors(builder.Configuration);
+
+        if (options.EnableCors)
+        {
+            builder.Services.EnableCors(builder.Configuration);
+        }
+
         builder.Services.AddHeroVersioning();
-        builder.Services.EnableApiDocs(builder.Configuration);
+
+        if (options.EnableOpenApi)
+        {
+            builder.Services.EnableApiDocs(builder.Configuration);
+        }
+
         builder.Services.AddHealthChecks().AddCheck("self", () => HealthCheckResult.Healthy());
-        builder.Services.AddFshJobs();
-        builder.Services.AddHeroMailing();
-        builder.Services.AddHeroCaching(builder.Configuration);
+
+        if (options.EnableJobs)
+        {
+            builder.Services.AddFshJobs();
+        }
+
+        if (options.EnableMailing)
+        {
+            builder.Services.AddHeroMailing();
+        }
+
+        if (options.EnableCaching)
+        {
+            builder.Services.AddHeroCaching(builder.Configuration);
+        }
+
         builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
         builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         builder.Services.AddProblemDetails();
         builder.Services.AddOptions<OriginOptions>().BindConfiguration(nameof(OriginOptions));
-        builder.AddModules(moduleAssemblies);
+
         return builder;
     }
 
-    public static WebApplication ConfigureFullStackHero(this WebApplication app)
+
+    public static WebApplication UseFshPlatform(this WebApplication app, Action<FshPipelineOptions>? configure = null)
     {
+        ArgumentNullException.ThrowIfNull(app);
+
+        var options = new FshPipelineOptions();
+        configure?.Invoke(options);
+
         app.UseExceptionHandler();
         app.UseHttpsRedirection();
-        app.ExposeCors();
-        app.UseRouting();
-        app.ExposeApiDocs();
-        app.UseStaticFiles();
-        var assetsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-        if (!Directory.Exists(assetsPath))
+
+        if (options.UseCors)
         {
-            Directory.CreateDirectory(assetsPath);
+            app.ExposeCors();
         }
-        app.UseStaticFiles(new StaticFileOptions()
+
+        app.UseRouting();
+
+        if (options.UseOpenApi)
         {
-            FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")),
-            RequestPath = new PathString("/wwwroot"),
-        });
-        app.UseStaticFiles();
+            app.ExposeApiDocs();
+        }
+
+        if (options.ServeStaticFiles)
+        {
+            var assetsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            if (!Directory.Exists(assetsPath))
+            {
+                Directory.CreateDirectory(assetsPath);
+            }
+
+            // Single static files registration is sufficient; default serves from wwwroot
+            app.UseStaticFiles();
+        }
+
         app.UseAuthentication();
         app.UseAuthorization();
-        app.MapModules();
+
+        if (options.MapModules)
+        {
+            app.MapModules();
+        }
+
         return app;
     }
+}
+
+public sealed class FshPlatformOptions
+{
+    public bool EnableCors { get; set; } = true;
+    public bool EnableOpenApi { get; set; } = true;
+    public bool EnableCaching { get; set; } = false;
+    public bool EnableJobs { get; set; } = false;
+    public bool EnableMailing { get; set; } = false;
+}
+
+public sealed class FshPipelineOptions
+{
+    public bool UseCors { get; set; } = true;
+    public bool UseOpenApi { get; set; } = true;
+    public bool ServeStaticFiles { get; set; } = true;
+    public bool MapModules { get; set; } = true;
 }

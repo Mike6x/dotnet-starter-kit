@@ -1,5 +1,6 @@
 ﻿using FSH.Framework.Tenant.Features.v1.GetTenantById;
 using FSH.Framework.Web;
+using FSH.Framework.Web.Modules;
 using FSH.Modules.Identity;
 using FSH.Modules.Identity.Contracts.v1.Tokens.TokenGeneration;
 using FSH.Modules.Identity.Features.v1.Tokens.TokenGeneration;
@@ -24,12 +25,22 @@ var moduleAssemblies = new Assembly[]
     typeof(IdentityModule).Assembly,
     typeof(MultitenancyModule).Assembly
 };
-builder.UseFullStackHero(moduleAssemblies);
+
+builder.AddFshPlatform(o =>
+{
+    o.EnableCors = true;
+    o.EnableOpenApi = true;
+    o.EnableCaching = true;
+    o.EnableMailing = true;
+    o.EnableJobs = true;
+});
+
+builder.AddModules(moduleAssemblies);
 
 
 
 var app = builder.Build();
 app.ConfigureMultiTenantDatabases();
-app.ConfigureFullStackHero();
+app.UseFshPlatform(p => { p.MapModules = true; });
 app.MapGet("/", () => "hello world!").WithTags("PlayGround").AllowAnonymous();
 await app.RunAsync();
