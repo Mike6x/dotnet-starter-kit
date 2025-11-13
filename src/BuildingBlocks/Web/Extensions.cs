@@ -22,7 +22,7 @@ namespace FSH.Framework.Web;
 
 public static class Extensions
 {
-    public static IHostApplicationBuilder AddFshPlatform(this IHostApplicationBuilder builder, Action<FshPlatformOptions>? configure = null)
+    public static IHostApplicationBuilder AddHeroPlatform(this IHostApplicationBuilder builder, Action<FshPlatformOptions>? configure = null)
     {
         ArgumentNullException.ThrowIfNull(builder);
 
@@ -31,26 +31,26 @@ public static class Extensions
 
         builder.AddHeroLogging();
         builder.Services.AddHttpContextAccessor();
-        builder.Services.AddDatabaseOptions(builder.Configuration);
+        builder.Services.AddHeroDatabaseOptions(builder.Configuration);
         builder.Services.AddHeroRateLimiting(builder.Configuration);
 
         if (options.EnableCors)
         {
-            builder.Services.EnableCors(builder.Configuration);
+            builder.Services.AddHeroCors(builder.Configuration);
         }
 
         builder.Services.AddHeroVersioning();
 
         if (options.EnableOpenApi)
         {
-            builder.Services.EnableApiDocs(builder.Configuration);
+            builder.Services.AddHeroOpenApi(builder.Configuration);
         }
 
         builder.Services.AddHealthChecks().AddCheck("self", () => HealthCheckResult.Healthy());
 
         if (options.EnableJobs)
         {
-            builder.Services.AddFshJobs();
+            builder.Services.AddHeroJobs();
         }
 
         if (options.EnableMailing)
@@ -72,7 +72,7 @@ public static class Extensions
     }
 
 
-    public static WebApplication UseFshPlatform(this WebApplication app, Action<FshPipelineOptions>? configure = null)
+    public static WebApplication UseHeroPlatform(this WebApplication app, Action<FshPipelineOptions>? configure = null)
     {
         ArgumentNullException.ThrowIfNull(app);
 
@@ -99,12 +99,12 @@ public static class Extensions
         // CORS should run between routing and authN/authZ
         if (options.UseCors)
         {
-            app.ExposeCors();
+            app.UseHeroCors();
         }
 
         if (options.UseOpenApi)
         {
-            app.ExposeApiDocs();
+            app.UseHeroOpenApi();
         }
 
         app.UseAuthentication();
@@ -125,7 +125,7 @@ public static class Extensions
         }
 
         // Always expose health endpoints
-        app.MapHealthCheckEndpoints();
+        app.MapHeroHealthEndpoints();
 
         return app;
     }

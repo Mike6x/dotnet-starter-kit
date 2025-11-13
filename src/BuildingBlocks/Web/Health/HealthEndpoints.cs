@@ -10,7 +10,7 @@ public static class HealthEndpoints
 {
     public sealed record HealthResult(string Status, IEnumerable<HealthEntry> Results);
     public sealed record HealthEntry(string Name, string Status, string? Description, double DurationMs);
-    public static IEndpointRouteBuilder MapHealthCheckEndpoints(this IEndpointRouteBuilder app)
+    public static IEndpointRouteBuilder MapHeroHealthEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/health")
                        .WithTags("Health")

@@ -94,11 +94,11 @@ src/
 
 Entry point: `Playground/Playground.Api/Program.cs`
 - Adds Mediator with feature/contract assemblies
-- Adds FullStackHero platform via `AddFshPlatform`:
+- Adds FullStackHero platform via `AddHeroPlatform`:
   - Logging, CORS, Versioning, OpenAPI, Health checks, ProblemDetails
   - Optional: Caching, Jobs, Mailing
-- Loads modules via `AddModules(assemblies)` (reflection-based) and maps endpoints via `UseFshPlatform(p => p.MapModules = true)`
-- Configures Finbuckle multi-tenant middleware and per-tenant DB migrations via `ConfigureMultiTenantDatabases()`
+- Loads modules via `AddModules(assemblies)` (reflection-based) and maps endpoints via `UseHeroPlatform(p => p.MapModules = true)`
+- Configures Finbuckle multi-tenant middleware and per-tenant DB migrations via `UseHeroMultiTenantDatabases()`
 
 ## Platform (BuildingBlocks/Web)
 

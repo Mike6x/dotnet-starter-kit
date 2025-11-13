@@ -18,7 +18,7 @@ public class AuditingModule : IModule
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddScoped<IAuditClient, DefaultAuditClient>();
         builder.Services.AddScoped<ISecurityAudit, SecurityAudit>();
-        builder.Services.BindDbContext<AuditDbContext>();
+        builder.Services.AddHeroDbContext<AuditDbContext>();
         builder.Services.AddScoped<IDbInitializer, AuditDbInitializer>();
         builder.Services.AddSingleton<IAuditSerializer, SystemTextJsonAuditSerializer>();
 

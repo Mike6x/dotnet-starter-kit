@@ -11,7 +11,7 @@ namespace FSH.Framework.Jobs;
 
 public static class Extensions
 {
-    public static IServiceCollection AddFshJobs(this IServiceCollection services)
+    public static IServiceCollection AddHeroJobs(this IServiceCollection services)
     {
         services.AddHangfireServer(options =>
         {
@@ -55,7 +55,7 @@ public static class Extensions
     }
 
 
-    internal static IApplicationBuilder UseJobDashboard(this IApplicationBuilder app, IConfiguration config)
+    internal static IApplicationBuilder UseHeroJobDashboard(this IApplicationBuilder app, IConfiguration config)
     {
         var hangfireOptions = config.GetSection(nameof(HangfireOptions)).Get<HangfireOptions>() ?? new HangfireOptions();
         var dashboardOptions = new DashboardOptions();

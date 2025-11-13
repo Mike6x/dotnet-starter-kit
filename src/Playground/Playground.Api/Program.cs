@@ -28,7 +28,7 @@ var moduleAssemblies = new Assembly[]
     typeof(AuditingModule).Assembly
 };
 
-builder.AddFshPlatform(o =>
+builder.AddHeroPlatform(o =>
 {
     o.EnableCors = true;
     o.EnableOpenApi = true;
@@ -42,7 +42,7 @@ builder.AddModules(moduleAssemblies);
 
 
 var app = builder.Build();
-app.ConfigureMultiTenantDatabases();
-app.UseFshPlatform(p => { p.MapModules = true; });
+app.UseHeroMultiTenantDatabases();
+app.UseHeroPlatform(p => { p.MapModules = true; });
 app.MapGet("/", () => "hello world!").WithTags("PlayGround").AllowAnonymous();
 await app.RunAsync();

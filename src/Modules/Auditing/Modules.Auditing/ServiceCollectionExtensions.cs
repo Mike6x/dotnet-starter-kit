@@ -17,7 +17,7 @@ public static class ServiceCollectionExtensions
         services.AddHttpContextAccessor();
         services.AddScoped<IAuditClient, DefaultAuditClient>();
         services.AddScoped<ISecurityAudit, SecurityAudit>();
-        services.BindDbContext<AuditDbContext>();
+        services.AddHeroDbContext<AuditDbContext>();
         services.AddSingleton<IAuditSerializer, SystemTextJsonAuditSerializer>();
 
         // Request-scoped scope reader (HttpContext-backed)

@@ -9,7 +9,7 @@ namespace FSH.Framework.Web.OpenApi;
 
 public static class Extensions
 {
-    public static IServiceCollection EnableApiDocs(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddHeroOpenApi(this IServiceCollection services, IConfiguration configuration)
     {
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(configuration);
@@ -55,7 +55,7 @@ public static class Extensions
         return services;
     }
 
-    public static void ExposeApiDocs(
+    public static void UseHeroOpenApi(
         this WebApplication app,
         string openApiPath = "/openapi/{documentName}.json")
     {

@@ -11,7 +11,7 @@ public static class Extensions
 {
     private const string PolicyName = "FSHCorsPolicy";
 
-    public static IServiceCollection EnableCors(
+    public static IServiceCollection AddHeroCors(
         this IServiceCollection services,
         IConfiguration configuration)
     {
@@ -57,7 +57,7 @@ public static class Extensions
         return services;
     }
 
-    public static void ExposeCors(this WebApplication app)
+    public static void UseHeroCors(this WebApplication app)
     {
         ArgumentNullException.ThrowIfNull(app);
         app.UseCors(PolicyName);

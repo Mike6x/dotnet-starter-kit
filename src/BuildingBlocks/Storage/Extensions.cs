@@ -6,7 +6,7 @@ namespace FSH.Framework.Storage;
 
 public static class Extensions
 {
-    public static IServiceCollection AddLocalFileStorage(this IServiceCollection services)
+    public static IServiceCollection AddHeroLocalFileStorage(this IServiceCollection services)
     {
         services.AddScoped<IStorageService, LocalStorageService>();
         return services;

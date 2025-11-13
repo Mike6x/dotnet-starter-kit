@@ -60,7 +60,7 @@ public class IdentityModule : IModule
         services.AddTransient<IRoleService, RoleService>();
         services.AddTransient<IStorageService, LocalStorageService>();
         services.AddScoped<IIdentityService, IdentityService>();
-        services.BindDbContext<IdentityDbContext>();
+        services.AddHeroDbContext<IdentityDbContext>();
         services.AddScoped<IDbInitializer, IdentityDbInitializer>();
         services.AddIdentity<FshUser, FshRole>(options =>
         {

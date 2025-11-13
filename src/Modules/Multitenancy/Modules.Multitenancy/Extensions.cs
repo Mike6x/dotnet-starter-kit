@@ -51,7 +51,7 @@ public static class Extensions
         return tenants;
     }
 
-    public static WebApplication ConfigureMultiTenantDatabases(this WebApplication app)
+    public static WebApplication UseHeroMultiTenantDatabases(this WebApplication app)
     {
         ArgumentNullException.ThrowIfNull(app);
         app.UseMultiTenant();

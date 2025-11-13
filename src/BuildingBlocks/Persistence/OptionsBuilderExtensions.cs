@@ -6,7 +6,7 @@ namespace FSH.Framework.Persistence;
 
 public static class OptionsBuilderExtensions
 {
-    public static DbContextOptionsBuilder ConfigureDatabase(this DbContextOptionsBuilder builder,
+    public static DbContextOptionsBuilder ConfigureHeroDatabase(this DbContextOptionsBuilder builder,
         string dbProvider,
         string connectionString,
         string migrationsAssembly

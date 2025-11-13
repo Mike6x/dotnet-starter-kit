@@ -39,7 +39,7 @@ public class IdentityDbContext : MultiTenantIdentityDbContext<FshUser,
     {
         if (!string.IsNullOrWhiteSpace(TenantInfo?.ConnectionString))
         {
-            optionsBuilder.ConfigureDatabase(_settings.Provider, TenantInfo.ConnectionString, _settings.MigrationsAssembly);
+            optionsBuilder.ConfigureHeroDatabase(_settings.Provider, TenantInfo.ConnectionString, _settings.MigrationsAssembly);
         }
     }
 }

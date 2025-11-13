@@ -30,7 +30,7 @@ public sealed class MultitenancyModule : IModule
         builder.Services.AddScoped<ITenantService, TenantService>();
         builder.Services.AddTransient<IConnectionStringValidator, ConnectionStringValidator>();
 
-        builder.Services.BindDbContext<TenantDbContext>();
+        builder.Services.AddHeroDbContext<TenantDbContext>();
 
         builder.Services
             .AddMultiTenant<AppTenantInfo>(options =>

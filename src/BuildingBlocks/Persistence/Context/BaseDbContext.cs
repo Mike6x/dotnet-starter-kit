@@ -29,7 +29,7 @@ public class BaseDbContext(IMultiTenantContextAccessor<AppTenantInfo> multiTenan
 
         if (!string.IsNullOrWhiteSpace(multiTenantContextAccessor?.MultiTenantContext.TenantInfo?.ConnectionString))
         {
-            optionsBuilder.ConfigureDatabase(_settings.Provider, multiTenantContextAccessor.MultiTenantContext.TenantInfo.ConnectionString!, _settings.MigrationsAssembly);
+            optionsBuilder.ConfigureHeroDatabase(_settings.Provider, multiTenantContextAccessor.MultiTenantContext.TenantInfo.ConnectionString!, _settings.MigrationsAssembly);
         }
     }
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

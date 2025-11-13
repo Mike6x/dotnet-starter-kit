@@ -9,7 +9,7 @@ namespace FSH.Framework.Persistence;
 
 public static class Extensions
 {
-    public static IServiceCollection AddDatabaseOptions(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddHeroDatabaseOptions(this IServiceCollection services, IConfiguration configuration)
     {
         ArgumentNullException.ThrowIfNull(configuration);
         services.AddOptions<DatabaseOptions>()
@@ -21,7 +21,7 @@ public static class Extensions
         return services;
     }
 
-    public static IServiceCollection BindDbContext<TContext>(this IServiceCollection services)
+    public static IServiceCollection AddHeroDbContext<TContext>(this IServiceCollection services)
         where TContext : DbContext
     {
         ArgumentNullException.ThrowIfNull(services);
@@ -29,7 +29,7 @@ public static class Extensions
         services.AddDbContext<TContext>((sp, options) =>
         {
             var dbConfig = sp.GetRequiredService<IOptions<DatabaseOptions>>().Value;
-            options.ConfigureDatabase(dbConfig.Provider, dbConfig.ConnectionString, dbConfig.MigrationsAssembly);
+            options.ConfigureHeroDatabase(dbConfig.Provider, dbConfig.ConnectionString, dbConfig.MigrationsAssembly);
             options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
         });
         return services;
