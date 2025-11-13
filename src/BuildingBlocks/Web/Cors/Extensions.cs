@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Builder;
+using System;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using AspNetCorsOptions = Microsoft.AspNetCore.Cors.Infrastructure.CorsOptions;
 
 namespace FSH.Framework.Web.Cors;
 
@@ -16,30 +18,39 @@ public static class Extensions
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(configuration);
 
-        var corsSettings = new CorsOptions();
-        configuration.GetSection(nameof(CorsOptions)).Bind(corsSettings);
+        services
+            .AddOptions<CorsOptions>()
+            .Bind(configuration.GetSection(nameof(CorsOptions)))
+            .Validate(settings => settings.AllowAll || settings.AllowedOrigins.Length > 0, "CorsOptions: AllowedOrigins are required when AllowAll is false.")
+            .Validate(settings => settings.AllowAll || settings.AllowedHeaders.Length > 0, "CorsOptions: AllowedHeaders are required when AllowAll is false.")
+            .Validate(settings => settings.AllowAll || settings.AllowedMethods.Length > 0, "CorsOptions: AllowedMethods are required when AllowAll is false.")
+            .ValidateOnStart();
 
-        services.AddSingleton(Options.Create(corsSettings));
-
-        services.AddCors(options =>
+        services.AddCors();
+        services.AddSingleton<IConfigureOptions<AspNetCorsOptions>>(sp =>
         {
-            options.AddPolicy(PolicyName, builder =>
+            var corsSettings = sp.GetRequiredService<IOptions<CorsOptions>>();
+            return new ConfigureOptions<AspNetCorsOptions>(options =>
             {
-                if (corsSettings.AllowAll)
+                options.AddPolicy(PolicyName, builder =>
                 {
-                    builder
-                        .AllowAnyOrigin()
-                        .AllowAnyHeader()
-                        .AllowAnyMethod();
-                }
-                else
-                {
-                    builder
-                        .WithOrigins(corsSettings.AllowedOrigins)
-                        .WithHeaders(corsSettings.AllowedHeaders)
-                        .WithMethods(corsSettings.AllowedMethods)
-                        .AllowCredentials();
-                }
+                    var settings = corsSettings.Value;
+                    if (settings.AllowAll)
+                    {
+                        builder
+                            .AllowAnyOrigin()
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
+                    }
+                    else
+                    {
+                        builder
+                            .WithOrigins(settings.AllowedOrigins)
+                            .WithHeaders(settings.AllowedHeaders)
+                            .WithMethods(settings.AllowedMethods)
+                            .AllowCredentials();
+                    }
+                });
             });
         });
 

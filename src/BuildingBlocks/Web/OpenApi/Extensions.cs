@@ -14,8 +14,12 @@ public static class Extensions
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(configuration);
 
-        // Bind options from appsettings
-        services.Configure<OpenApiOptions>(configuration.GetSection(nameof(OpenApiOptions)));
+        services
+            .AddOptions<OpenApiOptions>()
+            .Bind(configuration.GetSection(nameof(OpenApiOptions)))
+            .Validate(o => !string.IsNullOrWhiteSpace(o.Title), "OpenApi:Title is required.")
+            .Validate(o => !string.IsNullOrWhiteSpace(o.Description), "OpenApi:Description is required.")
+            .ValidateOnStart();
 
         // Minimal OpenAPI generator (ASP.NET Core 8)
         services.AddOpenApi(options =>
