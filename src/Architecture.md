@@ -170,6 +170,19 @@ Registration and pipeline:
 Example usage:
 - The token endpoint is annotated with `.RequireRateLimiting("auth")`.
 
+## HTTP Auditing
+
+Request/response auditing is provided by the Auditing module and auto-wired into the pipeline when the module is referenced.
+
+- Efficient design: non-blocking publish on the request path (bounded channel), batched background sink (SQL by default).
+- Standards: correlates with W3C Trace Context (trace/span IDs) and includes correlation/request IDs.
+- Exact path logging: logs the concrete request path (e.g., `/api/v1/...`), not route templates.
+- Body capture: off by config or JSON-only with size caps. Sensitive fields are masked via `IAuditMaskingService` (defaults include `password`, `token`, `access_token`, `refresh_token`, `otp`, `pin`), applied recursively.
+- Exclusions: paths like `/health`, `/metrics`, `/swagger`, `/scalar`, and static framework assets are excluded by default.
+- Placement: middleware runs after authentication and before authorization to include tenant/user context.
+- Configuration: Auditing section (capture bodies, size caps, excludes, min exception severity).
+- Enablement: no changes needed in host; when FSH.Modules.Auditing is referenced, the middleware is activated automatically.
+
 ## CORS
 
 `BuildingBlocks/Web/Cors/Extensions.cs` reads `CorsOptions` from configuration and exposes a single named policy (`FSHCorsPolicy`).
@@ -187,10 +200,43 @@ The handler integrates with Serilog and includes contextual details.
 
 ## Logging
 
-Serilog integration is configured via `AddHeroLogging`:
-- Reads configuration from appsettings
-- Enriches context (including correlation ID)
-- Adjusts noise levels for framework and EF logs
+Serilog is the structured logging backbone. The platform wires it via `AddHeroLogging` and you configure sinks/levels in appsettings.
+
+- Configuration-driven: `AddHeroLogging` reads `.Serilog` from configuration and sets up Serilog for the host.
+- Enrichment: adds `FromLogContext()` and `WithCorrelationId()` so logs capture ambient properties and a correlation identifier.
+  - Correlation ID falls back to `HttpContext.TraceIdentifier`; pair with a correlation-id middleware if you want to accept `X-Correlation-ID` from clients.
+- Noise control (overrides): lowers chatter from common frameworks
+  - `Microsoft` → Warning; `Microsoft.Hosting.Lifetime` → Information
+  - `Microsoft.EntityFrameworkCore` → Error; `Hangfire` → Warning; `Finbuckle.MultiTenant` → Warning
+  - Excludes `Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware` to avoid duplicate exception logs.
+- Exceptions: the `GlobalExceptionHandler` enriches the Serilog scope with `StackTrace` and logs the problem detail message.
+- Request logging: not enabled by default to keep logs concise; you can add `app.UseSerilogRequestLogging()` in the host if you want per-request logs.
+- Best practices (prod):
+  - Use JSON console/file and async sinks for performance; keep logs structured (no string concatenation).
+  - Avoid logging secrets; rely on auditing’s masking and push additional masking via `LogContext` or custom enrichers when needed.
+  - Keep EF Core logs at Error/Warning in production; raise during investigation when needed.
+
+Example appsettings (extend as needed):
+
+```
+"Serilog": {
+  "Using": [ "Serilog.Sinks.Console" ],
+  "MinimumLevel": { "Default": "Information" },
+  "WriteTo": [
+    { "Name": "Console", "Args": { "formatter": "Serilog.Formatting.Compact.RenderedCompactJsonFormatter, Serilog.Formatting.Compact" } }
+  ],
+  "Enrich": [ "FromLogContext" ]
+}
+```
+
+To add a file sink (rolling, JSON):
+
+```
+"WriteTo": [
+  { "Name": "Console" },
+  { "Name": "File", "Args": { "path": "/var/log/app/log-.json", "rollingInterval": "Day", "formatter": "Serilog.Formatting.Compact.CompactJsonFormatter, Serilog.Formatting.Compact" } }
+]
+```
 
 ## CQRS with Mediator
 
@@ -306,3 +352,4 @@ We will introduce an AppHost + ServiceDefaults to orchestrate resources and loca
 - Seamless local run, environment parity, and deployment bridges
 
 This document will be updated when Aspire is integrated. The current modular, Minimal API and configuration patterns are designed to transition cleanly to Aspire.
+

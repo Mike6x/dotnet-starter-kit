@@ -11,7 +11,7 @@ public sealed class JsonMaskingService : IAuditMaskingService
 {
     private static readonly HashSet<string> _maskKeywords = new(StringComparer.OrdinalIgnoreCase)
     {
-        "password", "secret", "token", "otp", "pin"
+        "password", "secret", "token", "otp", "pin", "accessToken", "refreshToken"
     };
 
     public object ApplyMasking(object payload)

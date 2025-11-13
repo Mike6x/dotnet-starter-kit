@@ -82,18 +82,7 @@ public static class Extensions
         app.UseExceptionHandler();
         app.UseHttpsRedirection();
 
-        if (options.UseCors)
-        {
-            app.ExposeCors();
-        }
-
-        app.UseRouting();
-
-        if (options.UseOpenApi)
-        {
-            app.ExposeApiDocs();
-        }
-
+        // Serve static files as early as possible to short-circuit pipeline
         if (options.ServeStaticFiles)
         {
             var assetsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
@@ -102,11 +91,31 @@ public static class Extensions
                 Directory.CreateDirectory(assetsPath);
             }
 
-            // Single static files registration is sufficient; default serves from wwwroot
             app.UseStaticFiles();
         }
 
+        app.UseRouting();
+
+        // CORS should run between routing and authN/authZ
+        if (options.UseCors)
+        {
+            app.ExposeCors();
+        }
+
+        if (options.UseOpenApi)
+        {
+            app.ExposeApiDocs();
+        }
+
         app.UseAuthentication();
+        
+        // If Auditing module is referenced, wire its HTTP middleware (request/response logging)
+        var auditMiddlewareType = Type.GetType("FSH.Modules.Auditing.AuditHttpMiddleware, FSH.Modules.Auditing");
+        if (auditMiddlewareType is not null)
+        {
+            app.UseMiddleware(auditMiddlewareType);
+        }
+
         app.UseHeroRateLimiting();
         app.UseAuthorization();
 
