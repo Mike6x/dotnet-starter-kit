@@ -238,6 +238,50 @@ To add a file sink (rolling, JSON):
 ]
 ```
 
+## Roadmap / Pending Features
+
+Planned enhancements to mature the platform for enterprise use. Use this as a living tracker.
+
+- Security
+  - Security headers baseline (CSP, HSTS, ReferrerPolicy, X-Content-Type-Options).
+
+- Observability
+  - OpenTelemetry end-to-end: traces, metrics, logs with OTLP export and log–trace correlation.
+  - Starter Grafana dashboards (RED/USE) and SLO alert templates.
+
+- Resilience & Performance
+  - Resilience pipeline (Polly v8) for all HttpClients: timeouts, retries, circuit breakers, hedging.
+  - Output caching + ETag/If-None-Match on GET endpoints; response compression (Brotli).
+
+- Data & Messaging
+  - Transactional outbox with background dispatcher; optional inbox for idempotency.
+  - Message bus abstraction (RabbitMQ/Azure Service Bus/Kafka) with schema versioning and contract tests.
+
+- Multitenancy
+  - Add schema-per-tenant mode alongside database-per-tenant; per-module tenancy strategy toggles.
+
+- Platform & APIs
+  - Feature flags (Microsoft.FeatureManagement) with per-tenant toggles and configuration-backed rules.
+  - Typed API clients (NSwag/Refit) and contract validation in CI.
+  - Metrics endpoint (Prometheus) and exclusion rules aligned with auditing and rate limiting.
+  - Webhook sender/receiver helpers and retry policies.
+
+- Developer Experience
+  - dotnet new templates for API/module/worker; scaffolding CLI for modules/endpoints.
+  - Dev Containers + docker compose for DB/Redis/broker; one-command dev up.
+  - Testcontainers for integration tests; Git hooks for format/analyzers/secret scan; Renovate for deps.
+
+- Operations & Compliance
+  - Infrastructure as code (Terraform) for app + DB + cache + broker + secrets.
+  - Aspire AppHost/ServiceDefaults to standardize telemetry, health, and service discovery.
+
+### Near-term priorities
+- OpenTelemetry wiring + probes and starter dashboards.
+- Resilience policies for outbound HTTP (defaults and per-client overrides).
+- Transactional outbox + simple background dispatcher.
+- Output caching + ETags for common reads.
+- Testcontainers for Identity/Multitenancy integration tests.
+
 ## CQRS with Mediator
 
 The solution uses `Mediator` with source generator:
