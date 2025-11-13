@@ -4,11 +4,13 @@ using FSH.Framework.Mailing;
 using FSH.Framework.Persistence;
 using FSH.Framework.Web.Cors;
 using FSH.Framework.Web.Exceptions;
+using FSH.Framework.Web.Health;
 using FSH.Framework.Web.Mediator.Behaviors;
 using FSH.Framework.Web.Modules;
 using FSH.Framework.Web.Observability.Logging.Serilog;
 using FSH.Framework.Web.OpenApi;
 using FSH.Framework.Web.Origin;
+using FSH.Framework.Web.RateLimiting;
 using FSH.Framework.Web.Versioning;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
@@ -30,6 +32,7 @@ public static class Extensions
         builder.AddHeroLogging();
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddDatabaseOptions(builder.Configuration);
+        builder.Services.AddHeroRateLimiting(builder.Configuration);
 
         if (options.EnableCors)
         {
@@ -104,12 +107,16 @@ public static class Extensions
         }
 
         app.UseAuthentication();
+        app.UseHeroRateLimiting();
         app.UseAuthorization();
 
         if (options.MapModules)
         {
             app.MapModules();
         }
+
+        // Always expose health endpoints
+        app.MapHealthCheckEndpoints();
 
         return app;
     }

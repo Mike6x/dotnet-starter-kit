@@ -1,9 +1,5 @@
-﻿// FSH.Framework.Web/Modules/ModuleLoader.cs
-using Microsoft.AspNetCore.Routing;
+﻿using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 
 namespace FSH.Framework.Web.Modules;
@@ -28,17 +24,18 @@ public static class ModuleLoader
                 : AppDomain.CurrentDomain.GetAssemblies();
 
             var moduleRegistrations = source
-                .SelectMany(a => a.GetCustomAttributes<FshModuleAttribute>());
-
-            foreach (var registration in moduleRegistrations
+                .SelectMany(a => a.GetCustomAttributes<FshModuleAttribute>())
                 .Where(r => typeof(IModule).IsAssignableFrom(r.ModuleType))
                 .DistinctBy(r => r.ModuleType)
                 .OrderBy(r => r.Order)
-                .ThenBy(r => r.ModuleType.Name))
+                .ThenBy(r => r.ModuleType.Name)
+                .Select(r => r.ModuleType);
+
+            foreach (var moduleType in moduleRegistrations)
             {
-                if (Activator.CreateInstance(registration.ModuleType) is not IModule module)
+                if (Activator.CreateInstance(moduleType) is not IModule module)
                 {
-                    throw new InvalidOperationException($"Unable to create module {registration.ModuleType.Name}.");
+                    throw new InvalidOperationException($"Unable to create module {moduleType.Name}.");
                 }
 
                 module.ConfigureServices(builder);

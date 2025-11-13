@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
 namespace FSH.Framework.Persistence;
@@ -18,7 +17,7 @@ public static class Extensions
             .ValidateDataAnnotations()
             .Validate(o => !string.IsNullOrWhiteSpace(o.Provider), "DatabaseOptions.Provider is required.")
             .ValidateOnStart();
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IPostConfigureOptions<DatabaseOptions>, DatabaseOptionsLogger>());
+        services.AddHostedService<DatabaseOptionsStartupLogger>();
         return services;
     }
 

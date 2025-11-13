@@ -143,6 +143,33 @@ Usage pattern:
 
 `BearerSecuritySchemeTransformer` automatically injects a Bearer security scheme and requirement for all operations when JWT authentication is configured.
 
+## Rate Limiting
+
+Built-in, configuration-driven rate limiting protects APIs from abuse while staying tenant- and user-aware.
+
+- Global policy: fixed window (default 100 requests/minute), partitioned by Tenant ID, then User ID, falling back to client IP.
+- Auth policy: fixed window (default 10 requests/minute) intended for token-generation and other sensitive endpoints.
+- Health endpoints are exempt via `.DisableRateLimiting()` and a path guard; static files are served before rate limiting middleware and are unaffected.
+- Middleware order: after `UseAuthentication()` and before `UseAuthorization()` to allow user/tenant partitioning.
+- Endpoint overrides: use `.RequireRateLimiting("auth")` or `.DisableRateLimiting()` on specific endpoints/groups.
+
+Configuration (`RateLimitingOptions`):
+
+```
+"RateLimitingOptions": {
+  "Enabled": true,
+  "Global": { "PermitLimit": 100, "WindowSeconds": 60, "QueueLimit": 0 },
+  "Auth": { "PermitLimit": 10,  "WindowSeconds": 60, "QueueLimit": 0 }
+}
+```
+
+Registration and pipeline:
+- Services: `builder.Services.AddHeroRateLimiting(builder.Configuration)`
+- Middleware: `app.UseHeroRateLimiting()` (inserted between `UseAuthentication` and `UseAuthorization`)
+
+Example usage:
+- The token endpoint is annotated with `.RequireRateLimiting("auth")`.
+
 ## CORS
 
 `BuildingBlocks/Web/Cors/Extensions.cs` reads `CorsOptions` from configuration and exposes a single named policy (`FSHCorsPolicy`).
@@ -279,4 +306,3 @@ We will introduce an AppHost + ServiceDefaults to orchestrate resources and loca
 - Seamless local run, environment parity, and deployment bridges
 
 This document will be updated when Aspire is integrated. The current modular, Minimal API and configuration patterns are designed to transition cleanly to Aspire.
-

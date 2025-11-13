@@ -14,8 +14,8 @@ public static class HealthEndpoints
     {
         var group = app.MapGroup("/health")
                        .WithTags("Health")
-                       .WithOpenApi()
-                       .AllowAnonymous();
+                       .AllowAnonymous()
+                       .DisableRateLimiting();
 
 
         // Liveness: only process up (no external deps)
@@ -32,8 +32,7 @@ public static class HealthEndpoints
                 .WithName("Liveness")
                 .WithSummary("Quick process liveness probe.")
                 .WithDescription("Reports if the API process is alive. Does not check dependencies.")
-                .Produces<HealthResult>(StatusCodes.Status200OK)
-                .WithOpenApi();
+                .Produces<HealthResult>(StatusCodes.Status200OK);
 
         // Readiness: includes DB (and any other registered checks)
         group.MapGet("/ready",
@@ -57,8 +56,7 @@ public static class HealthEndpoints
                     .WithSummary("Readiness probe with database check.")
                     .WithDescription("Returns 200 if all dependencies are healthy, otherwise 503.")
                     .Produces<HealthResult>(StatusCodes.Status200OK)
-                    .Produces(StatusCodes.Status503ServiceUnavailable)
-                    .WithOpenApi();
+                    .Produces(StatusCodes.Status503ServiceUnavailable);
 
         return app;
     }

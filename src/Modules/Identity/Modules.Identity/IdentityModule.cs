@@ -90,7 +90,7 @@ public class IdentityModule : IModule
             .WithApiVersionSet(apiVersionSet);
 
         // tokens
-        group.MapGenerateTokenEndpoint().AllowAnonymous();
+        group.MapGenerateTokenEndpoint().AllowAnonymous().RequireRateLimiting("auth");
 
         // roles
         group.MapGetRolesEndpoint();
