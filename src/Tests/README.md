@@ -9,8 +9,9 @@ This folder contains solution-wide architecture tests for the FullStackHero .NET
 
 ## What Is Covered
 
-- **Module dependencies**: module runtime projects (`Modules.*`) cannot reference other modules’ runtime projects directly; only their own runtime, contracts, and building blocks are allowed.
-- **Playground hosts**: Playground hosts that reference module contracts must also reference the owning runtime module, avoiding tight coupling to contracts alone.
+- **Module dependencies**: module runtime projects (`Modules.*`) cannot reference other modules' runtime projects directly; only their own runtime, contracts, and building blocks are allowed (validated via csproj inspection).
+- **Feature layering**: feature types under `Modules.*.Features.v{version}` are checked with NetArchTest to depend only on allowed layers (System/Microsoft, `FSH.Framework.*`, their module, and module contracts).
+- **Playground boundaries**: module code must not depend on Playground hosts, and hosts must not depend directly on module feature or data internals.
 - **Namespace conventions**: selected areas (for example, `BuildingBlocks/Core/Domain`) must declare namespaces that reflect the folder structure.
 
 ## Running the Tests
@@ -20,6 +21,5 @@ This folder contains solution-wide architecture tests for the FullStackHero .NET
 
 ## Extending the Rules
 
-- Add new rules as additional test classes inside `Architecture.Tests`, following the existing patterns (using reflection or project file inspection).
+- Add new rules as additional test classes inside `Architecture.Tests`, following the existing patterns (using NetArchTest for type-level rules and reflection or project file inspection where appropriate).
 - Keep rules fast and deterministic; avoid environment-specific assumptions so the tests remain stable in CI.
-

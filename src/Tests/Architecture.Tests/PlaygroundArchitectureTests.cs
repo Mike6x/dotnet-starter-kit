@@ -1,6 +1,3 @@
-using FSH.Modules.Auditing;
-using FSH.Modules.Identity;
-using FSH.Modules.Multitenancy;
 using NetArchTest.Rules;
 using Shouldly;
 using Xunit;
@@ -12,13 +9,6 @@ public class PlaygroundArchitectureTests
     [Fact]
     public void Modules_Should_Not_Depend_On_Playground_Hosts()
     {
-        var moduleAssemblies = new[]
-        {
-            typeof(AuditingModule).Assembly,
-            typeof(IdentityModule).Assembly,
-            typeof(MultitenancyModule).Assembly
-        };
-
         // Assemblies / namespaces that represent Playground hosts.
         string[] playgroundNamespaces =
         {
@@ -26,17 +16,51 @@ public class PlaygroundArchitectureTests
             "Playground.Blazor"
         };
 
-        foreach (var moduleAssembly in moduleAssemblies)
-        {
-            var result = Types
-                .InAssembly(moduleAssembly)
-                .Should()
-                .NotHaveDependencyOnAny(playgroundNamespaces)
-                .GetResult();
+        var result = Types
+            .InCurrentDomain()
+            .That()
+            .ResideInNamespace("FSH.Modules")
+            .Should()
+            .NotHaveDependencyOnAny(playgroundNamespaces)
+            .GetResult();
 
-            result.IsSuccessful.ShouldBeTrue(
-                $"Module '{moduleAssembly.FullName}' should not depend on Playground host assemblies.");
-        }
+        var failingTypes = result.FailingTypeNames ?? Array.Empty<string>();
+
+        result.IsSuccessful.ShouldBeTrue(
+            "Module code must not depend on Playground host assemblies. " +
+            $"Failing types: {string.Join(", ", failingTypes)}");
+    }
+
+    [Fact]
+    public void Playground_Hosts_Should_Not_Depend_On_Module_Internals()
+    {
+        // Hosts may depend on module contracts and module root types,
+        // but should not directly reference feature or data-layer namespaces.
+        string[] forbiddenNamespaces =
+        {
+            "FSH.Modules.Auditing.Features",
+            "FSH.Modules.Auditing.Data",
+            "FSH.Modules.Identity.Features",
+            "FSH.Modules.Identity.Data",
+            "FSH.Modules.Multitenancy.Features",
+            "FSH.Modules.Multitenancy.Data"
+        };
+
+        var hostResult = Types
+            .InCurrentDomain()
+            .That()
+            .ResideInNamespace("FSH.Playground")
+            .Or()
+            .ResideInNamespace("Playground.Blazor")
+            .Should()
+            .NotHaveDependencyOnAny(forbiddenNamespaces)
+            .GetResult();
+
+        var hostFailingTypes = hostResult.FailingTypeNames ?? Array.Empty<string>();
+
+        hostResult.IsSuccessful.ShouldBeTrue(
+            "Playground hosts should not depend directly on module feature or data internals. " +
+            $"Failing types: {string.Join(", ", hostFailingTypes)}");
     }
 }
 
