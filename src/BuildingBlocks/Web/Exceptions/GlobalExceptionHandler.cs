@@ -13,39 +13,58 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
     {
         ArgumentNullException.ThrowIfNull(httpContext);
         ArgumentNullException.ThrowIfNull(exception);
-        var problemDetails = new ProblemDetails();
-        problemDetails.Instance = httpContext.Request.Path;
+
+        var problemDetails = new ProblemDetails
+        {
+            Instance = httpContext.Request.Path
+        };
+
+        var statusCode = StatusCodes.Status500InternalServerError;
 
         if (exception is FluentValidation.ValidationException fluentException)
         {
-            problemDetails.Detail = "one or more validation errors occurred";
-            problemDetails.Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1";
-            httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
-            List<string> validationErrors = new();
-            foreach (var error in fluentException.Errors)
-            {
-                validationErrors.Add(error.ErrorMessage);
-            }
-            problemDetails.Extensions.Add("errors", validationErrors);
-        }
+            statusCode = StatusCodes.Status400BadRequest;
 
+            problemDetails.Status = statusCode;
+            problemDetails.Title = "Validation error";
+            problemDetails.Detail = "One or more validation errors occurred.";
+            problemDetails.Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1";
+
+            var errors = fluentException.Errors
+                .GroupBy(e => e.PropertyName)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.Select(e => e.ErrorMessage).ToArray());
+
+            problemDetails.Extensions["errors"] = errors;
+        }
         else if (exception is CustomException e)
         {
-            httpContext.Response.StatusCode = (int)e.StatusCode;
+            statusCode = (int)e.StatusCode;
+
+            problemDetails.Status = statusCode;
+            problemDetails.Title = e.GetType().Name;
             problemDetails.Detail = e.Message;
-            if (e.ErrorMessages != null && e.ErrorMessages.Any())
+
+            if (e.ErrorMessages is { Count: > 0 })
             {
-                problemDetails.Extensions.Add("errors", e.ErrorMessages);
+                problemDetails.Extensions["errors"] = e.ErrorMessages;
             }
         }
-
         else
         {
-            problemDetails.Detail = exception.Message;
+            statusCode = StatusCodes.Status500InternalServerError;
+
+            problemDetails.Status = statusCode;
+            problemDetails.Title = "An unexpected error occurred";
+            problemDetails.Detail = "An unexpected error occurred. Please try again later.";
         }
 
+        httpContext.Response.StatusCode = statusCode;
+
         LogContext.PushProperty("StackTrace", exception.StackTrace);
-        logger.LogError("{ProblemDetail}", problemDetails.Detail);
+        logger.LogError(exception, "Unhandled exception at {Path}", httpContext.Request.Path);
+
         await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken).ConfigureAwait(false);
         return true;
     }
