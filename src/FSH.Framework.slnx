@@ -30,6 +30,9 @@
   <Folder Name="/Playground/Migrations/">
     <Project Path="Playground/Migrations.PostgreSQL/Migrations.PostgreSQL.csproj" Id="2c21903e-5dfa-47e0-82d9-1a0bd627fcbd" />
   </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="Tests/Architecture.Tests/Architecture.Tests.csproj" />
+  </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
     <File Path="Architecture.md" />
