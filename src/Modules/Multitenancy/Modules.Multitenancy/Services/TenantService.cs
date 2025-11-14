@@ -6,7 +6,8 @@ using FSH.Framework.Shared.Multitenancy;
 using FSH.Framework.Shared.Persistence;
 using FSH.Modules.Multitenancy.Contracts;
 using FSH.Modules.Multitenancy.Contracts.Dtos;
-using Mapster;
+using FSH.Modules.Multitenancy.Data;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -17,12 +18,18 @@ public sealed class TenantService : ITenantService
     private readonly IMultiTenantStore<AppTenantInfo> _tenantStore;
     private readonly DatabaseOptions _config;
     private readonly IServiceProvider _serviceProvider;
+    private readonly TenantDbContext _dbContext;
 
-    public TenantService(IMultiTenantStore<AppTenantInfo> tenantStore, IOptions<DatabaseOptions> config, IServiceProvider serviceProvider)
+    public TenantService(
+        IMultiTenantStore<AppTenantInfo> tenantStore,
+        IOptions<DatabaseOptions> config,
+        IServiceProvider serviceProvider,
+        TenantDbContext dbContext)
     {
         _tenantStore = tenantStore;
         _config = config.Value;
         _serviceProvider = serviceProvider;
+        _dbContext = dbContext;
     }
 
     public async Task<string> ActivateAsync(string id, CancellationToken cancellationToken)
@@ -96,10 +103,24 @@ public sealed class TenantService : ITenantService
     public async Task<bool> ExistsWithNameAsync(string name) =>
         (await _tenantStore.GetAllAsync().ConfigureAwait(false)).Any(t => t.Name == name);
 
-    public async Task<List<TenantDto>> GetAllAsync()
+    public async Task<PagedResponse<TenantDto>> GetAllAsync(IPaginationParameters pagination, CancellationToken cancellationToken)
     {
-        var tenants = (await _tenantStore.GetAllAsync().ConfigureAwait(false)).Adapt<List<TenantDto>>();
-        return tenants;
+        ArgumentNullException.ThrowIfNull(pagination);
+
+        var tenants = _dbContext.TenantInfo.AsNoTracking();
+
+        var projected = tenants.Select(t => new TenantDto
+        {
+            Id = t.Id,
+            Name = t.Name,
+            ConnectionString = t.ConnectionString,
+            AdminEmail = t.AdminEmail,
+            IsActive = t.IsActive,
+            ValidUpto = t.ValidUpto,
+            Issuer = t.Issuer
+        });
+
+        return await projected.ToPagedResponseAsync(pagination, cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<TenantStatusDto> GetStatusAsync(string id)
@@ -130,4 +151,3 @@ public sealed class TenantService : ITenantService
         await _tenantStore.TryGetAsync(id).ConfigureAwait(false)
             ?? throw new NotFoundException($"{typeof(AppTenantInfo).Name} {id} Not Found.");
 }
-

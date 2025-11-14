@@ -1,10 +1,11 @@
+using FSH.Framework.Shared.Persistence;
 using FSH.Modules.Multitenancy.Contracts.Dtos;
 
 namespace FSH.Modules.Multitenancy.Contracts;
 
 public interface ITenantService
 {
-    Task<List<TenantDto>> GetAllAsync();
+    Task<PagedResponse<TenantDto>> GetAllAsync(IPaginationParameters pagination, CancellationToken cancellationToken);
 
     Task<bool> ExistsWithIdAsync(string id);
 
@@ -20,4 +21,3 @@ public interface ITenantService
 
     Task<DateTime> UpgradeSubscription(string id, DateTime extendedExpiryDate);
 }
-

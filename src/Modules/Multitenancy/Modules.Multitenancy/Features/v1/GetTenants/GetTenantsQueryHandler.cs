@@ -1,17 +1,17 @@
-﻿using FSH.Modules.Multitenancy.Contracts;
+using FSH.Framework.Shared.Persistence;
 using FSH.Modules.Multitenancy.Contracts.Dtos;
 using FSH.Modules.Multitenancy.Contracts.v1.GetTenants;
-using Mapster;
+using FSH.Modules.Multitenancy.Contracts;
 using Mediator;
 
 namespace FSH.Modules.Multitenancy.Features.v1.GetTenants;
 
-public sealed class GetTenantsQueryHandler(ITenantService service)
-    : IQueryHandler<GetTenantsQuery, IReadOnlyCollection<TenantDto>>
+public sealed class GetTenantsQueryHandler(ITenantService tenantService)
+    : IQueryHandler<GetTenantsQuery, PagedResponse<TenantDto>>
 {
-    public async ValueTask<IReadOnlyCollection<TenantDto>> Handle(GetTenantsQuery query, CancellationToken cancellationToken)
+    public async ValueTask<PagedResponse<TenantDto>> Handle(GetTenantsQuery query, CancellationToken cancellationToken)
     {
-        var tenants = await service.GetAllAsync();
-        return tenants.Adapt<List<TenantDto>>();
+        ArgumentNullException.ThrowIfNull(query);
+        return await tenantService.GetAllAsync(query, cancellationToken).ConfigureAwait(false);
     }
 }

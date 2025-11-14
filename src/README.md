@@ -198,3 +198,12 @@ src/
 
 ## Coming Soon: Aspire Orchestration
 An Aspire AppHost/ServiceDefaults experience is planned to orchestrate the API, PostgreSQL, observability stack, and shared services. The existing modular Minimal API composition is designed to slide into Aspire with minimal changes; updates will land here once AppHost scripts are merged.
+
+### Pagination & Sorting
+- **Request parameters**: List endpoints that support pagination implement a shared `IPaginationParameters` contract. Parameters are passed via query string:
+  - `pageNumber` (optional, 1-based; defaults to 1 when omitted or invalid).
+  - `pageSize` (optional; defaults to 20 and is capped at 100).
+  - `sort` (optional; multi-column expression like `sort=Name,-ValidUpto`). A `-` prefix means descending; property names are case-insensitive.
+- **Response shape**: Paged endpoints return `PagedResponse<T>` with:
+  - `items`, `pageNumber`, `pageSize`, `totalCount`, `totalPages`, `hasNext`, and `hasPrevious`.
+- **Behavior**: Missing or invalid pagination parameters never produce an error; defaults are applied centrally in the pagination helper. Unknown sort fields are ignored to keep sorting safe.
