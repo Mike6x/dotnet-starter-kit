@@ -5,6 +5,7 @@ using FSH.Modules.Auditing.Persistence;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 
 namespace FSH.Modules.Auditing;
@@ -21,6 +22,10 @@ public class AuditingModule : IModule
         builder.Services.AddHeroDbContext<AuditDbContext>();
         builder.Services.AddScoped<IDbInitializer, AuditDbInitializer>();
         builder.Services.AddSingleton<IAuditSerializer, SystemTextJsonAuditSerializer>();
+        builder.Services.AddHealthChecks()
+            .AddDbContextCheck<AuditDbContext>(
+                name: "db:auditing",
+                failureStatus: HealthStatus.Unhealthy);
 
         // Enrichers used by Audit.Configure (scoped, run on request thread)
         builder.Services.AddScoped<IAuditMaskingService, JsonMaskingService>();

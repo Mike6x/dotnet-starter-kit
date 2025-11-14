@@ -39,6 +39,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 
 namespace FSH.Modules.Identity;
@@ -61,6 +62,10 @@ public class IdentityModule : IModule
         services.AddTransient<IStorageService, LocalStorageService>();
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddHeroDbContext<IdentityDbContext>();
+        builder.Services.AddHealthChecks()
+            .AddDbContextCheck<IdentityDbContext>(
+                name: "db:identity",
+                failureStatus: HealthStatus.Unhealthy);
         services.AddScoped<IDbInitializer, IdentityDbInitializer>();
         services.AddIdentity<FshUser, FshRole>(options =>
         {
@@ -86,7 +91,6 @@ public class IdentityModule : IModule
         var group = endpoints
             .MapGroup("api/v{version:apiVersion}/identity")
             .WithTags("Identity")
-            .WithOpenApi()
             .WithApiVersionSet(apiVersionSet);
 
         // tokens

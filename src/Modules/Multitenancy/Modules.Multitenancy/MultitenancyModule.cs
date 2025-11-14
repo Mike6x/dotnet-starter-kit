@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 
 namespace FSH.Modules.Multitenancy;
@@ -65,6 +66,10 @@ public sealed class MultitenancyModule : IModule
             .WithDistributedCacheStore(TimeSpan.FromMinutes(60))
             .WithEFCoreStore<TenantDbContext, AppTenantInfo>();
 
+        builder.Services.AddHealthChecks()
+            .AddDbContextCheck<TenantDbContext>(
+                name: "db:multitenancy",
+                failureStatus: HealthStatus.Unhealthy);
         builder.Services.AddScoped<ITenantService, TenantService>();
     }
 
