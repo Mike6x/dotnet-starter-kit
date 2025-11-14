@@ -7,7 +7,7 @@ public class JwtOptions : IValidatableObject
     public string Issuer { get; init; } = string.Empty;
     public string Audience { get; init; } = string.Empty;
     public string SigningKey { get; init; } = string.Empty;
-    public int AccessTokenMinutes { get; init; } = 60;
+    public int AccessTokenMinutes { get; init; } = 30;
     public int RefreshTokenDays { get; init; } = 7;
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
@@ -15,6 +15,11 @@ public class JwtOptions : IValidatableObject
         if (string.IsNullOrEmpty(SigningKey))
         {
             yield return new ValidationResult("No Key defined in JwtOptions config", [nameof(SigningKey)]);
+        }
+
+        if (!string.IsNullOrEmpty(SigningKey) && SigningKey.Length < 32)
+        {
+            yield return new ValidationResult("SigningKey must be at least 32 characters long.", [nameof(SigningKey)]);
         }
 
         if (string.IsNullOrEmpty(Issuer))

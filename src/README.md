@@ -135,6 +135,11 @@ src/
 - `JwtOptions`: issuer, audience, signing key, token lifetimes.
 - `RateLimitingOptions`, `AuditingOptions`, `FshPlatformOptions`: enable/disable cross-cutting features.
 
+### Security Baseline
+- Global security headers are applied via `UseHeroSecurityHeaders` (CSP, X-Content-Type-Options, X-Frame-Options, Referrer-Policy).
+- JWT auth is configured through `JwtOptions` (issuer, audience, signing key, token lifetimes) and validated at startup.
+- For production, run behind HTTPS with HSTS enabled (see Playground Blazor host for an example) and store secrets (like `SigningKey`) outside source control (user secrets, environment variables, or secret managers).
+
 ## Development Workflow
 ### Adding a Module
 1. Create `Modules/MyFeature` and `Modules.MyFeature.Contracts`.

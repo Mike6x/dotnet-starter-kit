@@ -42,5 +42,7 @@ builder.AddModules(moduleAssemblies);
 var app = builder.Build();
 app.UseHeroMultiTenantDatabases();
 app.UseHeroPlatform(p => { p.MapModules = true; });
-app.MapGet("/", () => "hello world!").WithTags("PlayGround").AllowAnonymous();
+app.MapGet("/", () => Results.Ok(new { message = "hello world!" }))
+   .WithTags("PlayGround")
+   .AllowAnonymous();
 await app.RunAsync();

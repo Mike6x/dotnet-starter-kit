@@ -30,8 +30,8 @@ public class ConfigureJwtBearerOptions : IConfigureNamedOptions<JwtBearerOptions
 
         byte[] key = Encoding.ASCII.GetBytes(_options.SigningKey);
 
-        options.RequireHttpsMetadata = false;
-        options.SaveToken = true;
+        options.RequireHttpsMetadata = true;
+        options.SaveToken = false;
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
@@ -42,7 +42,7 @@ public class ConfigureJwtBearerOptions : IConfigureNamedOptions<JwtBearerOptions
             ValidAudience = _options.Audience,
             ValidateAudience = true,
             RoleClaimType = ClaimTypes.Role,
-            ClockSkew = TimeSpan.Zero
+            ClockSkew = TimeSpan.FromMinutes(2)
         };
         options.Events = new JwtBearerEvents
         {

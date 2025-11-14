@@ -11,6 +11,7 @@ using FSH.Framework.Web.Observability.Logging.Serilog;
 using FSH.Framework.Web.OpenApi;
 using FSH.Framework.Web.Origin;
 using FSH.Framework.Web.RateLimiting;
+using FSH.Framework.Web.Security;
 using FSH.Framework.Web.Versioning;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
@@ -82,6 +83,8 @@ public static class Extensions
         app.UseExceptionHandler();
         app.UseHttpsRedirection();
 
+        app.UseHeroSecurityHeaders();
+
         // Serve static files as early as possible to short-circuit pipeline
         if (options.ServeStaticFiles)
         {
@@ -108,7 +111,7 @@ public static class Extensions
         }
 
         app.UseAuthentication();
-        
+
         // If Auditing module is referenced, wire its HTTP middleware (request/response logging)
         var auditMiddlewareType = Type.GetType("FSH.Modules.Auditing.AuditHttpMiddleware, FSH.Modules.Auditing");
         if (auditMiddlewareType is not null)
