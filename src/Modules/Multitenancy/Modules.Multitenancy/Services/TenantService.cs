@@ -1,9 +1,10 @@
-﻿using Finbuckle.MultiTenant;
+using Finbuckle.MultiTenant;
 using Finbuckle.MultiTenant.Abstractions;
 using FSH.Framework.Core.Exceptions;
 using FSH.Framework.Persistence;
 using FSH.Framework.Shared.Multitenancy;
 using FSH.Framework.Shared.Persistence;
+using FSH.Modules.Multitenancy.Contracts;
 using FSH.Modules.Multitenancy.Contracts.Dtos;
 using Mapster;
 using Microsoft.Extensions.DependencyInjection;
@@ -60,17 +61,14 @@ public sealed class TenantService : ITenantService
 
     private async Task InitializeDatabase(AppTenantInfo tenant)
     {
-        // First create a new scope
         using var scope = _serviceProvider.CreateScope();
 
-        // Then set current tenant so the right connection string is used
         scope.ServiceProvider.GetRequiredService<IMultiTenantContextSetter>()
             .MultiTenantContext = new MultiTenantContext<AppTenantInfo>()
             {
                 TenantInfo = tenant
             };
 
-        // using the scope, perform migrations / seeding
         var initializers = scope.ServiceProvider.GetServices<IDbInitializer>();
         foreach (var initializer in initializers)
         {
@@ -104,9 +102,21 @@ public sealed class TenantService : ITenantService
         return tenants;
     }
 
-    public async Task<TenantDto> GetByIdAsync(string id) =>
-        (await GetTenantInfoAsync(id).ConfigureAwait(false))
-            .Adapt<TenantDto>();
+    public async Task<TenantStatusDto> GetStatusAsync(string id)
+    {
+        var tenant = await GetTenantInfoAsync(id).ConfigureAwait(false);
+
+        return new TenantStatusDto
+        {
+            Id = tenant.Id,
+            Name = tenant.Name,
+            IsActive = tenant.IsActive,
+            ValidUpto = tenant.ValidUpto,
+            HasConnectionString = !string.IsNullOrWhiteSpace(tenant.ConnectionString),
+            AdminEmail = tenant.AdminEmail,
+            Issuer = tenant.Issuer
+        };
+    }
 
     public async Task<DateTime> UpgradeSubscription(string id, DateTime extendedExpiryDate)
     {
@@ -117,6 +127,7 @@ public sealed class TenantService : ITenantService
     }
 
     private async Task<AppTenantInfo> GetTenantInfoAsync(string id) =>
-    await _tenantStore.TryGetAsync(id).ConfigureAwait(false)
-        ?? throw new NotFoundException($"{typeof(AppTenantInfo).Name} {id} Not Found.");
+        await _tenantStore.TryGetAsync(id).ConfigureAwait(false)
+            ?? throw new NotFoundException($"{typeof(AppTenantInfo).Name} {id} Not Found.");
 }
+

@@ -1,5 +1,5 @@
-﻿using FSH.Modules.Multitenancy.Contracts.v1.DisableTenant;
-using FSH.Modules.Multitenancy.Services;
+﻿using FSH.Modules.Multitenancy.Contracts;
+using FSH.Modules.Multitenancy.Contracts.v1.DisableTenant;
 using Mediator;
 
 namespace FSH.Modules.Multitenancy.Features.v1.DisableTenant;

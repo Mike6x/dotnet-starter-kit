@@ -7,11 +7,12 @@ using FSH.Framework.Persistence;
 using FSH.Framework.Shared.Constants;
 using FSH.Framework.Shared.Multitenancy;
 using FSH.Framework.Web.Modules;
+using FSH.Modules.Multitenancy.Contracts;
 using FSH.Modules.Multitenancy.Data;
 using FSH.Modules.Multitenancy.Features.v1.CreateTenant;
 using FSH.Modules.Multitenancy.Features.v1.DisableTenant;
-using FSH.Modules.Multitenancy.Features.v1.GetTenantById;
 using FSH.Modules.Multitenancy.Features.v1.GetTenants;
+using FSH.Modules.Multitenancy.Features.v1.GetTenantStatus;
 using FSH.Modules.Multitenancy.Features.v1.UpgradeTenant;
 using FSH.Modules.Multitenancy.Services;
 using FSH.Modules.Tenant.Features.v1.ActivateTenant;
@@ -85,10 +86,10 @@ public sealed class MultitenancyModule : IModule
             .WithApiVersionSet(versionSet);
 
         DisableTenantEndpoint.Map(group);
-        GetTenantByIdEndpoint.Map(group);
         GetTenantsEndpoint.Map(group);
         UpgradeTenantEndpoint.Map(group);
         ActivateTenantEndpoint.Map(group);
         CreateTenantEndpoint.Map(group);
+        GetTenantStatusEndpoint.Map(group);
     }
 }

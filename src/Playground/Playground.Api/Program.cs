@@ -1,12 +1,12 @@
-﻿using FSH.Framework.Tenant.Features.v1.GetTenantById;
-using FSH.Framework.Web;
+﻿using FSH.Framework.Web;
 using FSH.Framework.Web.Modules;
 using FSH.Modules.Auditing;
 using FSH.Modules.Identity;
 using FSH.Modules.Identity.Contracts.v1.Tokens.TokenGeneration;
 using FSH.Modules.Identity.Features.v1.Tokens.TokenGeneration;
 using FSH.Modules.Multitenancy;
-using FSH.Modules.Multitenancy.Contracts.v1.GetTenantById;
+using FSH.Modules.Multitenancy.Contracts.v1.GetTenantStatus;
+using FSH.Modules.Multitenancy.Features.v1.GetTenantStatus;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,8 +17,8 @@ builder.Services.AddMediator(o =>
     o.Assemblies = [
         typeof(GenerateTokenCommand),
         typeof(GenerateTokenCommandHandler),
-        typeof(GetTenantByIdQuery),
-        typeof(GetTenantByIdQueryHandler)];
+        typeof(GetTenantStatusQuery),
+        typeof(GetTenantStatusQueryHandler)];
 });
 
 var moduleAssemblies = new Assembly[]

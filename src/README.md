@@ -140,6 +140,10 @@ src/
 - JWT auth is configured through `JwtOptions` (issuer, audience, signing key, token lifetimes) and validated at startup.
 - For production, run behind HTTPS with HSTS enabled (see Playground Blazor host for an example) and store secrets (like `SigningKey`) outside source control (user secrets, environment variables, or secret managers).
 
+### Health Endpoints
+- `/health/live` reports process liveness only (no database calls).
+- `/health/ready` runs all registered health checks, including EF Core database checks for Identity, Multitenancy, and Auditing; it returns 503 when any of these checks is unhealthy.
+
 ## Development Workflow
 ### Adding a Module
 1. Create `Modules/MyFeature` and `Modules.MyFeature.Contracts`.
@@ -152,6 +156,12 @@ src/
 2. Build or reuse an `ApiVersionSet`, route group, and tags.
 3. Apply authorization/permission requirements and rate-limiting annotations.
 4. Validate input with FluentValidation; use Mapster for mapping; ensure audit masking if sensitive data is returned.
+
+### API Guidelines
+- **Routing**: Place HTTP APIs under `api/v{version:apiVersion}/resource` (for example, `api/v1/identity/users`, `api/v1/tenants`). Use nouns for resources and standard verbs for actions.
+- **Versioning**: Define versioned groups with `NewApiVersionSet()` and route groups per module. New versions (`v2`, `v3`, …) should not depend on newer versions.
+- **Metadata**: For new endpoints, set `WithName`, `WithSummary`, `WithDescription`, and `Produces` for main responses and errors so OpenAPI/Scalar stay descriptive.
+- **Authorization**: Use permission helpers (for example, `RequirePermission(...)`) on endpoints instead of ad‑hoc checks, and tag endpoints consistently (`WithTags("Identity")`, `WithTags("Tenants")`).
 
 ### Pre-Commit Checklist
 - `dotnet format`

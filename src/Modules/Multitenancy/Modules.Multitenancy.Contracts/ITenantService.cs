@@ -1,6 +1,6 @@
-﻿using FSH.Modules.Multitenancy.Contracts.Dtos;
+using FSH.Modules.Multitenancy.Contracts.Dtos;
 
-namespace FSH.Modules.Multitenancy.Services;
+namespace FSH.Modules.Multitenancy.Contracts;
 
 public interface ITenantService
 {
@@ -10,7 +10,7 @@ public interface ITenantService
 
     Task<bool> ExistsWithNameAsync(string name);
 
-    Task<TenantDto> GetByIdAsync(string id);
+    Task<TenantStatusDto> GetStatusAsync(string id);
 
     Task<string> CreateAsync(string id, string name, string? connectionString, string adminEmail, string? issuer, CancellationToken cancellationToken);
 
@@ -20,3 +20,4 @@ public interface ITenantService
 
     Task<DateTime> UpgradeSubscription(string id, DateTime extendedExpiryDate);
 }
+
