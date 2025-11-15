@@ -103,7 +103,7 @@ src/
 ### Multitenancy
 - Finbuckle strategies: header (`tenant`), claim, fallback delegate (query param).
 - Stores: EF Core backed + distributed cache for hot lookups.
-- Startup: root tenant seed, then per-tenant migrations via `IDbInitializer`.
+- Startup: root tenant seed always runs; per-tenant migrations via `IDbInitializer` can be made opt-in through `MultitenancyOptions.RunTenantMigrationsOnStartup` (recommended `true` in dev, `false` in production).
 
 ### API Versioning & Discovery
 - `BuildingBlocks/Web/Versioning/Extensions.cs` sets default API version v1 using URL segments.

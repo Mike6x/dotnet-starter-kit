@@ -29,6 +29,9 @@ public sealed class MultitenancyModule : IModule
 {
     public void ConfigureServices(IHostApplicationBuilder builder)
     {
+        builder.Services.AddOptions<MultitenancyOptions>()
+            .Bind(builder.Configuration.GetSection(nameof(MultitenancyOptions)));
+
         builder.Services.AddScoped<ITenantService, TenantService>();
         builder.Services.AddTransient<IConnectionStringValidator, ConnectionStringValidator>();
 

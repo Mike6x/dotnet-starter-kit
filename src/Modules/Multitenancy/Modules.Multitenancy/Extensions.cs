@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace FSH.Modules.Multitenancy;
 
@@ -33,7 +34,8 @@ public static class Extensions
                 MultitenancyConstants.Root.Id,
                 MultitenancyConstants.Root.Name,
                 string.Empty,
-                MultitenancyConstants.Root.EmailAddress);
+                MultitenancyConstants.Root.EmailAddress,
+                issuer: MultitenancyConstants.Root.Issuer);
 
             rootTenant.SetValidity(DateTime.UtcNow.AddYears(1));
             tenantDbContext.TenantInfo.Add(rootTenant);
@@ -59,12 +61,13 @@ public static class Extensions
         // set up tenant store
         var tenants = TenantStoreSetup(app);
 
-        // set up tenant databases
-        app.SetupTenantDatabases(tenants);
+        // set up tenant databases only when explicitly enabled
+        var options = app.Services.GetService<IOptions<MultitenancyOptions>>();
+        app.SetupTenantDatabases(tenants, options?.Value.RunTenantMigrationsOnStartup);
 
         return app;
     }
-    private static IApplicationBuilder SetupTenantDatabases(this IApplicationBuilder app, IEnumerable<AppTenantInfo> tenants)
+    private static IApplicationBuilder SetupTenantDatabases(this IApplicationBuilder app, IEnumerable<AppTenantInfo> tenants, bool? runMigrations)
     {
         foreach (var tenant in tenants)
         {
@@ -77,6 +80,12 @@ public static class Extensions
                 {
                     TenantInfo = tenant
                 };
+
+            // set up tenant databases only when explicitly enabled
+            if (runMigrations.HasValue && runMigrations == false)
+            {
+                continue;
+            }
 
             // using the scope, perform migrations / seeding
             var initializers = tenantScope.ServiceProvider.GetServices<IDbInitializer>();
