@@ -6,7 +6,9 @@ using FSH.Framework.Shared.Multitenancy;
 using FSH.Framework.Shared.Persistence;
 using FSH.Modules.Multitenancy.Contracts;
 using FSH.Modules.Multitenancy.Contracts.Dtos;
+using FSH.Modules.Multitenancy.Contracts.v1.GetTenants;
 using FSH.Modules.Multitenancy.Data;
+using FSH.Modules.Multitenancy.Features.v1.GetTenants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -103,24 +105,17 @@ public sealed class TenantService : ITenantService
     public async Task<bool> ExistsWithNameAsync(string name) =>
         (await _tenantStore.GetAllAsync().ConfigureAwait(false)).Any(t => t.Name == name);
 
-    public async Task<PagedResponse<TenantDto>> GetAllAsync(IPaginationParameters pagination, CancellationToken cancellationToken)
+    public async Task<PagedResponse<TenantDto>> GetAllAsync(GetTenantsQuery query, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(pagination);
+        ArgumentNullException.ThrowIfNull(query);
 
-        var tenants = _dbContext.TenantInfo.AsNoTracking();
+        IQueryable<AppTenantInfo> tenants = _dbContext.TenantInfo;
+        var specification = new GetTenantsSpecification(query);
+        IQueryable<TenantDto> projected = tenants.ApplySpecification(specification);
 
-        var projected = tenants.Select(t => new TenantDto
-        {
-            Id = t.Id,
-            Name = t.Name,
-            ConnectionString = t.ConnectionString,
-            AdminEmail = t.AdminEmail,
-            IsActive = t.IsActive,
-            ValidUpto = t.ValidUpto,
-            Issuer = t.Issuer
-        });
-
-        return await projected.ToPagedResponseAsync(pagination, cancellationToken).ConfigureAwait(false);
+        return await projected
+            .ToPagedResponseAsync(query, cancellationToken)
+            .ConfigureAwait(false);
     }
 
     public async Task<TenantStatusDto> GetStatusAsync(string id)

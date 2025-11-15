@@ -11,7 +11,7 @@ public static class PaginationExtensions
 
     public static Task<PagedResponse<T>> ToPagedResponseAsync<T>(
         this IQueryable<T> source,
-        IPaginationParameters pagination,
+        IPagedQuery pagination,
         CancellationToken cancellationToken = default)
         where T : class
     {
@@ -31,9 +31,10 @@ public static class PaginationExtensions
             pageSize = MaxPageSize;
         }
 
-        var sorted = ApplySorting(source, pagination.Sort);
-
-        return ToPagedResponseInternalAsync(sorted, pageNumber, pageSize, cancellationToken);
+        // Pagination is intentionally decoupled from specifications; the incoming
+        // source is expected to already have any required ordering applied via
+        // specifications or explicit ordering at call sites.
+        return ToPagedResponseInternalAsync(source, pageNumber, pageSize, cancellationToken);
     }
 
     private static async Task<PagedResponse<T>> ToPagedResponseInternalAsync<T>(
@@ -70,102 +71,5 @@ public static class PaginationExtensions
             TotalCount = totalCount,
             TotalPages = totalPages
         };
-    }
-
-    private static IQueryable<T> ApplySorting<T>(IQueryable<T> source, string? sortExpression)
-    {
-        if (string.IsNullOrWhiteSpace(sortExpression))
-        {
-            return source;
-        }
-
-        var clauses = sortExpression
-            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-
-        if (clauses.Length == 0)
-        {
-            return source;
-        }
-
-        var parameter = Expression.Parameter(typeof(T), "x");
-        IOrderedQueryable<T>? ordered = null;
-
-        foreach (var rawClause in clauses)
-        {
-            if (string.IsNullOrWhiteSpace(rawClause))
-            {
-                continue;
-            }
-
-            var clause = rawClause.Trim();
-            var descending = clause[0] == '-';
-            if (clause[0] is '-' or '+')
-            {
-                clause = clause[1..];
-            }
-
-            if (string.IsNullOrWhiteSpace(clause))
-            {
-                continue;
-            }
-
-            var property = typeof(T).GetProperty(
-                clause,
-                System.Reflection.BindingFlags.Public |
-                System.Reflection.BindingFlags.Instance |
-                System.Reflection.BindingFlags.IgnoreCase);
-            if (property is null)
-            {
-                // Unknown property; skip this clause to keep sorting safe.
-                continue;
-            }
-
-            var propertyAccess = Expression.Property(parameter, property);
-            var keySelectorType = typeof(Func<,>).MakeGenericType(typeof(T), property.PropertyType);
-            var keySelector = Expression.Lambda(keySelectorType, propertyAccess, parameter);
-
-            string? methodName;
-            if (descending)
-            {
-                if (descending)
-                {
-                    methodName = ordered is null
-                ? ("OrderByDescending")
-                : ("ThenByDescending");
-                }
-                else
-                {
-                    methodName = ordered is null
-                ? ("OrderByDescending")
-                : ("ThenBy");
-                }
-            }
-            else
-            {
-                if (descending)
-                {
-                    methodName = ordered is null
-                ? ("OrderBy")
-                : ("ThenByDescending");
-                }
-                else
-                {
-                    methodName = ordered is null
-                ? ("OrderBy")
-                : ("ThenBy");
-                }
-            }
-
-            var call = Expression.Call(
-                typeof(Queryable),
-                methodName,
-                new[] { typeof(T), property.PropertyType },
-                (ordered ?? source).Expression,
-                Expression.Quote(keySelector));
-
-            ordered = (IOrderedQueryable<T>)(ordered ?? source.Provider.CreateQuery<T>(call));
-        }
-
-        return ordered ?? source;
     }
 }

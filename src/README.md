@@ -14,7 +14,7 @@ src/
   BuildingBlocks/
     Core/            Domain primitives, exceptions, abstractions
     Shared/          Shared contracts, options, constants (e.g., DbProviders)
-    Persistence/     EF helpers, DbOptions, interceptors, DbContext bindings
+    Persistence/     EF helpers, DbOptions, interceptors, DbContext bindings, pagination, specifications
     Web/             Platform host wiring, middleware, versioning, OpenAPI, modules
     Caching/         ICacheService + Redis/memory implementations
     Jobs/            Hangfire integration and filters
@@ -85,6 +85,20 @@ src/
 - `DatabaseOptions` specify provider (`POSTGRESQL` or `MSSQL`), connection string, and migrations assembly.
 - `BaseDbContext` applies soft-delete filters, listens for tenant context, and registers interceptors such as domain event dispatching.
 - Connection string validators log misconfigurations early; per-tenant contexts are created via `ITenantInfo`.
+
+#### Choosing a Database Provider
+- Valid provider values are `POSTGRESQL` and `MSSQL` (case-insensitive in configuration).
+- Provider, connection string, and migrations assembly are bound from the `DatabaseOptions` section in `appsettings*.json`:
+  - PostgreSQL example:
+    - `"Provider": "POSTGRESQL"`
+    - `"ConnectionString": "Host=localhost;Port=5432;Database=fsh;Username=postgres;Password=password"`
+    - `"MigrationsAssembly": "FSH.Playground.Migrations.PostgreSQL"`
+  - MSSQL example:
+    - `"Provider": "MSSQL"`
+    - `"ConnectionString": "Server=localhost,1433;Database=fsh;User Id=sa;Password=Your_password123;TrustServerCertificate=True"`
+    - `"MigrationsAssembly": "FSH.Playground.Migrations.SqlServer"` (example; adjust to your migrations project).
+- Switching providers should not require code changes: update `DatabaseOptions` and ensure migrations exist for the chosen provider.
+- EF Core uses resilient retries and sensitive-data logging for both PostgreSQL and MSSQL in this starter kit; consider overriding these defaults in production if needed.
 
 ### Multitenancy
 - Finbuckle strategies: header (`tenant`), claim, fallback delegate (query param).
@@ -207,3 +221,13 @@ An Aspire AppHost/ServiceDefaults experience is planned to orchestrate the API, 
 - **Response shape**: Paged endpoints return `PagedResponse<T>` with:
   - `items`, `pageNumber`, `pageSize`, `totalCount`, `totalPages`, `hasNext`, and `hasPrevious`.
 - **Behavior**: Missing or invalid pagination parameters never produce an error; defaults are applied centrally in the pagination helper. Unknown sort fields are ignored to keep sorting safe.
+
+### Specification-Based Querying
+- Use-case-centric specifications live alongside features and build on the Persistence building block abstractions.
+- ISpecification<T> and ISpecification<T, TResult> describe criteria, includes, query behavior flags, and default ordering – but never pagination (no Skip/Take).
+- Base types Specification<T> and Specification<T, TResult> provide helpers like Where, Include, OrderBy/ThenBy, flags (AsNoTrackingQuery, AsSplitQueryBehavior, IgnoreQueryFiltersBehavior), and Select for projections.
+- The evaluator pipeline applies criteria, flags, includes, ordering, then (optionally) projection via query.ApplySpecification(spec); this becomes the canonical way to compose EF queries.
+- Pagination remains separate: compose query.ApplySpecification(spec).ToPagedResponseAsync(pagination, ct) so specs stay pure and paging stays cross-cutting.
+- Sorting is safe and deterministic: specs define default ordering via OrderExpression<T>, and client-provided pagination.Sort is mapped to whitelisted expressions (no reflection). When valid sort keys are present, client ordering overrides spec ordering; when not, spec ordering (or a spec-defined fallback such as OrderBy(x => x.Name).ThenBy(x => x.Id)) is used.
+- Includes with projections may be ignored by EF once Select is applied, but behavior is consistent: filters, flags, and ordering operate on the root entity before projection.
+

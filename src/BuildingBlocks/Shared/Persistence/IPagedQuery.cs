@@ -4,7 +4,7 @@ namespace FSH.Framework.Shared.Persistence;
 /// Shared pagination and sorting contract that can be implemented
 /// or extended by module-specific request types.
 /// </summary>
-public interface IPaginationParameters
+public interface IPagedQuery
 {
     /// <summary>
     /// 1-based page number. Values less than 1 are normalized to 1.

@@ -6,11 +6,11 @@ namespace FSH.Framework.Persistence;
 
 public static class OptionsBuilderExtensions
 {
-    public static DbContextOptionsBuilder ConfigureHeroDatabase(this DbContextOptionsBuilder builder,
+    public static DbContextOptionsBuilder ConfigureHeroDatabase(
+        this DbContextOptionsBuilder builder,
         string dbProvider,
         string connectionString,
-        string migrationsAssembly
-        )
+        string migrationsAssembly)
     {
         ArgumentNullException.ThrowIfNull(builder);
         ArgumentNullException.ThrowIfNullOrWhiteSpace(dbProvider);
@@ -19,18 +19,22 @@ public static class OptionsBuilderExtensions
         return dbProvider.ToUpperInvariant() switch
         {
             DbProviders.PostgreSQL =>
-            builder.UseNpgsql(
-                connectionString, e =>
-                {
-                    e.MigrationsAssembly(migrationsAssembly);
-                })
-                .EnableSensitiveDataLogging(),
+                builder.UseNpgsql(
+                        connectionString,
+                        e =>
+                        {
+                            e.MigrationsAssembly(migrationsAssembly);
+                        })
+                    .EnableSensitiveDataLogging(),
             DbProviders.MSSQL =>
-            builder.UseSqlServer(
-                connectionString, e =>
-                {
-                    e.MigrationsAssembly(migrationsAssembly);
-                }),
+                builder.UseSqlServer(
+                        connectionString,
+                        e =>
+                        {
+                            e.MigrationsAssembly(migrationsAssembly);
+                            e.EnableRetryOnFailure();
+                        })
+                    .EnableSensitiveDataLogging(),
             _ => throw new InvalidOperationException($"Database Provider {dbProvider} is not supported."),
         };
     }

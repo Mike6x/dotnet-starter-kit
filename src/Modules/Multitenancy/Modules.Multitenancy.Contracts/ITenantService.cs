@@ -1,11 +1,12 @@
 using FSH.Framework.Shared.Persistence;
 using FSH.Modules.Multitenancy.Contracts.Dtos;
+using FSH.Modules.Multitenancy.Contracts.v1.GetTenants;
 
 namespace FSH.Modules.Multitenancy.Contracts;
 
 public interface ITenantService
 {
-    Task<PagedResponse<TenantDto>> GetAllAsync(IPaginationParameters pagination, CancellationToken cancellationToken);
+    Task<PagedResponse<TenantDto>> GetAllAsync(GetTenantsQuery query, CancellationToken cancellationToken);
 
     Task<bool> ExistsWithIdAsync(string id);
 
