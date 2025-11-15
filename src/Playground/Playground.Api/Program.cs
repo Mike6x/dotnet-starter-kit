@@ -38,7 +38,7 @@ builder.AddHeroPlatform(o =>
 });
 
 builder.AddModules(moduleAssemblies);
-
+builder.AddServiceDefaults();
 var app = builder.Build();
 app.UseHeroMultiTenantDatabases();
 app.UseHeroPlatform(p => { p.MapModules = true; });
