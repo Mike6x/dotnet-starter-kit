@@ -10,9 +10,9 @@ public static class GetUserEndpoint
 {
     internal static RouteHandlerBuilder MapGetUserEndpoint(this IEndpointRouteBuilder endpoints)
     {
-        return endpoints.MapGet("/{id:guid}", (string id, IUserService service) =>
+        return endpoints.MapGet("/users/{id:guid}", (string id, IUserService service, CancellationToken cancellationToken) =>
         {
-            return service.GetAsync(id, CancellationToken.None);
+            return service.GetAsync(id, cancellationToken);
         })
         .WithName("GetUser")
         .WithSummary("Get user by ID")

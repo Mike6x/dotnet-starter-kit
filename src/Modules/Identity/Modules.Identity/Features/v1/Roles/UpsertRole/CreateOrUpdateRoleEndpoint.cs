@@ -12,7 +12,7 @@ public static class CreateOrUpdateRoleEndpoint
 {
     public static RouteHandlerBuilder MapCreateOrUpdateRoleEndpoint(this IEndpointRouteBuilder endpoints)
     {
-        return endpoints.MapPost("/", async ([FromBody] UpsertRoleCommand request, IRoleService roleService) =>
+        return endpoints.MapPost("/roles", async ([FromBody] UpsertRoleCommand request, IRoleService roleService) =>
         {
             return await roleService.CreateOrUpdateRoleAsync(request.Id, request.Name, request.Description);
         })

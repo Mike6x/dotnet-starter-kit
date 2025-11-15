@@ -10,9 +10,10 @@ public static class DeleteRoleEndpoint
 {
     public static RouteHandlerBuilder MapDeleteRoleEndpoint(this IEndpointRouteBuilder endpoints)
     {
-        return endpoints.MapDelete("/{id:guid}", async (string id, IRoleService roleService) =>
+        return endpoints.MapDelete("/roles/{id:guid}", async (string id, IRoleService roleService) =>
         {
             await roleService.DeleteRoleAsync(id);
+            return Results.NoContent();
         })
         .WithName("DeleteRole")
         .WithSummary("Delete role by ID")

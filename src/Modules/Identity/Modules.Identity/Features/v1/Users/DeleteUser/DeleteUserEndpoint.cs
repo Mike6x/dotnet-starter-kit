@@ -10,9 +10,10 @@ public static class DeleteUserEndpoint
 {
     internal static RouteHandlerBuilder MapDeleteUserEndpoint(this IEndpointRouteBuilder endpoints)
     {
-        return endpoints.MapDelete("/{id:guid}", (string id, IUserService service) =>
+        return endpoints.MapDelete("/users/{id:guid}", async (string id, IUserService service, CancellationToken cancellationToken) =>
         {
-            return service.DeleteAsync(id);
+            await service.DeleteAsync(id);
+            return Results.NoContent();
         })
         .WithName("DeleteUser")
         .WithSummary("Delete user")

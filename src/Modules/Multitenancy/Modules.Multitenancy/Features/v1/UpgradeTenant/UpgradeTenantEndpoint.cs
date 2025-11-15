@@ -3,7 +3,6 @@ using FSH.Modules.Multitenancy.Contracts.v1.UpgradeTenant;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 
 namespace FSH.Modules.Multitenancy.Features.v1.UpgradeTenant;
@@ -12,11 +11,22 @@ public static class UpgradeTenantEndpoint
 {
     internal static RouteHandlerBuilder Map(this IEndpointRouteBuilder endpoints)
     {
-        return endpoints.MapPost("/upgrade", ([FromBody] UpgradeTenantCommand command, IMediator dispatcher)
-            => dispatcher.Send(command))
-                            .WithName("UpgradeTenant")
-                            .WithSummary("Upgrade tenant subscription")
-                            .RequirePermission("Permissions.Tenants.Update")
-                            .WithDescription("Extend or upgrade a tenant's subscription.");
+        return endpoints.MapPost("/{id}/upgrade", async (
+            string id,
+            UpgradeTenantCommand command,
+            IMediator dispatcher) =>
+        {
+            if (!string.Equals(id, command.Tenant, StringComparison.Ordinal))
+            {
+                return Results.BadRequest();
+            }
+
+            var result = await dispatcher.Send(command);
+            return Results.Ok(result);
+        })
+        .WithName("UpgradeTenant")
+        .WithSummary("Upgrade tenant subscription")
+        .RequirePermission("Permissions.Tenants.Update")
+        .WithDescription("Extend or upgrade a tenant's subscription.");
     }
 }
