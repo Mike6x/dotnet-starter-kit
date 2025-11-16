@@ -1,4 +1,5 @@
-﻿using FSH.Modules.Auditing.Contracts;
+﻿using FSH.Framework.Caching;
+using FSH.Modules.Auditing.Contracts;
 using FSH.Modules.Identity.Contracts.DTOs;
 using FSH.Modules.Identity.Contracts.Services;
 using FSH.Modules.Identity.Contracts.v1.Tokens.TokenGeneration;
@@ -15,17 +16,20 @@ public sealed class GenerateTokenCommandHandler
     private readonly ITokenService _tokenService;
     private readonly ISecurityAudit _securityAudit;
     private readonly IHttpContextAccessor _http;
+    private readonly ICacheService _cacheService;
 
     public GenerateTokenCommandHandler(
         IIdentityService identityService,
         ITokenService tokenService,
         ISecurityAudit securityAudit,
-        IHttpContextAccessor http)
+        IHttpContextAccessor http,
+        ICacheService cacheService)
     {
         _identityService = identityService;
         _tokenService = tokenService;
         _securityAudit = securityAudit;
         _http = http;
+        _cacheService = cacheService;
     }
 
     public async ValueTask<TokenResponse> Handle(
@@ -72,7 +76,11 @@ public sealed class GenerateTokenCommandHandler
 
         // Issue token
         var token = await _tokenService.IssueAsync(subject, claims, /*extra*/ null, cancellationToken);
-
+        await _cacheService.SetItemAsync(
+            $"refresh_token_{token.RefreshToken}",
+            subject,
+            token.RefreshTokenExpiresAt - DateTime.UtcNow,
+            cancellationToken);
         // 3) Audit token issuance with a fingerprint (never raw token)
         var fingerprint = Sha256Short(token.AccessToken);
         await _securityAudit.TokenIssuedAsync(

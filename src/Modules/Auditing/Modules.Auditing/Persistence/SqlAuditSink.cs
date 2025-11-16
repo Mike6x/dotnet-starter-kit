@@ -45,6 +45,6 @@ public sealed class SqlAuditSink : IAuditSink
         db.AuditRecords.AddRange(records);
         await db.SaveChangesAsync(ct);
 
-        _log.LogDebug("Wrote {Count} audit records.", records.Count);
+        _log.LogInformation("Wrote {Count} audit records.", records.Count);
     }
 }

@@ -6,6 +6,18 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Observability\Metrics\**" />
+	  <Compile Remove="Observability\Traces\**" />
+	  <Compile Remove="ProblemDetails\**" />
+	  <EmbeddedResource Remove="Observability\Metrics\**" />
+	  <EmbeddedResource Remove="Observability\Traces\**" />
+	  <EmbeddedResource Remove="ProblemDetails\**" />
+	  <None Remove="Observability\Metrics\**" />
+	  <None Remove="Observability\Traces\**" />
+	  <None Remove="ProblemDetails\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 	</ItemGroup>
 	
@@ -15,17 +27,22 @@
 		<PackageReference Include="FluentValidation" />
 		<PackageReference Include="Mediator.Abstractions" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+		<PackageReference Include="Npgsql.OpenTelemetry" />
+		<PackageReference Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" />
+		<PackageReference Include="OpenTelemetry.Instrumentation.StackExchangeRedis" />
 		<PackageReference Include="Scalar.AspNetCore" />
 		<PackageReference Include="Serilog" />
 		<PackageReference Include="Serilog.AspNetCore" />
 		<PackageReference Include="Serilog.Enrichers.CorrelationId" />
+		<PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
+		<PackageReference Include="OpenTelemetry.Extensions.Hosting" />
+		<PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
+		<PackageReference Include="OpenTelemetry.Instrumentation.Http" />
+		<PackageReference Include="OpenTelemetry.Instrumentation.Runtime" />
 	</ItemGroup>
 	
 	<ItemGroup>
 	  <Folder Include="RateLimiting\" />
-	  <Folder Include="ProblemDetails\" />
-	  <Folder Include="Observability\Metrics\" />
-	  <Folder Include="Observability\Traces\" />
 	</ItemGroup>
 	
 	<ItemGroup>

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using StackExchange.Redis;
 
 namespace FSH.Framework.Caching;
 
@@ -19,12 +20,10 @@ public static class Extensions
 
         services.AddStackExchangeRedisCache(options =>
         {
-            options.Configuration = cacheOptions.Redis;
-            options.ConfigurationOptions = new StackExchange.Redis.ConfigurationOptions()
-            {
-                AbortOnConnectFail = true,
-                EndPoints = { cacheOptions.Redis! }
-            };
+            var config = ConfigurationOptions.Parse(cacheOptions.Redis);
+            config.AbortOnConnectFail = true;
+
+            options.ConfigurationOptions = config;
         });
 
         return services;

@@ -46,13 +46,10 @@ namespace FSH.Modules.Identity;
 
 public class IdentityModule : IModule
 {
-
-
     public void ConfigureServices(IHostApplicationBuilder builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
         var services = builder.Services;
-        services.AddScoped<CurrentUserMiddleware>();
         services.AddSingleton<IAuthorizationMiddlewareResultHandler, PathAwareAuthorizationHandler>();
         services.AddScoped<ICurrentUser, CurrentUserService>();
         services.AddScoped<ITokenService, TokenService>();

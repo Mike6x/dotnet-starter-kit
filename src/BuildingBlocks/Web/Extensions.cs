@@ -2,12 +2,13 @@
 using FSH.Framework.Jobs;
 using FSH.Framework.Mailing;
 using FSH.Framework.Persistence;
+using FSH.Framework.Web.Auth;
 using FSH.Framework.Web.Cors;
 using FSH.Framework.Web.Exceptions;
 using FSH.Framework.Web.Health;
 using FSH.Framework.Web.Mediator.Behaviors;
 using FSH.Framework.Web.Modules;
-using FSH.Framework.Web.Observability.Logging.Serilog;
+using FSH.Framework.Web.Observability.OpenTelemetry;
 using FSH.Framework.Web.OpenApi;
 using FSH.Framework.Web.Origin;
 using FSH.Framework.Web.RateLimiting;
@@ -30,7 +31,9 @@ public static class Extensions
         var options = new FshPlatformOptions();
         configure?.Invoke(options);
 
-        builder.AddHeroLogging();
+        builder.Services.AddScoped<CurrentUserMiddleware>();
+
+        //builder.AddHeroLogging();
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddHeroDatabaseOptions(builder.Configuration);
         builder.Services.AddHeroRateLimiting(builder.Configuration);
@@ -68,6 +71,11 @@ public static class Extensions
         builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         builder.Services.AddProblemDetails();
         builder.Services.AddOptions<OriginOptions>().BindConfiguration(nameof(OriginOptions));
+
+        if (options.EnableOpenTelemetry)
+        {
+            builder.AddHeroOpenTelemetry();
+        }
 
         return builder;
     }
@@ -129,7 +137,7 @@ public static class Extensions
 
         // Always expose health endpoints
         app.MapHeroHealthEndpoints();
-
+        app.UseMiddleware<CurrentUserMiddleware>();
         return app;
     }
 }
@@ -141,6 +149,7 @@ public sealed class FshPlatformOptions
     public bool EnableCaching { get; set; } = false;
     public bool EnableJobs { get; set; } = false;
     public bool EnableMailing { get; set; } = false;
+    public bool EnableOpenTelemetry { get; set; } = true;
 }
 
 public sealed class FshPipelineOptions

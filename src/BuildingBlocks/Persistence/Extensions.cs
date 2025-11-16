@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
 namespace FSH.Framework.Persistence;
@@ -28,8 +29,9 @@ public static class Extensions
 
         services.AddDbContext<TContext>((sp, options) =>
         {
+            var env = sp.GetRequiredService<IHostEnvironment>();
             var dbConfig = sp.GetRequiredService<IOptions<DatabaseOptions>>().Value;
-            options.ConfigureHeroDatabase(dbConfig.Provider, dbConfig.ConnectionString, dbConfig.MigrationsAssembly);
+            options.ConfigureHeroDatabase(dbConfig.Provider, dbConfig.ConnectionString, dbConfig.MigrationsAssembly, env.IsDevelopment());
             options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
         });
         return services;

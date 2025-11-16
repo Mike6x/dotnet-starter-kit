@@ -46,7 +46,7 @@ public sealed class TokenService : ITokenService
         var refreshToken = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
         var refreshTokenExpiry = DateTime.UtcNow.AddDays(_options.RefreshTokenDays);
 
-        _logger.LogInformation("Issued JWT for {Subject}", subject);
+        _logger.LogInformation("Issued JWT for {Email}", claims.Where(a => a.Type == ClaimTypes.Email).Select(a => a.Value).FirstOrDefault());
 
         var response = new TokenResponse(
             AccessToken: accessToken,

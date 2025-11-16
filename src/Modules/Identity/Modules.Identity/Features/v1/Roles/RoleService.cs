@@ -19,6 +19,7 @@ public class RoleService(RoleManager<FshRole> roleManager,
 {
     public async Task<IEnumerable<RoleDto>> GetRolesAsync()
     {
+        var user = currentUser.GetTenant();
         if (roleManager is null)
             throw new NotFoundException("RoleManager<FshRole> not resolved. Check Identity registration.");
 

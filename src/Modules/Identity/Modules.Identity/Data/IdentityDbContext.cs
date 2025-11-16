@@ -8,6 +8,7 @@ using FSH.Modules.Identity.Features.v1.Roles;
 using FSH.Modules.Identity.Features.v1.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
 namespace FSH.Modules.Identity.Data;
@@ -23,8 +24,14 @@ public class IdentityDbContext : MultiTenantIdentityDbContext<FshUser,
 {
     private readonly DatabaseOptions _settings;
     private new AppTenantInfo TenantInfo { get; set; }
-    public IdentityDbContext(IMultiTenantContextAccessor<AppTenantInfo> multiTenantContextAccessor, DbContextOptions<IdentityDbContext> options, IOptions<DatabaseOptions> settings) : base(multiTenantContextAccessor, options)
+    private readonly IHostEnvironment _environment;
+    public IdentityDbContext(
+        IMultiTenantContextAccessor<AppTenantInfo> multiTenantContextAccessor,
+        DbContextOptions<IdentityDbContext> options,
+        IOptions<DatabaseOptions> settings,
+        IHostEnvironment environment) : base(multiTenantContextAccessor, options)
     {
+        _environment = environment;
         _settings = settings.Value;
         TenantInfo = multiTenantContextAccessor.MultiTenantContext.TenantInfo!;
     }
@@ -39,7 +46,11 @@ public class IdentityDbContext : MultiTenantIdentityDbContext<FshUser,
     {
         if (!string.IsNullOrWhiteSpace(TenantInfo?.ConnectionString))
         {
-            optionsBuilder.ConfigureHeroDatabase(_settings.Provider, TenantInfo.ConnectionString, _settings.MigrationsAssembly);
+            optionsBuilder.ConfigureHeroDatabase(
+                _settings.Provider,
+                TenantInfo.ConnectionString,
+                _settings.MigrationsAssembly,
+                _environment.IsDevelopment());
         }
     }
 }
