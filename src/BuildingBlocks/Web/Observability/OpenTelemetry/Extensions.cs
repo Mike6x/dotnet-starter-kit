@@ -18,11 +18,6 @@ public static class Extensions
 {
     private const string HealthEndpointPath = "/health";
     private const string AlivenessEndpointPath = "/alive";
-
-    private const string TenantIdTagName = "fsh.tenant_id";
-    private const string UserIdTagName = "enduser.id";
-    private const string CorrelationIdTagName = "fsh.correlation_id";
-
     public static IHostApplicationBuilder AddHeroOpenTelemetry(this IHostApplicationBuilder builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
@@ -44,35 +39,9 @@ public static class Extensions
             .CreateDefault()
             .AddService(serviceName: builder.Environment.ApplicationName);
 
-        ConfigureLogging(builder, options);
         ConfigureMetricsAndTracing(builder, options, resourceBuilder);
 
         return builder;
-    }
-
-    private static void ConfigureLogging(
-        IHostApplicationBuilder builder,
-        OpenTelemetryOptions options)
-    {
-        if (!options.Logging.Enabled)
-        {
-            return;
-        }
-
-        builder.Logging.AddOpenTelemetry(logging =>
-        {
-            logging.IncludeScopes = options.Logging.IncludeScopes;
-            logging.IncludeFormattedMessage = options.Logging.IncludeFormattedMessage;
-            logging.ParseStateValues = true;
-
-            if (options.Exporter.Otlp.Enabled)
-            {
-                logging.AddOtlpExporter(otlp =>
-                {
-                    ConfigureOtlpExporter(options.Exporter.Otlp, otlp);
-                });
-            }
-        });
     }
 
     private static void ConfigureMetricsAndTracing(

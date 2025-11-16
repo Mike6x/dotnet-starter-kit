@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
 using Serilog.Filters;
@@ -10,11 +11,12 @@ public static class Extensions
     public static IHostApplicationBuilder AddHeroLogging(this IHostApplicationBuilder builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
+        builder.Services.AddSingleton<HttpRequestContextEnricher>();
         builder.Services.AddSerilog((context, logger) =>
         {
+            var httpEnricher = context.GetRequiredService<HttpRequestContextEnricher>();
             logger.ReadFrom.Configuration(builder.Configuration);
-            logger.Enrich.FromLogContext();
-            logger.Enrich.WithCorrelationId();
+            logger.Enrich.With(httpEnricher);
             logger
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                 .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)

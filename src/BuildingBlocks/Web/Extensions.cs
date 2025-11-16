@@ -8,6 +8,7 @@ using FSH.Framework.Web.Exceptions;
 using FSH.Framework.Web.Health;
 using FSH.Framework.Web.Mediator.Behaviors;
 using FSH.Framework.Web.Modules;
+using FSH.Framework.Web.Observability.Logging.Serilog;
 using FSH.Framework.Web.Observability.OpenTelemetry;
 using FSH.Framework.Web.OpenApi;
 using FSH.Framework.Web.Origin;
@@ -33,7 +34,12 @@ public static class Extensions
 
         builder.Services.AddScoped<CurrentUserMiddleware>();
 
-        //builder.AddHeroLogging();
+        builder.AddHeroLogging();
+        if (options.EnableOpenTelemetry)
+        {
+            builder.AddHeroOpenTelemetry();
+        }
+
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddHeroDatabaseOptions(builder.Configuration);
         builder.Services.AddHeroRateLimiting(builder.Configuration);
@@ -71,11 +77,6 @@ public static class Extensions
         builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         builder.Services.AddProblemDetails();
         builder.Services.AddOptions<OriginOptions>().BindConfiguration(nameof(OriginOptions));
-
-        if (options.EnableOpenTelemetry)
-        {
-            builder.AddHeroOpenTelemetry();
-        }
 
         return builder;
     }

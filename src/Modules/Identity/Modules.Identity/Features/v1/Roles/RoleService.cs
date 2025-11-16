@@ -19,7 +19,6 @@ public class RoleService(RoleManager<FshRole> roleManager,
 {
     public async Task<IEnumerable<RoleDto>> GetRolesAsync()
     {
-        var user = currentUser.GetTenant();
         if (roleManager is null)
             throw new NotFoundException("RoleManager<FshRole> not resolved. Check Identity registration.");
 
@@ -30,6 +29,7 @@ public class RoleService(RoleManager<FshRole> roleManager,
         var roles = await roleManager.Roles
             .Select(role => new RoleDto { Id = role.Id, Name = role.Name!, Description = role.Description })
             .ToListAsync();
+
         return roles;
     }
 
