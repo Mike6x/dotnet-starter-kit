@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Routing;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Hosting;
 using System.Reflection;
 
@@ -12,12 +13,16 @@ public static class ModuleLoader
 
     public static IHostApplicationBuilder AddModules(this IHostApplicationBuilder builder, params Assembly[] assemblies)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+
         lock (_lock)
         {
             if (_modulesLoaded)
             {
                 return builder;
             }
+
+            builder.Services.AddValidatorsFromAssemblies(assemblies);
 
             var source = assemblies is { Length: > 0 }
                 ? assemblies

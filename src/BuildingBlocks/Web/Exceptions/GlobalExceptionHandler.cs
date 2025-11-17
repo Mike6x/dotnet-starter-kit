@@ -62,8 +62,12 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
 
         httpContext.Response.StatusCode = statusCode;
 
-        LogContext.PushProperty("StackTrace", exception.StackTrace);
-        logger.LogError(exception, "Unhandled exception at {Path}", httpContext.Request.Path);
+        LogContext.PushProperty("exception_title", problemDetails.Title);
+        LogContext.PushProperty("exception_detail", problemDetails.Detail);
+        LogContext.PushProperty("exception_statusCode", problemDetails.Status);
+        LogContext.PushProperty("exception_stackTrace", exception.StackTrace);
+
+        logger.LogError("Exception at {Path} - {Detail}", httpContext.Request.Path, problemDetails.Detail);
 
         await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken).ConfigureAwait(false);
         return true;

@@ -6,6 +6,7 @@ namespace FSH.Modules.Identity.Features.v1.Users;
 
 public class UserImageValidator : AbstractValidator<FileUploadRequest>
 {
+    public UserImageValidator() : this(FileType.Image) { }
     public UserImageValidator(FileType fileType)
     {
         var rules = FileTypeMetadata.GetRules(fileType);
