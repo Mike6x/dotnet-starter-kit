@@ -25,6 +25,7 @@ public sealed class OpenTelemetryOptions
     public sealed class MetricsOptions
     {
         public bool Enabled { get; set; } = true;
+        public string[]? MeterNames { get; set; }
     }
 
     public sealed class ExporterOptions

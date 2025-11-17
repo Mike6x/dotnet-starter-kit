@@ -75,6 +75,10 @@ public class IdentityModule : IModule
         })
            .AddEntityFrameworkStores<IdentityDbContext>()
            .AddDefaultTokenProviders();
+
+        //metrics
+        services.AddSingleton<IdentityMetrics>();
+
         services.ConfigureJwtAuth();
     }
 

@@ -62,7 +62,13 @@ public static class Extensions
                     .SetResourceBuilder(resourceBuilder)
                     .AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
+                    .AddNpgsqlInstrumentation()
                     .AddRuntimeInstrumentation();
+
+                foreach (var meterName in options.Metrics.MeterNames ?? Array.Empty<string>())
+                {
+                    metrics.AddMeter(meterName);
+                }
 
                 if (options.Exporter.Otlp.Enabled)
                 {

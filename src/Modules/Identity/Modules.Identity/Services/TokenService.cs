@@ -14,12 +14,14 @@ public sealed class TokenService : ITokenService
 {
     private readonly JwtOptions _options;
     private readonly ILogger<TokenService> _logger;
+    private readonly IdentityMetrics _metrics;
 
-    public TokenService(IOptions<JwtOptions> options, ILogger<TokenService> logger)
+    public TokenService(IOptions<JwtOptions> options, ILogger<TokenService> logger, IdentityMetrics metrics)
     {
         ArgumentNullException.ThrowIfNull(options);
         _options = options.Value;
         _logger = logger;
+        _metrics = metrics;
     }
 
     public Task<TokenResponse> IssueAsync(
@@ -46,7 +48,9 @@ public sealed class TokenService : ITokenService
         var refreshToken = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
         var refreshTokenExpiry = DateTime.UtcNow.AddDays(_options.RefreshTokenDays);
 
-        _logger.LogInformation("Issued JWT for {Email}", claims.Where(a => a.Type == ClaimTypes.Email).Select(a => a.Value).FirstOrDefault());
+        var userEmail = claims.Where(a => a.Type == ClaimTypes.Email).Select(a => a.Value).First();
+        _logger.LogInformation("Issued JWT for {Email}", userEmail);
+        _metrics.TokenGenerated(userEmail);
 
         var response = new TokenResponse(
             AccessToken: accessToken,
