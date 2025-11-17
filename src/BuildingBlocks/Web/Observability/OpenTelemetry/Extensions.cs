@@ -81,7 +81,6 @@ public static class Extensions
 
                 tracing
                     .SetResourceBuilder(resourceBuilder)
-                    .SetSampler(CreateSampler(options.Sampler))
                     .AddAspNetCoreInstrumentation(instrumentation =>
                     {
                         instrumentation.Filter = context => !IsHealthCheck(context.Request.Path);
@@ -119,20 +118,6 @@ public static class Extensions
     private static void EnrichWithHttpResponse(Activity activity, HttpResponse response)
     {
         activity.SetTag("http.status_code", response.StatusCode);
-    }
-
-    private static Sampler CreateSampler(OpenTelemetryOptions.SamplerOptions options)
-    {
-        var type = options.Type?.Trim().ToLowerInvariant();
-
-        return type switch
-        {
-            "always_off" => new AlwaysOffSampler(),
-            "always_on" => new AlwaysOnSampler(),
-            "traceidratio" => new TraceIdRatioBasedSampler(options.Probability),
-            "parentbased_always_on" => new ParentBasedSampler(new AlwaysOnSampler()),
-            "parentbased_traceidratio" or _ => new ParentBasedSampler(new TraceIdRatioBasedSampler(options.Probability)),
-        };
     }
 
     private static void ConfigureOtlpExporter(
