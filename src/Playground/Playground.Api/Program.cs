@@ -18,7 +18,9 @@ builder.Services.AddMediator(o =>
         typeof(GenerateTokenCommand),
         typeof(GenerateTokenCommandHandler),
         typeof(GetTenantStatusQuery),
-        typeof(GetTenantStatusQueryHandler)];
+        typeof(GetTenantStatusQueryHandler),
+        typeof(FSH.Modules.Auditing.Contracts.AuditEnvelope),
+        typeof(FSH.Modules.Auditing.Persistence.AuditDbContext)];
 });
 
 var moduleAssemblies = new Assembly[]

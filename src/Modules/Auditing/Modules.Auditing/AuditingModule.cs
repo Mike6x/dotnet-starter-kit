@@ -1,7 +1,17 @@
-﻿using FSH.Framework.Persistence;
+using Asp.Versioning;
+using FSH.Framework.Persistence;
 using FSH.Framework.Web.Modules;
 using FSH.Modules.Auditing.Contracts;
+using FSH.Modules.Auditing.Features.v1.GetAuditById;
+using FSH.Modules.Auditing.Features.v1.GetAudits;
+using FSH.Modules.Auditing.Features.v1.GetAuditsByCorrelation;
+using FSH.Modules.Auditing.Features.v1.GetAuditsByTrace;
+using FSH.Modules.Auditing.Features.v1.GetAuditSummary;
+using FSH.Modules.Auditing.Features.v1.GetExceptionAudits;
+using FSH.Modules.Auditing.Features.v1.GetSecurityAudits;
 using FSH.Modules.Auditing.Persistence;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,6 +51,22 @@ public class AuditingModule : IModule
 
     public void MapEndpoints(IEndpointRouteBuilder endpoints)
     {
+        var apiVersionSet = endpoints.NewApiVersionSet()
+            .HasApiVersion(new ApiVersion(1))
+            .ReportApiVersions()
+            .Build();
 
+        var group = endpoints
+            .MapGroup("api/v{version:apiVersion}/audits")
+            .WithTags("Audits")
+            .WithApiVersionSet(apiVersionSet);
+
+        group.MapGetAuditsEndpoint();
+        group.MapGetAuditByIdEndpoint();
+        group.MapGetAuditsByCorrelationEndpoint();
+        group.MapGetAuditsByTraceEndpoint();
+        group.MapGetSecurityAuditsEndpoint();
+        group.MapGetExceptionAuditsEndpoint();
+        group.MapGetAuditSummaryEndpoint();
     }
 }
