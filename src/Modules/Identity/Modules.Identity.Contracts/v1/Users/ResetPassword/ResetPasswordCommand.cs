@@ -1,6 +1,8 @@
-﻿namespace FSH.Modules.Identity.Contracts.v1.Users.ResetPassword;
+using Mediator;
 
-public class ResetPasswordCommand
+namespace FSH.Modules.Identity.Contracts.v1.Users.ResetPassword;
+
+public class ResetPasswordCommand : ICommand<string>
 {
     public string Email { get; set; } = default!;
 

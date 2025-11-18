@@ -1,5 +1,7 @@
-﻿using FSH.Framework.Shared.Identity.Authorization;
-using FSH.Modules.Identity.Contracts.Services;
+using FSH.Framework.Shared.Identity;
+using FSH.Framework.Shared.Identity.Authorization;
+using FSH.Modules.Identity.Contracts.v1.Users.GetUser;
+using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -10,13 +12,11 @@ public static class GetUserEndpoint
 {
     internal static RouteHandlerBuilder MapGetUserEndpoint(this IEndpointRouteBuilder endpoints)
     {
-        return endpoints.MapGet("/users/{id:guid}", (string id, IUserService service, CancellationToken cancellationToken) =>
-        {
-            return service.GetAsync(id, cancellationToken);
-        })
+        return endpoints.MapGet("/users/{id:guid}", (string id, IMediator mediator, CancellationToken cancellationToken) =>
+            mediator.Send(new GetUserQuery(id), cancellationToken))
         .WithName("GetUser")
         .WithSummary("Get user by ID")
-        .RequirePermission("Permissions.Users.View")
+        .RequirePermission(IdentityPermissionConstants.Users.View)
         .WithDescription("Retrieve a user's profile details by unique user identifier.");
     }
 }

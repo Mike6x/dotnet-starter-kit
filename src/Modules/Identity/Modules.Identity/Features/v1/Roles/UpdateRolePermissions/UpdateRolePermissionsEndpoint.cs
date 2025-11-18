@@ -1,7 +1,7 @@
-﻿using FluentValidation;
+using FSH.Framework.Shared.Identity;
 using FSH.Framework.Shared.Identity.Authorization;
-using FSH.Modules.Identity.Contracts.Services;
 using FSH.Modules.Identity.Contracts.v1.Roles.UpdatePermissions;
+using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,18 +14,22 @@ public static class UpdateRolePermissionsEndpoint
     public static RouteHandlerBuilder MapUpdateRolePermissionsEndpoint(this IEndpointRouteBuilder endpoints)
     {
         return endpoints.MapPut("/{id}/permissions", async (
-            [FromBody] UpdatePermissionsCommand request,
-            IRoleService roleService,
             string id,
-            [FromServices] IValidator<UpdatePermissionsCommand> validator) =>
+            [FromBody] UpdatePermissionsCommand request,
+            IMediator mediator,
+            CancellationToken cancellationToken) =>
         {
-            if (id != request.RoleId) return Results.BadRequest();
-            var response = await roleService.UpdatePermissionsAsync(request.RoleId, request.Permissions);
+            if (id != request.RoleId)
+            {
+                return Results.BadRequest();
+            }
+
+            var response = await mediator.Send(request, cancellationToken);
             return Results.Ok(response);
         })
         .WithName("UpdateRolePermissions")
         .WithSummary("Update role permissions")
-        .RequirePermission("Permissions.Roles.Create")
+        .RequirePermission(IdentityPermissionConstants.Roles.Update)
         .WithDescription("Replace the set of permissions assigned to a role.");
     }
 }

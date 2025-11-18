@@ -1,6 +1,7 @@
-﻿using FSH.Framework.Shared.Identity.Authorization;
-using FSH.Modules.Identity.Contracts.Services;
+using FSH.Framework.Shared.Identity;
+using FSH.Framework.Shared.Identity.Authorization;
 using FSH.Modules.Identity.Contracts.v1.Users.RegisterUser;
+using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -11,25 +12,18 @@ public static class RegisterUserEndpoint
 {
     internal static RouteHandlerBuilder MapRegisterUserEndpoint(this IEndpointRouteBuilder endpoints)
     {
-        return endpoints.MapPost("/register", (RegisterUserCommand request,
-            IUserService service,
+        return endpoints.MapPost("/register", (RegisterUserCommand command,
             HttpContext context,
+            IMediator mediator,
             CancellationToken cancellationToken) =>
         {
             var origin = $"{context.Request.Scheme}://{context.Request.Host.Value}{context.Request.PathBase.Value}";
-            return service.RegisterAsync(request.FirstName,
-                request.LastName,
-                request.Email,
-                request.UserName,
-                request.Password,
-                request.ConfirmPassword,
-                request.PhoneNumber,
-                origin,
-                cancellationToken);
+            command.Origin = origin;
+            return mediator.Send(command, cancellationToken);
         })
         .WithName("RegisterUser")
         .WithSummary("Register user")
-        .RequirePermission("Permissions.Users.Create")
+        .RequirePermission(IdentityPermissionConstants.Users.Create)
         .WithDescription("Create a new user account.");
     }
 }

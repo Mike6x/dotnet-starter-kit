@@ -1,5 +1,7 @@
-﻿using FSH.Framework.Shared.Identity.Authorization;
-using FSH.Modules.Identity.Contracts.Services;
+using FSH.Framework.Shared.Identity;
+using FSH.Framework.Shared.Identity.Authorization;
+using FSH.Modules.Identity.Contracts.v1.Users.GetUserRoles;
+using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -10,13 +12,11 @@ public static class GetUserRolesEndpoint
 {
     internal static RouteHandlerBuilder MapGetUserRolesEndpoint(this IEndpointRouteBuilder endpoints)
     {
-        return endpoints.MapGet("/users/{id:guid}/roles", (string id, IUserService service, CancellationToken cancellationToken) =>
-        {
-            return service.GetUserRolesAsync(id, cancellationToken);
-        })
+        return endpoints.MapGet("/users/{id:guid}/roles", (string id, IMediator mediator, CancellationToken cancellationToken) =>
+            mediator.Send(new GetUserRolesQuery(id), cancellationToken))
         .WithName("GetUserRoles")
         .WithSummary("Get user roles")
-        .RequirePermission("Permissions.Users.View")
+        .RequirePermission(IdentityPermissionConstants.Users.View)
         .WithDescription("Retrieve the roles assigned to a specific user.");
     }
 }

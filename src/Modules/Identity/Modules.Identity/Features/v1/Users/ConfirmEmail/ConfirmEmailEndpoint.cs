@@ -1,4 +1,5 @@
-﻿using FSH.Modules.Identity.Contracts.Services;
+using FSH.Modules.Identity.Contracts.v1.Users.ConfirmEmail;
+using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -9,9 +10,10 @@ public static class ConfirmEmailEndpoint
 {
     internal static RouteHandlerBuilder MapConfirmEmailEndpoint(this IEndpointRouteBuilder endpoints)
     {
-        return endpoints.MapGet("/confirm-email", (string userId, string code, string tenant, IUserService service) =>
+        return endpoints.MapGet("/confirm-email", async (string userId, string code, string tenant, IMediator mediator, CancellationToken cancellationToken) =>
         {
-            return service.ConfirmEmailAsync(userId, code, tenant, default);
+            var result = await mediator.Send(new ConfirmEmailCommand(userId, code, tenant), cancellationToken);
+            return Results.Ok(result);
         })
         .WithName("ConfirmEmail")
         .WithSummary("Confirm user email")

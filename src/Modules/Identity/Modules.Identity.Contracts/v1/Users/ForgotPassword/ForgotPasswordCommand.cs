@@ -1,6 +1,8 @@
-﻿namespace FSH.Modules.Identity.Contracts.v1.Users.ForgotPassword;
+using Mediator;
 
-public class ForgotPasswordCommand
+namespace FSH.Modules.Identity.Contracts.v1.Users.ForgotPassword;
+
+public class ForgotPasswordCommand : ICommand<string>
 {
     public string Email { get; set; } = default!;
 }

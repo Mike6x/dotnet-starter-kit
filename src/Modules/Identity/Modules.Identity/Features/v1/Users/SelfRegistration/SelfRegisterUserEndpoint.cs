@@ -1,7 +1,8 @@
-﻿using FSH.Framework.Shared.Identity.Authorization;
+using FSH.Framework.Shared.Identity;
+using FSH.Framework.Shared.Identity.Authorization;
 using FSH.Framework.Shared.Multitenancy;
-using FSH.Modules.Identity.Contracts.Services;
 using FSH.Modules.Identity.Contracts.v1.Users.RegisterUser;
+using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,26 +14,19 @@ public static class SelfRegisterUserEndpoint
 {
     internal static RouteHandlerBuilder MapSelfRegisterUserEndpoint(this IEndpointRouteBuilder endpoints)
     {
-        return endpoints.MapPost("/self-register", (RegisterUserCommand request,
+        return endpoints.MapPost("/self-register", (RegisterUserCommand command,
             [FromHeader(Name = MultitenancyConstants.Identifier)] string tenant,
-            IUserService service,
             HttpContext context,
+            IMediator mediator,
             CancellationToken cancellationToken) =>
         {
             var origin = $"{context.Request.Scheme}://{context.Request.Host.Value}{context.Request.PathBase.Value}";
-            return service.RegisterAsync(request.FirstName,
-                request.LastName,
-                request.Email,
-                request.UserName,
-                request.Password,
-                request.ConfirmPassword,
-                request.PhoneNumber,
-                origin,
-                cancellationToken);
+            command.Origin = origin;
+            return mediator.Send(command, cancellationToken);
         })
         .WithName("SelfRegisterUser")
         .WithSummary("Self register user")
-        .RequirePermission("Permissions.Users.Create")
+        .RequirePermission(IdentityPermissionConstants.Users.Create)
         .WithDescription("Allow a user to self-register.")
         .AllowAnonymous();
     }

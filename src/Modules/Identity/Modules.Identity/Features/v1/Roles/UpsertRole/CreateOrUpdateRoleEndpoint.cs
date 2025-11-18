@@ -1,6 +1,7 @@
-﻿using FSH.Framework.Shared.Identity.Authorization;
-using FSH.Modules.Identity.Contracts.Services;
+using FSH.Framework.Shared.Identity;
+using FSH.Framework.Shared.Identity.Authorization;
 using FSH.Modules.Identity.Contracts.v1.Roles.UpsertRole;
+using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,13 +13,11 @@ public static class CreateOrUpdateRoleEndpoint
 {
     public static RouteHandlerBuilder MapCreateOrUpdateRoleEndpoint(this IEndpointRouteBuilder endpoints)
     {
-        return endpoints.MapPost("/roles", async ([FromBody] UpsertRoleCommand request, IRoleService roleService) =>
-        {
-            return await roleService.CreateOrUpdateRoleAsync(request.Id, request.Name, request.Description);
-        })
+        return endpoints.MapPost("/roles", (IMediator mediator, [FromBody] UpsertRoleCommand request, CancellationToken cancellationToken) =>
+            mediator.Send(request, cancellationToken))
         .WithName("CreateOrUpdateRole")
         .WithSummary("Create or update role")
-        .RequirePermission("Permissions.Roles.Create")
+        .RequirePermission(IdentityPermissionConstants.Roles.Create)
         .WithDescription("Create a new role or update an existing role's name and description.");
     }
 }

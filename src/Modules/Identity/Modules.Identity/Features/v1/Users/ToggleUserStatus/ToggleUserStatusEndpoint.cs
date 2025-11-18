@@ -1,7 +1,7 @@
-﻿using FluentValidation;
+using FSH.Framework.Shared.Identity;
 using FSH.Framework.Shared.Identity.Authorization;
-using FSH.Modules.Identity.Contracts.Services;
 using FSH.Modules.Identity.Contracts.v1.Users.ToggleUserStatus;
+using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +16,7 @@ public static class ToggleUserStatusEndpoint
         return endpoints.MapPatch("/users/{id:guid}", async (
             string id,
             [FromBody] ToggleUserStatusCommand command,
-            [FromServices] IUserService userService,
+            IMediator mediator,
             CancellationToken cancellationToken) =>
         {
             if (string.IsNullOrWhiteSpace(command.UserId))
@@ -29,13 +29,12 @@ public static class ToggleUserStatusEndpoint
                 return Results.BadRequest();
             }
 
-            await userService.ToggleStatusAsync(command.ActivateUser, command.UserId, cancellationToken);
+            await mediator.Send(command, cancellationToken);
             return Results.NoContent();
         })
         .WithName("ToggleUserStatus")
         .WithSummary("Toggle user status")
-        .RequirePermission("Permissions.Users.Update")
+        .RequirePermission(IdentityPermissionConstants.Users.Update)
         .WithDescription("Activate or deactivate a user account.");
     }
-
 }

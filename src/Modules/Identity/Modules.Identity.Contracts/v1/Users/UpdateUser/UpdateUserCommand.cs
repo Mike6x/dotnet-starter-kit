@@ -1,8 +1,9 @@
-﻿using FSH.Framework.Storage.DTOs;
+using FSH.Framework.Storage.DTOs;
+using Mediator;
 
 namespace FSH.Modules.Identity.Contracts.v1.Users.UpdateUser;
 
-public class UpdateUserCommand
+public class UpdateUserCommand : ICommand<Unit>
 {
     public string Id { get; set; } = default!;
     public string? FirstName { get; set; }
