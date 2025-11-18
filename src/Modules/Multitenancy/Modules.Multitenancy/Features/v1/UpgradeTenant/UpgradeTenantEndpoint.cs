@@ -1,4 +1,5 @@
-﻿using FSH.Framework.Shared.Identity.Authorization;
+using FSH.Framework.Shared.Identity.Authorization;
+using FSH.Framework.Shared.Multitenancy;
 using FSH.Modules.Multitenancy.Contracts.v1.UpgradeTenant;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
@@ -26,7 +27,7 @@ public static class UpgradeTenantEndpoint
         })
         .WithName("UpgradeTenant")
         .WithSummary("Upgrade tenant subscription")
-        .RequirePermission("Permissions.Tenants.Update")
+        .RequirePermission(MultitenancyConstants.Permissions.Update)
         .WithDescription("Extend or upgrade a tenant's subscription.");
     }
 }

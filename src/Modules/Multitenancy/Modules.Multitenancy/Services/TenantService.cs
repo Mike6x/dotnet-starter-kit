@@ -94,6 +94,17 @@ public sealed class TenantService : ITenantService
             throw new CustomException($"tenant {id} is already deactivated");
         }
 
+        int tenantCount = (await _tenantStore.GetAllAsync().ConfigureAwait(false)).Count(t => t.IsActive);
+        if (tenantCount <= 1)
+        {
+            throw new CustomException("At least one active tenant is required.");
+        }
+
+        if (!tenant.Id.Equals(MultitenancyConstants.Root.Id, StringComparison.OrdinalIgnoreCase))
+        {
+            throw new CustomException("The root tenant cannot be deactivated.");
+        }
+
         tenant.Deactivate();
         await _tenantStore.TryUpdateAsync(tenant).ConfigureAwait(false);
         return $"tenant {id} is now deactivated";

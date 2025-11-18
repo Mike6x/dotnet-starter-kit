@@ -17,5 +17,7 @@ public static class MultitenancyConstants
     public static class Permissions
     {
         public const string View = "Permissions.Tenants.View";
+        public const string Create = "Permissions.Tenants.Create";
+        public const string Update = "Permissions.Tenants.Update";
     }
 }

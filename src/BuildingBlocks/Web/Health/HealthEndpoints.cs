@@ -9,7 +9,7 @@ namespace FSH.Framework.Web.Health;
 public static class HealthEndpoints
 {
     public sealed record HealthResult(string Status, IEnumerable<HealthEntry> Results);
-    public sealed record HealthEntry(string Name, string Status, string? Description, double DurationMs);
+    public sealed record HealthEntry(string Name, string Status, string? Description, double DurationMs, Dictionary<string, object>? Details = default);
     public static IEndpointRouteBuilder MapHeroHealthEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/health")
@@ -44,7 +44,11 @@ public static class HealthEndpoints
                         Name: e.Key,
                         Status: e.Value.Status.ToString(),
                         Description: e.Value.Description,
-                        DurationMs: e.Value.Duration.TotalMilliseconds));
+                        DurationMs: e.Value.Duration.TotalMilliseconds,
+                        Details: e.Value.Data.ToDictionary(
+                            k => k.Key,
+                            v => v.Value is null ? "null" : v.Value
+                        )));
 
                         var payload = new HealthResult(report.Status.ToString(), results);
 

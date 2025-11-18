@@ -1,5 +1,4 @@
-﻿// FSH.Modules.Multitenancy/MultitenancyModule.cs
-using Asp.Versioning;
+﻿using Asp.Versioning;
 using Finbuckle.MultiTenant;
 using Finbuckle.MultiTenant.Abstractions;
 using Finbuckle.MultiTenant.Stores.DistributedCacheStore;
@@ -9,13 +8,12 @@ using FSH.Framework.Shared.Multitenancy;
 using FSH.Framework.Web.Modules;
 using FSH.Modules.Multitenancy.Contracts;
 using FSH.Modules.Multitenancy.Data;
+using FSH.Modules.Multitenancy.Features.v1.ChangeTenantActivation;
 using FSH.Modules.Multitenancy.Features.v1.CreateTenant;
-using FSH.Modules.Multitenancy.Features.v1.DisableTenant;
 using FSH.Modules.Multitenancy.Features.v1.GetTenants;
 using FSH.Modules.Multitenancy.Features.v1.GetTenantStatus;
 using FSH.Modules.Multitenancy.Features.v1.UpgradeTenant;
 using FSH.Modules.Multitenancy.Services;
-using FSH.Modules.Tenant.Features.v1.ActivateTenant;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -73,7 +71,10 @@ public sealed class MultitenancyModule : IModule
         builder.Services.AddHealthChecks()
             .AddDbContextCheck<TenantDbContext>(
                 name: "db:multitenancy",
-                failureStatus: HealthStatus.Unhealthy);
+                failureStatus: HealthStatus.Unhealthy)
+            .AddCheck<TenantMigrationsHealthCheck>(
+                name: "db:tenants-migrations",
+                failureStatus: HealthStatus.Healthy);
         builder.Services.AddScoped<ITenantService, TenantService>();
     }
 
@@ -87,11 +88,9 @@ public sealed class MultitenancyModule : IModule
         var group = endpoints.MapGroup("api/v{version:apiVersion}/tenants")
             .WithTags("Tenants")
             .WithApiVersionSet(versionSet);
-
-        DisableTenantEndpoint.Map(group);
+        ChangeTenantActivationEndpoint.Map(group);
         GetTenantsEndpoint.Map(group);
         UpgradeTenantEndpoint.Map(group);
-        ActivateTenantEndpoint.Map(group);
         CreateTenantEndpoint.Map(group);
         GetTenantStatusEndpoint.Map(group);
     }

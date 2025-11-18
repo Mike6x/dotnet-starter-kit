@@ -1,4 +1,5 @@
-﻿using FSH.Framework.Shared.Identity.Authorization;
+using FSH.Framework.Shared.Identity.Authorization;
+using FSH.Framework.Shared.Multitenancy;
 using FSH.Modules.Multitenancy.Contracts.v1.CreateTenant;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
@@ -16,9 +17,9 @@ public static class CreateTenantEndpoint
             [FromBody] CreateTenantCommand command,
             [FromServices] IMediator mediator)
             => await mediator.Send(command))
-                                .WithName("CreateTenant")
-                                .WithSummary("Create tenant")
-                                .RequirePermission("Permissions.Tenants.Create")
-                                .WithDescription("Create a new tenant.");
+            .WithName("CreateTenant")
+            .WithSummary("Create tenant")
+            .RequirePermission(MultitenancyConstants.Permissions.Create)
+            .WithDescription("Create a new tenant.");
     }
 }
