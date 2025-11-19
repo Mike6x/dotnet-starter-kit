@@ -19,4 +19,6 @@ builder.AddProject<Projects.Playground_Api>("playground-api")
     .WithEnvironment("CachingOptions__Redis", redis.Resource.ConnectionStringExpression)
     .WaitFor(redis);
 
+builder.AddProject<Projects.Playground_Blazor>("playground-blazor");
+
 await builder.Build().RunAsync();
