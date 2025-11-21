@@ -5,6 +5,10 @@ using FSH.Modules.Identity.Contracts.v1.Tokens.TokenGeneration;
 using Mediator;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
+using Finbuckle.MultiTenant.Abstractions;
+using FSH.Framework.Eventing.Outbox;
+using FSH.Framework.Shared.Multitenancy;
+using FSH.Modules.Identity.Contracts.Events;
 
 namespace FSH.Modules.Identity.Features.v1.Tokens.TokenGeneration;
 
@@ -15,17 +19,23 @@ public sealed class GenerateTokenCommandHandler
     private readonly ITokenService _tokenService;
     private readonly ISecurityAudit _securityAudit;
     private readonly IHttpContextAccessor _http;
+    private readonly IOutboxStore _outboxStore;
+    private readonly IMultiTenantContextAccessor<AppTenantInfo> _multiTenantContextAccessor;
 
     public GenerateTokenCommandHandler(
         IIdentityService identityService,
         ITokenService tokenService,
         ISecurityAudit securityAudit,
-        IHttpContextAccessor http)
+        IHttpContextAccessor http,
+        IOutboxStore outboxStore,
+        IMultiTenantContextAccessor<AppTenantInfo> multiTenantContextAccessor)
     {
         _identityService = identityService;
         _tokenService = tokenService;
         _securityAudit = securityAudit;
         _http = http;
+        _outboxStore = outboxStore;
+        _multiTenantContextAccessor = multiTenantContextAccessor;
     }
 
     public async ValueTask<TokenResponse> Handle(
@@ -73,6 +83,9 @@ public sealed class GenerateTokenCommandHandler
         // Issue token
         var token = await _tokenService.IssueAsync(subject, claims, /*extra*/ null, cancellationToken);
 
+        // Persist refresh token (hashed) for this user
+        await _identityService.StoreRefreshTokenAsync(subject, token.RefreshToken, token.RefreshTokenExpiresAt, cancellationToken);
+
         // 3) Audit token issuance with a fingerprint (never raw token)
         var fingerprint = Sha256Short(token.AccessToken);
         await _securityAudit.TokenIssuedAsync(
@@ -82,6 +95,26 @@ public sealed class GenerateTokenCommandHandler
             tokenFingerprint: fingerprint,
             expiresUtc: token.AccessTokenExpiresAt,
             ct: cancellationToken);
+
+        // 4) Enqueue integration event for token generation (sample event for testing eventing)
+        var tenantId = _multiTenantContextAccessor.MultiTenantContext?.TenantInfo?.Id;
+        var correlationId = Guid.NewGuid().ToString();
+
+        var integrationEvent = new TokenGeneratedIntegrationEvent(
+            Id: Guid.NewGuid(),
+            OccurredOnUtc: DateTime.UtcNow,
+            TenantId: tenantId,
+            CorrelationId: correlationId,
+            Source: "Identity",
+            UserId: subject,
+            Email: request.Email,
+            ClientId: clientId!,
+            IpAddress: ip,
+            UserAgent: ua,
+            TokenFingerprint: fingerprint,
+            AccessTokenExpiresAtUtc: token.AccessTokenExpiresAt);
+
+        await _outboxStore.AddAsync(integrationEvent, cancellationToken).ConfigureAwait(false);
 
         return token;
     }

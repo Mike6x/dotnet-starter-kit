@@ -1,5 +1,8 @@
 ﻿using Asp.Versioning;
 using FSH.Framework.Core.Context;
+using FSH.Framework.Eventing;
+using FSH.Framework.Eventing.Outbox;
+using FSH.Framework.Identity.v1.Tokens.RefreshToken;
 using FSH.Framework.Identity.v1.Tokens.TokenGeneration;
 using FSH.Framework.Infrastructure.Identity.Users.Endpoints;
 using FSH.Framework.Infrastructure.Identity.Users.Services;
@@ -33,6 +36,8 @@ using FSH.Modules.Identity.Features.v1.Users.ResetPassword;
 using FSH.Modules.Identity.Features.v1.Users.ToggleUserStatus;
 using FSH.Modules.Identity.Features.v1.Users.UpdateUser;
 using FSH.Modules.Identity.Services;
+using Hangfire;
+using Hangfire.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -59,6 +64,9 @@ public class IdentityModule : IModule
         services.AddTransient<IStorageService, LocalStorageService>();
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddHeroDbContext<IdentityDbContext>();
+        services.AddEventingCore(builder.Configuration);
+        services.AddEventingForDbContext<IdentityDbContext>();
+        services.AddIntegrationEventHandlers(typeof(IdentityModule).Assembly);
         builder.Services.AddHealthChecks()
             .AddDbContextCheck<IdentityDbContext>(
                 name: "db:identity",
@@ -96,6 +104,18 @@ public class IdentityModule : IModule
 
         // tokens
         group.MapGenerateTokenEndpoint().AllowAnonymous().RequireRateLimiting("auth");
+        group.MapRefreshTokenEndpoint().AllowAnonymous().RequireRateLimiting("auth");
+
+        // example Hangfire setup for Identity outbox dispatcher
+        var jobManager = endpoints.ServiceProvider.GetService<IRecurringJobManager>();
+        if (jobManager is not null)
+        {
+            jobManager.AddOrUpdate(
+                "identity-outbox-dispatcher",
+                Job.FromExpression<OutboxDispatcher>(d => d.DispatchAsync(CancellationToken.None)),
+                Cron.Minutely(),
+                new RecurringJobOptions());
+        }
 
         // roles
         group.MapGetRolesEndpoint();

@@ -106,6 +106,7 @@ public static class Extensions
             app.UseStaticFiles();
         }
 
+        app.UseHeroJobDashboard(app.Configuration);
         app.UseRouting();
 
         // CORS should run between routing and authN/authZ

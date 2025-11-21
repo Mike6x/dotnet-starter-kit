@@ -1,5 +1,7 @@
 ﻿using Finbuckle.MultiTenant.Abstractions;
 using Finbuckle.MultiTenant.EntityFrameworkCore;
+using FSH.Framework.Eventing.Inbox;
+using FSH.Framework.Eventing.Outbox;
 using FSH.Framework.Persistence;
 using FSH.Framework.Shared.Multitenancy;
 using FSH.Framework.Shared.Persistence;
@@ -25,6 +27,10 @@ public class IdentityDbContext : MultiTenantIdentityDbContext<FshUser,
     private readonly DatabaseOptions _settings;
     private new AppTenantInfo TenantInfo { get; set; }
     private readonly IHostEnvironment _environment;
+    public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
+
+    public DbSet<InboxMessage> InboxMessages => Set<InboxMessage>();
+
     public IdentityDbContext(
         IMultiTenantContextAccessor<AppTenantInfo> multiTenantContextAccessor,
         DbContextOptions<IdentityDbContext> options,
@@ -40,6 +46,9 @@ public class IdentityDbContext : MultiTenantIdentityDbContext<FshUser,
     {
         base.OnModelCreating(builder);
         builder.ApplyConfigurationsFromAssembly(typeof(IdentityDbContext).Assembly);
+
+        builder.ApplyConfiguration(new OutboxMessageConfiguration(IdentityModuleConstants.SchemaName));
+        builder.ApplyConfiguration(new InboxMessageConfiguration(IdentityModuleConstants.SchemaName));
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

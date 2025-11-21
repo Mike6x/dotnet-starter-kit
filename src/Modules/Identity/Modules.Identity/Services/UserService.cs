@@ -2,6 +2,7 @@
 using FSH.Framework.Caching;
 using FSH.Framework.Core.Common;
 using FSH.Framework.Core.Exceptions;
+using FSH.Framework.Eventing.Outbox;
 using FSH.Framework.Jobs.Services;
 using FSH.Framework.Mailing;
 using FSH.Framework.Mailing.Services;
@@ -11,6 +12,7 @@ using FSH.Framework.Storage;
 using FSH.Framework.Storage.DTOs;
 using FSH.Framework.Storage.Services;
 using FSH.Modules.Identity.Contracts.DTOs;
+using FSH.Modules.Identity.Contracts.Events;
 using FSH.Modules.Identity.Contracts.Services;
 using FSH.Modules.Identity.Data;
 using FSH.Modules.Identity.Features.v1.Roles;
@@ -33,7 +35,8 @@ internal sealed partial class UserService(
     IJobService jobService,
     IMailService mailService,
     IMultiTenantContextAccessor<AppTenantInfo> multiTenantContextAccessor,
-    IStorageService storageService
+    IStorageService storageService,
+    IOutboxStore outboxStore
     ) : IUserService
 {
     private void EnsureValidTenant()
@@ -173,6 +176,22 @@ internal sealed partial class UserService(
                 emailVerificationUri);
             jobService.Enqueue("email", () => mailService.SendAsync(mailRequest, cancellationToken));
         }
+
+        // enqueue integration event for user registration
+        var tenantId = multiTenantContextAccessor.MultiTenantContext.TenantInfo?.Id;
+        var correlationId = Guid.NewGuid().ToString();
+        var integrationEvent = new UserRegisteredIntegrationEvent(
+            Id: Guid.NewGuid(),
+            OccurredOnUtc: DateTime.UtcNow,
+            TenantId: tenantId,
+            CorrelationId: correlationId,
+            Source: "Identity",
+            UserId: user.Id,
+            Email: user.Email ?? string.Empty,
+            FirstName: user.FirstName ?? string.Empty,
+            LastName: user.LastName ?? string.Empty);
+
+        await outboxStore.AddAsync(integrationEvent, cancellationToken).ConfigureAwait(false);
 
         return user.Id;
     }

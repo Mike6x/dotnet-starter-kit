@@ -55,7 +55,7 @@ public static class Extensions
     }
 
 
-    internal static IApplicationBuilder UseHeroJobDashboard(this IApplicationBuilder app, IConfiguration config)
+    public static IApplicationBuilder UseHeroJobDashboard(this IApplicationBuilder app, IConfiguration config)
     {
         var hangfireOptions = config.GetSection(nameof(HangfireOptions)).Get<HangfireOptions>() ?? new HangfireOptions();
         var dashboardOptions = new DashboardOptions();

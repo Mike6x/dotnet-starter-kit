@@ -1,5 +1,6 @@
 ﻿using FSH.Framework.Core.Exceptions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
@@ -10,10 +11,15 @@ namespace FSH.Modules.Identity.Authorization.Jwt;
 public class ConfigureJwtBearerOptions : IConfigureNamedOptions<JwtBearerOptions>
 {
     private readonly JwtOptions _options;
+    private readonly string _hangfireRoute;
 
-    public ConfigureJwtBearerOptions(IOptions<JwtOptions> options)
+    public ConfigureJwtBearerOptions(IOptions<JwtOptions> options, IConfiguration configuration)
     {
         _options = options.Value;
+
+        // Read Hangfire dashboard route from configuration (HangfireOptions:Route).
+        // Fallback to "/jobs" if not configured.
+        _hangfireRoute = configuration.GetSection("HangfireOptions").GetValue<string>("Route") ?? "/jobs";
     }
 
     public void Configure(JwtBearerOptions options)
@@ -50,9 +56,10 @@ public class ConfigureJwtBearerOptions : IConfigureNamedOptions<JwtBearerOptions
             {
                 context.HandleResponse();
 
+                var path = context.HttpContext.Request.Path;
+
                 if (!context.Response.HasStarted)
                 {
-                    var path = context.HttpContext.Request.Path;
                     var method = context.HttpContext.Request.Method;
 
                     // You can include more details if needed like headers, etc.

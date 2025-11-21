@@ -20,4 +20,9 @@ public interface IIdentityService
     /// </summary>
     Task<(string Subject, IEnumerable<Claim> Claims)?>
         ValidateRefreshTokenAsync(string refreshToken, CancellationToken ct = default);
+
+    /// <summary>
+    /// Persists a hashed refresh token for the specified subject.
+    /// </summary>
+    Task StoreRefreshTokenAsync(string subject, string refreshToken, DateTime expiresAtUtc, CancellationToken ct = default);
 }

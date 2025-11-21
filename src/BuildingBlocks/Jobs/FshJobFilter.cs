@@ -21,18 +21,34 @@ public class FshJobFilter : IClientFilter
     {
         ArgumentNullException.ThrowIfNull(context);
 
-        Logger.InfoFormat("Set TenantId and UserId parameters to job {0}.{1}...", context.Job.Method.ReflectedType?.FullName, context.Job.Method.Name);
+        Logger.InfoFormat("Set TenantId and UserId parameters to job {0}.{1}...",
+            context.Job.Method.ReflectedType?.FullName, context.Job.Method.Name);
 
         using var scope = _services.CreateScope();
 
-        var httpContext = scope.ServiceProvider.GetRequiredService<IHttpContextAccessor>()?.HttpContext;
-        _ = httpContext ?? throw new InvalidOperationException("Can't create a TenantJob without HttpContext.");
+        var httpContextAccessor = scope.ServiceProvider.GetService<IHttpContextAccessor>();
+        var httpContext = httpContextAccessor?.HttpContext;
 
-        var tenantInfo = scope.ServiceProvider.GetRequiredService<IMultiTenantContextAccessor>().MultiTenantContext.TenantInfo;
-        context.SetJobParameter(MultitenancyConstants.Identifier, tenantInfo);
+        if (httpContext is null)
+        {
+            // No HTTP context (e.g. recurring/background job creation) – skip setting tenant/user.
+            Logger.WarnFormat("No HttpContext available for job {0}.{1}; skipping tenant/user parameters.",
+                context.Job.Method.ReflectedType?.FullName, context.Job.Method.Name);
+            return;
+        }
 
-        string? userId = httpContext.User.GetUserId();
-        context.SetJobParameter(QueryStringKeys.UserId, userId);
+        var mtAccessor = scope.ServiceProvider.GetService<IMultiTenantContextAccessor>();
+        var tenantInfo = mtAccessor?.MultiTenantContext?.TenantInfo;
+        if (tenantInfo is not null)
+        {
+            context.SetJobParameter(MultitenancyConstants.Identifier, tenantInfo);
+        }
+
+        var userId = httpContext.User.GetUserId();
+        if (!string.IsNullOrEmpty(userId))
+        {
+            context.SetJobParameter(QueryStringKeys.UserId, userId);
+        }
     }
 
     public void OnCreated(CreatedContext context) =>

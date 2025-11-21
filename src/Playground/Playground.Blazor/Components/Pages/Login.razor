@@ -31,6 +31,12 @@
                           Class="mb-4"
                           OnKeyDown="HandleKeyDown" />
 
+            <MudTextField @bind-Value="_tenant"
+                          Label="Tenant"
+                          Variant="Variant.Outlined"
+                          Class="mb-4"
+                          HelperText="Leave as &quot;root&quot; for the default tenant." />
+
             <MudButton OnClick="LoginAsync"
                        Color="Color.Primary"
                        Variant="Variant.Filled"
@@ -48,8 +54,9 @@
 </MudContainer>
 
 @code {
-    private string _email = "admin@root.com";
-    private string _password = "123Pa$$word!";
+    private string _email = string.Empty;
+    private string _password = string.Empty;
+    private string _tenant = "root";
     private bool _isBusy;
 
     private async Task HandleKeyDown(KeyboardEventArgs args)
@@ -72,7 +79,8 @@
         {
             var client = HttpClientFactory.CreateClient();
             var uri = Navigation.ToAbsoluteUri("/auth/login");
-            var response = await client.PostAsJsonAsync(uri, new { Email = _email, Password = _password, Tenant = "root" });
+            var tenant = string.IsNullOrWhiteSpace(_tenant) ? "root" : _tenant.Trim();
+            var response = await client.PostAsJsonAsync(uri, new { Email = _email, Password = _password, Tenant = tenant });
             if (!response.IsSuccessStatusCode)
             {
                 Snackbar.Add("Invalid credentials.", Severity.Error);
