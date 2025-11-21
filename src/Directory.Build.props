@@ -21,7 +21,7 @@
 		<!-- Suppress warning about missing XML docs -->
 
 		<!-- Container tags (if using container builds) -->
-		<ContainerImageTags>3.0.0-alpha;latest</ContainerImageTags>
+		<ContainerImageTags>10.0.0-rc;latest</ContainerImageTags>
 
 		<!-- Prevent MSBuild from excluding common folders (optional) -->
 		<NoDefaultExcludes>true</NoDefaultExcludes>

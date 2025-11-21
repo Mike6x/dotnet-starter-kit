@@ -7,6 +7,8 @@
 		<!-- Container configuration -->
 		<ContainerPort>8080</ContainerPort>
 		<ContainerUser>root</ContainerUser>
+		<ContainerRepository>fsh-playground-api</ContainerRepository>
+    	<PublishProfile>DefaultContainer</PublishProfile>
 	</PropertyGroup>
 
 	<ItemGroup>
