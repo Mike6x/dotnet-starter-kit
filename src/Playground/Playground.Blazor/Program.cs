@@ -30,6 +30,13 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+// Simple health endpoints for ALB/ECS
+app.MapGet("/health/ready", () => Results.Ok(new { status = "Healthy" }))
+   .AllowAnonymous();
+
+app.MapGet("/health/live", () => Results.Ok(new { status = "Alive" }))
+   .AllowAnonymous();
+
 app.UseHttpsRedirection();
 app.UseAntiforgery();
 
