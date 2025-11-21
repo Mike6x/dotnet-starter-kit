@@ -30,19 +30,33 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish API container image
-        working-directory: ../src/Playground/Playground.Api/Playground.Api.csproj
+        working-directory: ${{ github.workspace }}
         run: |
-          dotnet publish -c Release -p:RuntimeIdentifier=linux-x64 -p:ContainerRepository=${{ github.repository_owner }}/fsh-playground-api -p:ContainerImageTags='${{ github.sha }};latest'
+          dotnet publish src/Playground/Playground.Api/Playground.Api.csproj \
+            -c Release -r linux-x64 \
+            -p:PublishProfile=DefaultContainer \
+            -p:ContainerRegistry=ghcr.io \
+            -p:ContainerRepository=${{ github.repository_owner }}/fsh-playground-api \
+            -p:ContainerImageTags='${{ github.sha }};latest'
 
       - name: Publish Blazor container image
-        working-directory: ../src/Playground/Playground.Blazor/Playground.Blazor.csproj
+        working-directory: ${{ github.workspace }}
         run: |
-          dotnet publish -c Release -p:RuntimeIdentifier=linux-x64 -p:ContainerRepository=${{ github.repository_owner }}/fsh-playground-blazor -p:ContainerImageTags='${{ github.sha }};latest'
+          dotnet publish src/Playground/Playground.Blazor/Playground.Blazor.csproj \
+            -c Release -r linux-x64 \
+            -p:PublishProfile=DefaultContainer \
+            -p:ContainerRegistry=ghcr.io \
+            -p:ContainerRepository=${{ github.repository_owner }}/fsh-playground-blazor \
+            -p:ContainerImageTags='${{ github.sha }};latest'
 
       - name: Push API images to GHCR
+        working-directory: ${{ github.workspace }}
         run: |
-          docker push ghcr.io/${{ github.repository_owner }}/fsh-playground-api --all-tags
+          docker push ghcr.io/${{ github.repository_owner }}/fsh-playground-api:${{ github.sha }}
+          docker push ghcr.io/${{ github.repository_owner }}/fsh-playground-api:latest
 
       - name: Push Blazor images to GHCR
+        working-directory: ${{ github.workspace }}
         run: |
-          docker push ghcr.io/${{ github.repository_owner }}/fsh-playground-blazor --all-tags
+          docker push ghcr.io/${{ github.repository_owner }}/fsh-playground-blazor:${{ github.sha }}
+          docker push ghcr.io/${{ github.repository_owner }}/fsh-playground-blazor:latest
