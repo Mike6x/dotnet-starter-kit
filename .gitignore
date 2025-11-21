@@ -3,8 +3,9 @@
 ##
 ## Get latest from `dotnet new gitignore`
 
-stories/***
-AGENTS.md
+*.terraform
+*.terraform.lock.hcl
+terraform.tfstate
 # dotenv files
 .env
 
