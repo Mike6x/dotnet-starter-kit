@@ -65,6 +65,11 @@ variable "listener_arn" {
   description = "ALB listener ARN."
 }
 
+variable "listener_rule_priority" {
+  type        = number
+  description = "Priority for the ALB listener rule."
+}
+
 variable "path_patterns" {
   type        = list(string)
   description = "Path patterns for ALB listener rule."
@@ -94,4 +99,3 @@ variable "tags" {
   description = "Tags to apply to resources."
   default     = {}
 }
-

@@ -14,6 +14,7 @@ locals {
     Environment = var.environment
     Project     = "dotnet-starter-kit"
   }
+  aspnetcore_environment = var.environment == "dev" ? "Development" : "Production"
 }
 
 module "network" {
@@ -122,15 +123,16 @@ module "api_service" {
   subnet_ids      = module.network.private_subnet_ids
   assign_public_ip = false
 
-  listener_arn  = module.alb.listener_arn
-  path_patterns = ["/api/*"]
+  listener_arn           = module.alb.listener_arn
+  listener_rule_priority = 10
+  path_patterns          = ["/api/*", "/scalar*", "/health*", "/swagger*", "/openapi*"]
 
-  health_check_path = "/api/health"
+  health_check_path = "/health/live"
 
   environment_variables = {
-    ASPNETCORE_ENVIRONMENT      = var.environment
+    ASPNETCORE_ENVIRONMENT            = local.aspnetcore_environment
     DatabaseOptions__ConnectionString = local.db_connection_string
-    CachingOptions__Redis = module.redis.primary_endpoint_address
+    CachingOptions__Redis             = "${module.redis.primary_endpoint_address}:6379,ssl=True,abortConnect=False"
   }
 
   tags = local.common_tags
@@ -153,14 +155,15 @@ module "blazor_service" {
   subnet_ids      = module.network.private_subnet_ids
   assign_public_ip = false
 
-  listener_arn  = module.alb.listener_arn
-  path_patterns = ["/*"]
+  listener_arn           = module.alb.listener_arn
+  listener_rule_priority = 20
+  path_patterns          = ["/*"]
 
-  health_check_path = "/"
+  health_check_path = "/health/live"
 
   environment_variables = {
-    ASPNETCORE_ENVIRONMENT      = var.environment
-    Api__BaseUrl                = "http://${module.alb.dns_name}/api"
+    ASPNETCORE_ENVIRONMENT = local.aspnetcore_environment
+    Api__BaseUrl           = "http://${module.alb.dns_name}"
   }
 
   tags = local.common_tags
