@@ -36,7 +36,7 @@ jobs:
             -p:PublishProfile=DefaultContainer \
             -p:ContainerRegistry=ghcr.io \
             -p:ContainerRepository=${{ github.repository_owner }}/fsh-playground-api \
-            -p:ContainerImageTags=${{ github.sha }};latest
+            -p:ContainerImageTags="${{ github.sha }};latest"
 
       - name: Publish Blazor container image
         run: |
@@ -45,12 +45,14 @@ jobs:
             -p:PublishProfile=DefaultContainer \
             -p:ContainerRegistry=ghcr.io \
             -p:ContainerRepository=${{ github.repository_owner }}/fsh-playground-blazor \
-            -p:ContainerImageTags=${{ github.sha }};latest
+            -p:ContainerImageTags="${{ github.sha }};latest"
 
-      - name: Push API image to GHCR
+      - name: Push API images to GHCR
         run: |
-          docker push ghcr.io/${{ github.repository_owner }}/fsh-playground-api --all-tags
+          docker push ghcr.io/${{ github.repository_owner }}/fsh-playground-api:${{ github.sha }}
+          docker push ghcr.io/${{ github.repository_owner }}/fsh-playground-api:latest
 
-      - name: Push Blazor image to GHCR
+      - name: Push Blazor images to GHCR
         run: |
-          docker push ghcr.io/${{ github.repository_owner }}/fsh-playground-blazor --all-tags
+          docker push ghcr.io/${{ github.repository_owner }}/fsh-playground-blazor:${{ github.sha }}
+          docker push ghcr.io/${{ github.repository_owner }}/fsh-playground-blazor:latest
