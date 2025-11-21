@@ -49,8 +49,8 @@ jobs:
 
       - name: Push API image to GHCR
         run: |
-          docker push ghcr.io/${{ github.repository_owner }}/fsh-playground-api:${{ github.sha }} --all-tags
+          docker push ghcr.io/${{ github.repository_owner }}/fsh-playground-api --all-tags
 
       - name: Push Blazor image to GHCR
         run: |
-          docker push ghcr.io/${{ github.repository_owner }}/fsh-playground-blazor:${{ github.sha }} --all-tags
+          docker push ghcr.io/${{ github.repository_owner }}/fsh-playground-blazor --all-tags
