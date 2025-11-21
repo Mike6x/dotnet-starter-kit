@@ -22,16 +22,15 @@ jobs:
         with:
           dotnet-version: '10.0.x'
 
-      - name: Log in to GitHub Container Registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
-
       - name: Publish API container image
         run: |
           dotnet publish src/Playground/Playground.Api/Playground.Api.csproj \
             -c Release -r linux-x64 \
             -p:PublishProfile=DefaultContainer \
-            -p:ContainerRegistry=ghcr.io/${{ github.repository_owner }} \
-            -p:ContainerRepository=fsh-playground-api \
+            -p:ContainerRegistry=ghcr.io \
+            -p:ContainerRepository=${{ github.repository_owner }}/fsh-playground-api \
+            -p:ContainerRegistryUsername=${{ github.actor }} \
+            -p:ContainerRegistryPassword=${{ secrets.GITHUB_TOKEN }} \
             -p:ContainerImageTags=${{ github.sha }}
 
       - name: Publish Blazor container image
@@ -39,8 +38,10 @@ jobs:
           dotnet publish src/Playground/Playground.Blazor/Playground.Blazor.csproj \
             -c Release -r linux-x64 \
             -p:PublishProfile=DefaultContainer \
-            -p:ContainerRegistry=ghcr.io/${{ github.repository_owner }} \
-            -p:ContainerRepository=fsh-playground-blazor \
+            -p:ContainerRegistry=ghcr.io \
+            -p:ContainerRepository=${{ github.repository_owner }}/fsh-playground-blazor \
+            -p:ContainerRegistryUsername=${{ github.actor }} \
+            -p:ContainerRegistryPassword=${{ secrets.GITHUB_TOKEN }} \
             -p:ContainerImageTags=${{ github.sha }}
 
       - name: Push API image to GHCR

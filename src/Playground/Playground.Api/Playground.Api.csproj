@@ -5,7 +5,6 @@
 		<AssemblyName>FSH.Playground.Api</AssemblyName>
 
 		<!-- Container configuration -->
-		<ContainerImageName>fsh-playground-api</ContainerImageName>
 		<ContainerPort>8080</ContainerPort>
 		<ContainerUser>root</ContainerUser>
 	</PropertyGroup>
