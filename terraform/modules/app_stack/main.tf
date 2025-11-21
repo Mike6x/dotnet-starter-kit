@@ -160,7 +160,7 @@ module "blazor_service" {
 
   environment_variables = {
     ASPNETCORE_ENVIRONMENT      = var.environment
-    Api__BaseUrl                = "http://${module.alb.dns_name}"
+    Api__BaseUrl                = "http://${module.alb.dns_name}/api"
   }
 
   tags = local.common_tags
