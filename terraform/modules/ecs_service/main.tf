@@ -98,7 +98,7 @@ resource "aws_ecs_task_definition" "this" {
   memory                   = var.memory
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  execution_role_arn       = aws_iam_role_task_execution.arn
+  execution_role_arn       = aws_iam_role.task_execution.arn
 
   container_definitions = jsonencode([
     {
@@ -159,7 +159,7 @@ resource "aws_ecs_service" "this" {
     ignore_changes = [desired_count]
   }
 
-  depends_on = [aws_lb_listener_rule_this]
+  depends_on = [aws_lb_listener_rule.this]
 }
 
 output "service_name" {
@@ -168,4 +168,8 @@ output "service_name" {
 
 output "task_definition_arn" {
   value = aws_ecs_task_definition.this.arn
+}
+
+output "security_group_id" {
+  value = aws_security_group.ecs_service.id
 }

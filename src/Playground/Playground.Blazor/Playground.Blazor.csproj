@@ -3,6 +3,11 @@
 	<PropertyGroup>
 		<RootNamespace>FSH.Playground.Blazor</RootNamespace>
 		<AssemblyName>FSH.Playground.Blazor</AssemblyName>
+
+		<!-- Container configuration -->
+		<ContainerImageName>fsh-playground-blazor</ContainerImageName>
+		<ContainerPort>8080</ContainerPort>
+		<ContainerUser>root</ContainerUser>
 	</PropertyGroup>
 
   <ItemGroup>

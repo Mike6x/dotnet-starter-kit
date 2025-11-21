@@ -44,7 +44,7 @@ resource "aws_elasticache_replication_group" "this" {
   engine                        = "redis"
   engine_version                = var.engine_version
   node_type                     = var.node_type
-  number_cache_clusters         = var.number_cache_clusters
+  num_cache_clusters            = var.number_cache_clusters
   automatic_failover_enabled    = var.automatic_failover_enabled
   multi_az_enabled              = var.multi_az_enabled
   port                          = 6379

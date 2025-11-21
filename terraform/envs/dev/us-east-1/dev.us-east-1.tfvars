@@ -25,19 +25,19 @@ private_subnets = {
   }
 }
 
-app_s3_bucket_name = "CHANGE_ME-app-dev-us-east-1"
+app_s3_bucket_name = "dev-fsh-app-bucket"
 
 db_name     = "fshdb"
 db_username = "fshadmin"
-db_password = "CHANGE_ME_STRONG_PASSWORD"
+db_password = "password123!" # Note: In production, use a more secure method for managing secrets.
 
-api_container_image = "CHANGE_ME_API_IMAGE"
+api_container_image = "821175633958.dkr.ecr.us-east-1.amazonaws.com/fsh-playground-api"
 api_container_port  = 8080
 api_cpu             = "256"
 api_memory          = "512"
 api_desired_count   = 1
 
-blazor_container_image = "CHANGE_ME_BLAZOR_IMAGE"
+blazor_container_image = "821175633958.dkr.ecr.us-east-1.amazonaws.com/fsh-playground-blazor"
 blazor_container_port  = 8080
 blazor_cpu             = "256"
 blazor_memory          = "512"

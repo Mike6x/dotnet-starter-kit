@@ -78,11 +78,18 @@ module "rds" {
   name                       = "${var.environment}-${var.region}-postgres"
   vpc_id                     = module.network.vpc_id
   subnet_ids                 = module.network.private_subnet_ids
-  allowed_security_group_ids = [aws_security_group.alb.id]
+  allowed_security_group_ids = [
+    module.api_service.security_group_id,
+    module.blazor_service.security_group_id,
+  ]
   db_name                    = var.db_name
   username                   = var.db_username
   password                   = var.db_password
   tags                       = local.common_tags
+}
+
+locals {
+  db_connection_string = "Host=${module.rds.endpoint};Port=${module.rds.port};Database=${var.db_name};Username=${var.db_username};Password=${var.db_password};Pooling=true;"
 }
 
 module "redis" {
@@ -91,7 +98,10 @@ module "redis" {
   name                       = "${var.environment}-${var.region}-redis"
   vpc_id                     = module.network.vpc_id
   subnet_ids                 = module.network.private_subnet_ids
-  allowed_security_group_ids = [aws_security_group.alb.id]
+  allowed_security_group_ids = [
+    module.api_service.security_group_id,
+    module.blazor_service.security_group_id,
+  ]
   tags                       = local.common_tags
 }
 
@@ -118,7 +128,9 @@ module "api_service" {
   health_check_path = "/api/health"
 
   environment_variables = {
-    ASPNETCORE_ENVIRONMENT = var.environment
+    ASPNETCORE_ENVIRONMENT      = var.environment
+    DatabaseOptions__ConnectionString = local.db_connection_string
+    CachingOptions__Redis = module.redis.primary_endpoint_address
   }
 
   tags = local.common_tags
@@ -147,7 +159,8 @@ module "blazor_service" {
   health_check_path = "/"
 
   environment_variables = {
-    ASPNETCORE_ENVIRONMENT = var.environment
+    ASPNETCORE_ENVIRONMENT      = var.environment
+    Api__BaseUrl                = "http://${module.alb.dns_name}"
   }
 
   tags = local.common_tags
@@ -157,6 +170,14 @@ output "alb_dns_name" {
   value = module.alb.dns_name
 }
 
+output "api_url" {
+  value = "http://${module.alb.dns_name}/api"
+}
+
+output "blazor_url" {
+  value = "http://${module.alb.dns_name}"
+}
+
 output "rds_endpoint" {
   value = module.rds.endpoint
 }
@@ -164,4 +185,3 @@ output "rds_endpoint" {
 output "redis_endpoint" {
   value = module.redis.primary_endpoint_address
 }
-

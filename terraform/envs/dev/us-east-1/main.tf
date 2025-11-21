@@ -45,6 +45,14 @@ output "alb_dns_name" {
   value = module.app.alb_dns_name
 }
 
+output "api_url" {
+  value = module.app.api_url
+}
+
+output "blazor_url" {
+  value = module.app.blazor_url
+}
+
 output "rds_endpoint" {
   value = module.app.rds_endpoint
 }
@@ -52,4 +60,3 @@ output "rds_endpoint" {
 output "redis_endpoint" {
   value = module.app.redis_endpoint
 }
-

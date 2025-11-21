@@ -11,14 +11,12 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<ITokenStore, InMemoryTokenStore>();
 builder.Services.AddTransient<BffAuthDelegatingHandler>();
 
-builder.Services.AddHttpClient("Api", client =>
-{
-    client.BaseAddress = new Uri("https://localhost:7030");
-}).AddHttpMessageHandler<BffAuthDelegatingHandler>();
+var apiBaseUrl = builder.Configuration["Api:BaseUrl"]
+                 ?? throw new InvalidOperationException("Api:BaseUrl configuration is missing.");
 
 builder.Services.AddHttpClient("AuthApi", client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7030");
+    client.BaseAddress = new Uri(apiBaseUrl);
 });
 
 builder.Services.AddRazorComponents()
