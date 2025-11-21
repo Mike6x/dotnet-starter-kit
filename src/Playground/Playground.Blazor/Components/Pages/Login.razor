@@ -2,6 +2,7 @@
 @inject IHttpClientFactory HttpClientFactory
 @inject ISnackbar Snackbar
 @inject NavigationManager Navigation
+@inject ILogger<Login> Logger
 
 <MudContainer MaxWidth="MaxWidth.False"
               Class="d-flex justify-center align-center"
@@ -83,6 +84,8 @@
             var response = await client.PostAsJsonAsync(uri, new { Email = _email, Password = _password, Tenant = tenant });
             if (!response.IsSuccessStatusCode)
             {
+                var error = await response.Content.ReadAsStringAsync();
+                Logger.LogError("Login failed with status code {StatusCode} and error {Error}", response.StatusCode, error);
                 Snackbar.Add("Invalid credentials.", Severity.Error);
             }
             else
