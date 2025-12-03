@@ -1,7 +1,10 @@
-﻿using Asp.Versioning;
+using Asp.Versioning;
 using Finbuckle.MultiTenant;
 using Finbuckle.MultiTenant.Abstractions;
-using Finbuckle.MultiTenant.Stores.DistributedCacheStore;
+using Finbuckle.MultiTenant.Stores;
+using Finbuckle.MultiTenant.Extensions;
+using Finbuckle.MultiTenant.AspNetCore.Extensions;
+using Finbuckle.MultiTenant.EntityFrameworkCore.Stores;
 using FSH.Framework.Persistence;
 using FSH.Framework.Shared.Constants;
 using FSH.Framework.Shared.Multitenancy;
@@ -12,7 +15,10 @@ using FSH.Modules.Multitenancy.Features.v1.ChangeTenantActivation;
 using FSH.Modules.Multitenancy.Features.v1.CreateTenant;
 using FSH.Modules.Multitenancy.Features.v1.GetTenants;
 using FSH.Modules.Multitenancy.Features.v1.GetTenantStatus;
+using FSH.Modules.Multitenancy.Features.v1.TenantProvisioning.GetTenantProvisioningStatus;
+using FSH.Modules.Multitenancy.Features.v1.TenantProvisioning.RetryTenantProvisioning;
 using FSH.Modules.Multitenancy.Features.v1.UpgradeTenant;
+using FSH.Modules.Multitenancy.Provisioning;
 using FSH.Modules.Multitenancy.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -32,6 +38,10 @@ public sealed class MultitenancyModule : IModule
 
         builder.Services.AddScoped<ITenantService, TenantService>();
         builder.Services.AddTransient<IConnectionStringValidator, ConnectionStringValidator>();
+        builder.Services.AddScoped<ITenantProvisioningService, TenantProvisioningService>();
+        builder.Services.AddHostedService<TenantStoreInitializerHostedService>();
+        builder.Services.AddTransient<TenantProvisioningJob>();
+        builder.Services.AddHostedService<TenantAutoProvisioningHostedService>();
 
         builder.Services.AddHeroDbContext<TenantDbContext>();
 
@@ -48,7 +58,7 @@ public sealed class MultitenancyModule : IModule
                             .GetRequiredService<IEnumerable<IMultiTenantStore<AppTenantInfo>>>()
                             .FirstOrDefault(s => s.GetType() == typeof(DistributedCacheStore<AppTenantInfo>));
 
-                        await distributedStore!.TryAddAsync(context.MultiTenantContext.TenantInfo!);
+                        await distributedStore!.AddAsync(context.MultiTenantContext.TenantInfo!);
                     }
                     await Task.CompletedTask;
                 };
@@ -66,7 +76,7 @@ public sealed class MultitenancyModule : IModule
                 return await Task.FromResult(tenantIdentifier.ToString());
             })
             .WithDistributedCacheStore(TimeSpan.FromMinutes(60))
-            .WithEFCoreStore<TenantDbContext, AppTenantInfo>();
+            .WithStore<EFCoreStore<TenantDbContext, AppTenantInfo>>(ServiceLifetime.Scoped);
 
         builder.Services.AddHealthChecks()
             .AddDbContextCheck<TenantDbContext>(
@@ -93,5 +103,7 @@ public sealed class MultitenancyModule : IModule
         UpgradeTenantEndpoint.Map(group);
         CreateTenantEndpoint.Map(group);
         GetTenantStatusEndpoint.Map(group);
+        GetTenantProvisioningStatusEndpoint.Map(group);
+        RetryTenantProvisioningEndpoint.Map(group);
     }
 }
