@@ -26,6 +26,8 @@ public sealed class InMemoryEventBus : IEventBus
 
     public async Task PublishAsync(IEnumerable<IIntegrationEvent> events, CancellationToken ct = default)
     {
+        ArgumentNullException.ThrowIfNull(events);
+
         foreach (var @event in events)
         {
             await PublishSingleAsync(@event, ct).ConfigureAwait(false);
@@ -90,4 +92,3 @@ public sealed class InMemoryEventBus : IEventBus
         }
     }
 }
-

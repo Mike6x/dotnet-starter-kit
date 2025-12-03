@@ -33,6 +33,8 @@ public sealed class ChannelAuditPublisher : IAuditPublisher
 
     public ValueTask PublishAsync(IAuditEvent auditEvent, CancellationToken ct = default)
     {
+        ArgumentNullException.ThrowIfNull(auditEvent);
+
         var scope = CurrentScope;
 
         if (auditEvent is not AuditEnvelope env)

@@ -38,6 +38,9 @@ public class IdentityDbContext : MultiTenantIdentityDbContext<FshUser,
         IOptions<DatabaseOptions> settings,
         IHostEnvironment environment) : base(multiTenantContextAccessor, options)
     {
+        ArgumentNullException.ThrowIfNull(multiTenantContextAccessor);
+        ArgumentNullException.ThrowIfNull(settings);
+
         _environment = environment;
         _settings = settings.Value;
         TenantInfo = multiTenantContextAccessor.MultiTenantContext.TenantInfo!;
@@ -45,6 +48,8 @@ public class IdentityDbContext : MultiTenantIdentityDbContext<FshUser,
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+
         base.OnModelCreating(builder);
         builder.ApplyConfigurationsFromAssembly(typeof(IdentityDbContext).Assembly);
 

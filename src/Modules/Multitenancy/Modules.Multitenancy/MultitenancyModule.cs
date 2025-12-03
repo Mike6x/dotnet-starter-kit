@@ -1,10 +1,9 @@
 using Asp.Versioning;
-using Finbuckle.MultiTenant;
 using Finbuckle.MultiTenant.Abstractions;
-using Finbuckle.MultiTenant.Stores;
-using Finbuckle.MultiTenant.Extensions;
 using Finbuckle.MultiTenant.AspNetCore.Extensions;
 using Finbuckle.MultiTenant.EntityFrameworkCore.Stores;
+using Finbuckle.MultiTenant.Extensions;
+using Finbuckle.MultiTenant.Stores;
 using FSH.Framework.Persistence;
 using FSH.Framework.Shared.Constants;
 using FSH.Framework.Shared.Multitenancy;
@@ -33,6 +32,8 @@ public sealed class MultitenancyModule : IModule
 {
     public void ConfigureServices(IHostApplicationBuilder builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+
         builder.Services.AddOptions<MultitenancyOptions>()
             .Bind(builder.Configuration.GetSection(nameof(MultitenancyOptions)));
 

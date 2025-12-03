@@ -20,6 +20,8 @@ public sealed class UserRegisteredEmailHandler
 
     public async Task HandleAsync(UserRegisteredIntegrationEvent @event, CancellationToken ct = default)
     {
+        ArgumentNullException.ThrowIfNull(@event);
+
         if (string.IsNullOrWhiteSpace(@event.Email))
         {
             return;
@@ -33,4 +35,3 @@ public sealed class UserRegisteredEmailHandler
         await _mailService.SendAsync(mail, ct).ConfigureAwait(false);
     }
 }
-

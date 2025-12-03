@@ -8,6 +8,7 @@ public class AuditRecordConfiguration : IEntityTypeConfiguration<AuditRecord>
 {
     public void Configure(EntityTypeBuilder<AuditRecord> builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
         builder.ToTable("AuditRecords", "audit");
         builder.IsMultiTenant();
         builder.HasKey(x => x.Id);

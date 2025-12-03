@@ -10,6 +10,8 @@ public class CreateTenantCommandHandler(ITenantService tenantService, ITenantPro
 {
     public async ValueTask<CreateTenantCommandResponse> Handle(CreateTenantCommand command, CancellationToken cancellationToken)
     {
+        ArgumentNullException.ThrowIfNull(command);
+
         var tenantId = await tenantService.CreateAsync(
             command.Id,
             command.Name,

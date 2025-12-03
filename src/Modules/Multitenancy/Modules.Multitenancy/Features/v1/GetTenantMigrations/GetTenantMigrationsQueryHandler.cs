@@ -1,4 +1,3 @@
-using Finbuckle.MultiTenant;
 using Finbuckle.MultiTenant.Abstractions;
 using FSH.Framework.Shared.Multitenancy;
 using FSH.Modules.Multitenancy.Contracts.Dtos;
@@ -37,7 +36,7 @@ public sealed class GetTenantMigrationsQueryHandler
             var tenantStatus = new TenantMigrationStatusDto
             {
                 TenantId = tenant.Id,
-                Name = tenant.Name,
+                Name = tenant.Name!,
                 IsActive = tenant.IsActive,
                 ValidUpto = tenant.ValidUpto
             };

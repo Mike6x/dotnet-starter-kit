@@ -19,6 +19,8 @@ public sealed class DistributedCacheService : ICacheService
         ILogger<DistributedCacheService> logger,
         IOptions<CachingOptions> opts)
     {
+        ArgumentNullException.ThrowIfNull(opts);
+
         _cache = cache;
         _logger = logger;
         _opts = opts.Value;

@@ -10,6 +10,7 @@ public sealed class RetryTenantProvisioningCommandHandler(ITenantProvisioningSer
 {
     public async ValueTask<TenantProvisioningStatusDto> Handle(RetryTenantProvisioningCommand command, CancellationToken cancellationToken)
     {
+        ArgumentNullException.ThrowIfNull(command);
         var correlationId = await provisioningService.RetryAsync(command.TenantId, cancellationToken).ConfigureAwait(false);
         var status = await provisioningService.GetStatusAsync(command.TenantId, cancellationToken).ConfigureAwait(false);
         return status with { CorrelationId = correlationId };

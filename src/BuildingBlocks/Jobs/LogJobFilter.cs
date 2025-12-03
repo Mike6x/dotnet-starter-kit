@@ -16,6 +16,8 @@ public class LogJobFilter : IClientFilter, IServerFilter, IElectStateFilter, IAp
 
     public void OnCreating(CreatingContext context)
     {
+        ArgumentNullException.ThrowIfNull(context);
+
         var job = context.Job;
         var jobName = GetJobName(job);
 
@@ -25,6 +27,8 @@ public class LogJobFilter : IClientFilter, IServerFilter, IElectStateFilter, IAp
 
     public void OnCreated(CreatedContext context)
     {
+        ArgumentNullException.ThrowIfNull(context);
+
         var job = context.Job;
         var jobName = GetJobName(job);
         var jobId = context.BackgroundJob?.Id ?? "<unknown>";
@@ -39,6 +43,8 @@ public class LogJobFilter : IClientFilter, IServerFilter, IElectStateFilter, IAp
 
     public void OnPerforming(PerformingContext context)
     {
+        ArgumentNullException.ThrowIfNull(context);
+
         var backgroundJob = context.BackgroundJob;
         var job = backgroundJob.Job;
         var jobName = GetJobName(job);
@@ -56,6 +62,8 @@ public class LogJobFilter : IClientFilter, IServerFilter, IElectStateFilter, IAp
 
     public void OnPerformed(PerformedContext context)
     {
+        ArgumentNullException.ThrowIfNull(context);
+
         var backgroundJob = context.BackgroundJob;
         var job = backgroundJob.Job;
         var jobName = GetJobName(job);
@@ -69,6 +77,8 @@ public class LogJobFilter : IClientFilter, IServerFilter, IElectStateFilter, IAp
 
     public void OnStateElection(ElectStateContext context)
     {
+        ArgumentNullException.ThrowIfNull(context);
+
         if (context.CandidateState is FailedState failedState)
         {
             Logger.WarnFormat(
@@ -81,6 +91,8 @@ public class LogJobFilter : IClientFilter, IServerFilter, IElectStateFilter, IAp
 
     public void OnStateApplied(ApplyStateContext context, IWriteOnlyTransaction transaction)
     {
+        ArgumentNullException.ThrowIfNull(context);
+
         Logger.DebugFormat(
             "Job state changed: Id={0}, Name={1}, OldState={2}, NewState={3}",
             context.BackgroundJob.Id,
@@ -91,6 +103,8 @@ public class LogJobFilter : IClientFilter, IServerFilter, IElectStateFilter, IAp
 
     public void OnStateUnapplied(ApplyStateContext context, IWriteOnlyTransaction transaction)
     {
+        ArgumentNullException.ThrowIfNull(context);
+
         Logger.DebugFormat(
             "Job state unapplied: Id={0}, Name={1}, OldState={2}",
             context.BackgroundJob.Id,

@@ -85,6 +85,8 @@ public class RoleService(RoleManager<FshRole> roleManager,
 
     public async Task<string> UpdatePermissionsAsync(string roleId, List<string> permissions)
     {
+        ArgumentNullException.ThrowIfNull(permissions);
+
         var role = await roleManager.FindByIdAsync(roleId);
         _ = role ?? throw new NotFoundException("role not found");
         if (role.Name == RoleConstants.Admin)

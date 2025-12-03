@@ -1,4 +1,3 @@
-using Finbuckle.MultiTenant;
 using Finbuckle.MultiTenant.Abstractions;
 using FSH.Framework.Core.Exceptions;
 using FSH.Framework.Persistence;
@@ -8,8 +7,8 @@ using FSH.Modules.Multitenancy.Contracts;
 using FSH.Modules.Multitenancy.Contracts.Dtos;
 using FSH.Modules.Multitenancy.Contracts.v1.GetTenants;
 using FSH.Modules.Multitenancy.Data;
-using FSH.Modules.Multitenancy.Provisioning;
 using FSH.Modules.Multitenancy.Features.v1.GetTenants;
+using FSH.Modules.Multitenancy.Provisioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -31,6 +30,7 @@ public sealed class TenantService : ITenantService
         TenantDbContext dbContext,
         ITenantProvisioningService provisioningService)
     {
+        ArgumentNullException.ThrowIfNull(config);
         _tenantStore = tenantStore;
         _config = config.Value;
         _serviceProvider = serviceProvider;

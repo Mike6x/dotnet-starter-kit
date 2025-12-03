@@ -30,6 +30,8 @@ public class InboxMessageConfiguration : IEntityTypeConfiguration<InboxMessage>
 
     public void Configure(EntityTypeBuilder<InboxMessage> builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+
         builder.ToTable("InboxMessages", _schema);
 
         builder.HasKey(i => new { i.Id, i.HandlerName });
@@ -46,4 +48,3 @@ public class InboxMessageConfiguration : IEntityTypeConfiguration<InboxMessage>
             .HasMaxLength(64);
     }
 }
-

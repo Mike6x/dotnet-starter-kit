@@ -31,6 +31,9 @@ public sealed class IdentityService : IIdentityService
     public async Task<(string Subject, IEnumerable<Claim> Claims)?>
         ValidateCredentialsAsync(string email, string password, CancellationToken ct = default)
     {
+        ArgumentNullException.ThrowIfNull(email);
+        ArgumentNullException.ThrowIfNull(password);
+
         var currentTenant = _multiTenantContextAccessor!.MultiTenantContext.TenantInfo;
         if (currentTenant == null) throw new UnauthorizedException();
 

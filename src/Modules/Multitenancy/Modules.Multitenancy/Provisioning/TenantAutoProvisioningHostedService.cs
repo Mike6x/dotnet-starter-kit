@@ -1,11 +1,11 @@
 using Finbuckle.MultiTenant.Abstractions;
 using FSH.Framework.Core.Exceptions;
 using FSH.Framework.Shared.Multitenancy;
+using Hangfire;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Hangfire;
 
 namespace FSH.Modules.Multitenancy.Provisioning;
 
@@ -20,6 +20,7 @@ public sealed class TenantAutoProvisioningHostedService : IHostedService
         ILogger<TenantAutoProvisioningHostedService> logger,
         IOptions<MultitenancyOptions> options)
     {
+        ArgumentNullException.ThrowIfNull(options);
         _serviceProvider = serviceProvider;
         _logger = logger;
         _options = options.Value;

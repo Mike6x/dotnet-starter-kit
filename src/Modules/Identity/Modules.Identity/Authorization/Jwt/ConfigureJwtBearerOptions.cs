@@ -15,6 +15,9 @@ public class ConfigureJwtBearerOptions : IConfigureNamedOptions<JwtBearerOptions
 
     public ConfigureJwtBearerOptions(IOptions<JwtOptions> options, IConfiguration configuration)
     {
+        ArgumentNullException.ThrowIfNull(options);
+        ArgumentNullException.ThrowIfNull(configuration);
+
         _options = options.Value;
 
         // Read Hangfire dashboard route from configuration (HangfireOptions:Route).
@@ -24,11 +27,15 @@ public class ConfigureJwtBearerOptions : IConfigureNamedOptions<JwtBearerOptions
 
     public void Configure(JwtBearerOptions options)
     {
+        ArgumentNullException.ThrowIfNull(options);
+
         Configure(string.Empty, options);
     }
 
     public void Configure(string? name, JwtBearerOptions options)
     {
+        ArgumentNullException.ThrowIfNull(options);
+
         if (name != JwtBearerDefaults.AuthenticationScheme)
         {
             return;

@@ -23,6 +23,8 @@ public sealed class OutboxDispatcher
         IOptions<EventingOptions> options,
         ILogger<OutboxDispatcher> logger)
     {
+        ArgumentNullException.ThrowIfNull(options);
+
         _outbox = outbox;
         _bus = bus;
         _serializer = serializer;

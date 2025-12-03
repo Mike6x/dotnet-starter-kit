@@ -20,6 +20,8 @@ public sealed class TokenGeneratedLogHandler
 
     public Task HandleAsync(TokenGeneratedIntegrationEvent @event, CancellationToken ct = default)
     {
+        ArgumentNullException.ThrowIfNull(@event);
+
         _logger.LogInformation(
             "Token generated for user {UserId} ({Email}) with client {ClientId}, IP {IpAddress}, UserAgent {UserAgent}, expires at {ExpiresAtUtc} (fingerprint: {Fingerprint})",
             @event.UserId,
@@ -33,4 +35,3 @@ public sealed class TokenGeneratedLogHandler
         return Task.CompletedTask;
     }
 }
-

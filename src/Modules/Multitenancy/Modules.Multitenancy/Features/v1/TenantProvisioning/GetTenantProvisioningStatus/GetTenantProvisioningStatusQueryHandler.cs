@@ -9,5 +9,8 @@ public sealed class GetTenantProvisioningStatusQueryHandler(ITenantProvisioningS
     : IQueryHandler<GetTenantProvisioningStatusQuery, TenantProvisioningStatusDto>
 {
     public async ValueTask<TenantProvisioningStatusDto> Handle(GetTenantProvisioningStatusQuery query, CancellationToken cancellationToken)
-        => await provisioningService.GetStatusAsync(query.TenantId, cancellationToken).ConfigureAwait(false);
+    {
+        ArgumentNullException.ThrowIfNull(query);
+        return await provisioningService.GetStatusAsync(query.TenantId, cancellationToken).ConfigureAwait(false);
+    }
 }

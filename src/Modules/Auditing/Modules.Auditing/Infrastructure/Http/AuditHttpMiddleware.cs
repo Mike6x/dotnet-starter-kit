@@ -17,6 +17,8 @@ public sealed class AuditHttpMiddleware
 
     public async Task InvokeAsync(HttpContext ctx)
     {
+        ArgumentNullException.ThrowIfNull(ctx);
+
         if (ShouldSkip(ctx))
         {
             await _next(ctx);

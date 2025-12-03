@@ -13,11 +13,15 @@ public static class RequiredPermissionAuthorizationExtensions
 {
     public static AuthorizationPolicyBuilder RequireRequiredPermissions(this AuthorizationPolicyBuilder builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+
         return builder.AddRequirements(new PermissionAuthorizationRequirement());
     }
 
     public static AuthorizationBuilder AddRequiredPermissionPolicy(this AuthorizationBuilder builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+
         builder.AddPolicy(RequiredPermissionDefaults.PolicyName, policy =>
         {
             policy.RequireAuthenticatedUser();

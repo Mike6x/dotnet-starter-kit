@@ -1,10 +1,5 @@
 using System.Collections.Concurrent;
-using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Net.Http.Json;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 
 namespace FSH.Playground.Blazor.Services;
 
@@ -69,6 +64,7 @@ public sealed class BffAuthDelegatingHandler : DelegatingHandler
             var token = await _tokenStore.GetAsync(sessionId, cancellationToken);
             if (token is not null && !string.IsNullOrWhiteSpace(token.AccessToken))
             {
+                ArgumentNullException.ThrowIfNull(request);
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.AccessToken);
 
                 if (!request.Headers.Contains("tenant"))

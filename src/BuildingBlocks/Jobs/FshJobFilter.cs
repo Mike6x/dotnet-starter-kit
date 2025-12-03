@@ -51,8 +51,12 @@ public class FshJobFilter : IClientFilter
         }
     }
 
-    public void OnCreated(CreatedContext context) =>
+    public void OnCreated(CreatedContext context)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+
         Logger.InfoFormat(
             "Job created with parameters {0}",
             context.Parameters.Select(x => x.Key + "=" + x.Value).Aggregate((s1, s2) => s1 + ";" + s2));
+    }
 }

@@ -9,6 +9,9 @@ public sealed class RequiredPermissionAuthorizationHandler(IUserService userServ
 {
     protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionAuthorizationRequirement requirement)
     {
+        ArgumentNullException.ThrowIfNull(context);
+        ArgumentNullException.ThrowIfNull(requirement);
+
         var endpoint = context.Resource switch
         {
             HttpContext httpContext => httpContext.GetEndpoint(),

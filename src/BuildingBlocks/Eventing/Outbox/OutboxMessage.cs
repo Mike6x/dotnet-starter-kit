@@ -40,6 +40,8 @@ public class OutboxMessageConfiguration : IEntityTypeConfiguration<OutboxMessage
 
     public void Configure(EntityTypeBuilder<OutboxMessage> builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+
         builder.ToTable("OutboxMessages", _schema);
 
         builder.HasKey(o => o.Id);
@@ -61,4 +63,3 @@ public class OutboxMessageConfiguration : IEntityTypeConfiguration<OutboxMessage
             .IsRequired();
     }
 }
-

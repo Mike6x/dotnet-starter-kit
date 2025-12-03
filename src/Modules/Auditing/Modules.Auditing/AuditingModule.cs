@@ -24,6 +24,7 @@ public class AuditingModule : IModule
 {
     public void ConfigureServices(IHostApplicationBuilder builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
         var httpOpts = builder.Configuration.GetSection("Auditing").Get<AuditHttpOptions>() ?? new AuditHttpOptions();
         builder.Services.AddSingleton(httpOpts);
         builder.Services.AddHttpContextAccessor();

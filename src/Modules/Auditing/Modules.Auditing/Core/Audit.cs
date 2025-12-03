@@ -48,15 +48,18 @@ public static class Audit
             payload: new ActivityEventPayload(kind, name, null, 0, BodyCapture.None, 0, 0, null, null));
 
     public static Builder ForException(Exception ex, ExceptionArea area = ExceptionArea.None, string? routeOrLocation = null, AuditSeverity? severity = null)
-        => new Builder(
-            eventType: AuditEventType.Exception,
-            severity: severity ?? DefaultSeverity(ex),
-            payload: new ExceptionEventPayload(area,
-                ex.GetType().FullName ?? "Exception",
-                ex.Message ?? string.Empty,
-                StackTop(ex, maxFrames: 20),
-                ToDict(ex.Data),
-                routeOrLocation));
+    {
+        ArgumentNullException.ThrowIfNull(ex);
+        return new Builder(
+                eventType: AuditEventType.Exception,
+                severity: severity ?? DefaultSeverity(ex),
+                payload: new ExceptionEventPayload(area,
+                    ex.GetType().FullName ?? "Exception",
+                    ex.Message ?? string.Empty,
+                    StackTop(ex, maxFrames: 20),
+                    ToDict(ex.Data),
+                    routeOrLocation));
+    }
 
     private static AuditSeverity DefaultSeverity(Exception ex)
     {

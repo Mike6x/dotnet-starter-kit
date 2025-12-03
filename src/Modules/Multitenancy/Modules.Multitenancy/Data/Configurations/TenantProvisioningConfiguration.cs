@@ -9,6 +9,8 @@ public class TenantProvisioningConfiguration : IEntityTypeConfiguration<TenantPr
 {
     public void Configure(EntityTypeBuilder<TenantProvisioning> builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+
         builder.ToTable("TenantProvisionings", MultitenancyConstants.Schema);
 
         builder.HasMany(p => p.Steps)

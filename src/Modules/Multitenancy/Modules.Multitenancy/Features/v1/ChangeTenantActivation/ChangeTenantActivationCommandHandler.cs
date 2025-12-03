@@ -16,6 +16,8 @@ public sealed class ChangeTenantActivationCommandHandler : ICommandHandler<Chang
 
     public async ValueTask<TenantLifecycleResultDto> Handle(ChangeTenantActivationCommand command, CancellationToken cancellationToken)
     {
+        ArgumentNullException.ThrowIfNull(command);
+
         string message;
 
         if (command.IsActive)

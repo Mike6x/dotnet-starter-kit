@@ -92,6 +92,8 @@ public class IdentityModule : IModule
 
     public void MapEndpoints(IEndpointRouteBuilder endpoints)
     {
+        ArgumentNullException.ThrowIfNull(endpoints);
+
         var apiVersionSet = endpoints.NewApiVersionSet()
             .HasApiVersion(new ApiVersion(1))
             .ReportApiVersions()

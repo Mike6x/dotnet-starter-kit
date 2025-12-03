@@ -9,6 +9,8 @@ public sealed class AssignUserRolesCommandHandler(IUserService _userService)
 {
     public async ValueTask<string> Handle(AssignUserRolesCommand command, CancellationToken cancellationToken)
     {
+        ArgumentNullException.ThrowIfNull(command);
+
         return await _userService.AssignRolesAsync(command.UserId, command.UserRoles, cancellationToken);
     }
 

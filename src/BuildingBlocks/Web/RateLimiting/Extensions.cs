@@ -13,6 +13,9 @@ public static class Extensions
 {
     public static IServiceCollection AddHeroRateLimiting(this IServiceCollection services, IConfiguration configuration)
     {
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(configuration);
+
         var settings = configuration.GetSection(nameof(RateLimitingOptions)).Get<RateLimitingOptions>() ?? new RateLimitingOptions();
 
         services.AddOptions<RateLimitingOptions>()
@@ -87,6 +90,8 @@ public static class Extensions
 
     public static IApplicationBuilder UseHeroRateLimiting(this IApplicationBuilder app)
     {
+        ArgumentNullException.ThrowIfNull(app);
+
         var opts = app.ApplicationServices.GetRequiredService<IOptions<RateLimitingOptions>>().Value;
         if (opts.Enabled)
         {

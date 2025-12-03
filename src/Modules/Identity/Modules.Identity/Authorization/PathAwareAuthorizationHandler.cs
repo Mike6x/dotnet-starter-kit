@@ -14,6 +14,11 @@ public class PathAwareAuthorizationHandler : IAuthorizationMiddlewareResultHandl
         AuthorizationPolicy policy,
         PolicyAuthorizationResult authorizeResult)
     {
+        ArgumentNullException.ThrowIfNull(next);
+        ArgumentNullException.ThrowIfNull(context);
+        ArgumentNullException.ThrowIfNull(policy);
+        ArgumentNullException.ThrowIfNull(authorizeResult);
+
         var path = context.Request.Path;
         var allowedPaths = new[]
         {

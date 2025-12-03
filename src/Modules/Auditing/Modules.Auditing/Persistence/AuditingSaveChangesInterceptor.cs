@@ -16,8 +16,9 @@ public sealed class AuditingSaveChangesInterceptor : SaveChangesInterceptor
     public override async ValueTask<InterceptionResult<int>> SavingChangesAsync(
         DbContextEventData eventData,
         InterceptionResult<int> result,
-        CancellationToken ct = default)
+        CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(eventData);
         var ctx = eventData.Context;
         if (ctx is null) return result;
 
@@ -55,7 +56,7 @@ public sealed class AuditingSaveChangesInterceptor : SaveChangesInterceptor
                     tags: AuditTag.None,
                     payload: payload);
 
-                await _publisher.PublishAsync(env, ct);
+                await _publisher.PublishAsync(env, cancellationToken);
             }
         }
 

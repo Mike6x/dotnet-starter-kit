@@ -9,6 +9,7 @@ public sealed class UpgradeTenantCommandHandler(ITenantService service)
 {
     public async ValueTask<UpgradeTenantCommandResponse> Handle(UpgradeTenantCommand command, CancellationToken cancellationToken)
     {
+        ArgumentNullException.ThrowIfNull(command);
         var validUpto = await service.UpgradeSubscription(command.Tenant, command.ExtendedExpiryDate);
         return new UpgradeTenantCommandResponse(validUpto, command.Tenant);
     }

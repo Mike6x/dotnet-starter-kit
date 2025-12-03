@@ -13,6 +13,8 @@ public class SmtpMailService(IOptions<MailOptions> settings, ILogger<SmtpMailSer
 
     public async Task SendAsync(MailRequest request, CancellationToken ct)
     {
+        ArgumentNullException.ThrowIfNull(request);
+
         using var email = new MimeMessage();
 
         // From

@@ -13,6 +13,8 @@ public static class Extensions
 {
     public static IServiceCollection AddHeroJobs(this IServiceCollection services)
     {
+        ArgumentNullException.ThrowIfNull(services);
+
         services.AddOptions<HangfireOptions>()
             .BindConfiguration(nameof(HangfireOptions));
 
@@ -59,6 +61,9 @@ public static class Extensions
 
     public static IApplicationBuilder UseHeroJobDashboard(this IApplicationBuilder app, IConfiguration config)
     {
+        ArgumentNullException.ThrowIfNull(app);
+        ArgumentNullException.ThrowIfNull(config);
+
         var hangfireOptions = config.GetSection(nameof(HangfireOptions)).Get<HangfireOptions>() ?? new HangfireOptions();
         var dashboardOptions = new DashboardOptions();
         dashboardOptions.AppPath = "https://fullstackhero.net/";

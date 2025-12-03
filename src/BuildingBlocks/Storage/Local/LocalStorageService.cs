@@ -12,6 +12,8 @@ public class LocalStorageService : IStorageService
     public async Task<string> UploadAsync<T>(FileUploadRequest request, FileType fileType, CancellationToken cancellationToken = default)
         where T : class
     {
+        ArgumentNullException.ThrowIfNull(request);
+
         var rules = FileTypeMetadata.GetRules(fileType);
         var extension = Path.GetExtension(request.FileName);
 
