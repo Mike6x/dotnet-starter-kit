@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Security.Claims;
 using System.Text;
 
@@ -61,8 +62,8 @@ internal sealed partial class UserService(
         var result = await userManager.ConfirmEmailAsync(user, code);
 
         return result.Succeeded
-            ? string.Format("Account Confirmed for E-Mail {0}. You can now use the /api/tokens endpoint to generate JWT.", user.Email)
-            : throw new CustomException(string.Format("An error occurred while confirming {0}", user.Email));
+            ? string.Format(CultureInfo.InvariantCulture, "Account Confirmed for E-Mail {0}. You can now use the /api/tokens endpoint to generate JWT.", user.Email)
+            : throw new CustomException(string.Format(CultureInfo.InvariantCulture, "An error occurred while confirming {0}", user.Email));
     }
 
     public Task<string> ConfirmPhoneNumberAsync(string userId, string code)

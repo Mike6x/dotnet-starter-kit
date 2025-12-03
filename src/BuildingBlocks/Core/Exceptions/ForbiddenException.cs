@@ -20,4 +20,9 @@ public class ForbiddenException : CustomException
         : base(message, errors.ToList(), HttpStatusCode.Forbidden)
     {
     }
+
+    public ForbiddenException(string message, Exception innerException)
+        : base(message, innerException, HttpStatusCode.Forbidden)
+    {
+    }
 }

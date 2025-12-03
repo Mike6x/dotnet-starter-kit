@@ -7,6 +7,11 @@ namespace FSH.Framework.Core.Exceptions;
 /// </summary>
 public class NotFoundException : CustomException
 {
+    public NotFoundException()
+        : base("Resource not found.", Array.Empty<string>(), HttpStatusCode.NotFound)
+    {
+    }
+
     public NotFoundException(string message)
         : base(message, Array.Empty<string>(), HttpStatusCode.NotFound)
     {
@@ -14,6 +19,11 @@ public class NotFoundException : CustomException
 
     public NotFoundException(string message, IEnumerable<string> errors)
         : base(message, errors.ToList(), HttpStatusCode.NotFound)
+    {
+    }
+
+    public NotFoundException(string message, Exception innerException)
+        : base(message, innerException, HttpStatusCode.NotFound)
     {
     }
 }

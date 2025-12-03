@@ -1,4 +1,5 @@
-﻿using System.Net;
+using System.Net;
+using System.Linq;
 
 namespace FSH.Framework.Core.Exceptions;
 
@@ -18,9 +19,24 @@ public class CustomException : Exception
     /// </summary>
     public HttpStatusCode StatusCode { get; }
 
+    public CustomException()
+        : this("An error occurred.", Enumerable.Empty<string>(), HttpStatusCode.InternalServerError)
+    {
+    }
+
+    public CustomException(string message)
+        : this(message, Enumerable.Empty<string>(), HttpStatusCode.InternalServerError)
+    {
+    }
+
+    public CustomException(string message, Exception innerException)
+        : this(message, innerException, Enumerable.Empty<string>(), HttpStatusCode.InternalServerError)
+    {
+    }
+
     public CustomException(
         string message,
-        IEnumerable<string>? errors = null,
+        IEnumerable<string>? errors,
         HttpStatusCode statusCode = HttpStatusCode.InternalServerError)
         : base(message)
     {
@@ -31,11 +47,19 @@ public class CustomException : Exception
     public CustomException(
         string message,
         Exception innerException,
-        IEnumerable<string>? errors = null,
+        IEnumerable<string>? errors,
         HttpStatusCode statusCode = HttpStatusCode.InternalServerError)
         : base(message, innerException)
     {
         ErrorMessages = errors?.ToList() ?? new List<string>();
         StatusCode = statusCode;
+    }
+
+    public CustomException(
+        string message,
+        Exception innerException,
+        HttpStatusCode statusCode)
+        : this(message, innerException, Enumerable.Empty<string>(), statusCode)
+    {
     }
 }

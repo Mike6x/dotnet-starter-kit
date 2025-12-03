@@ -124,6 +124,7 @@ public class LogJobFilter : IClientFilter, IServerFilter, IElectStateFilter, IAp
             return "[]";
         }
 
+        #pragma warning disable CA1031 // best-effort formatting for diagnostics
         try
         {
             var rendered = args.Select(a => a?.ToString() ?? "null");
@@ -133,5 +134,6 @@ public class LogJobFilter : IClientFilter, IServerFilter, IElectStateFilter, IAp
         {
             return "[<unavailable>]";
         }
+        #pragma warning restore CA1031
     }
 }

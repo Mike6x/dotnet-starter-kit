@@ -4,11 +4,11 @@ namespace FSH.Modules.Identity;
 
 public sealed class IdentityModuleConstants : IModuleConstants
 {
-    public string ModuleId => throw new NotImplementedException();
+    public string ModuleId => "Identity";
 
-    public string ModuleName => throw new NotImplementedException();
+    public string ModuleName => "Identity";
 
-    public string ApiPrefix => throw new NotImplementedException();
+    public string ApiPrefix => "identity";
     public const string SchemaName = "identity";
     public const int PasswordLength = 10;
 }

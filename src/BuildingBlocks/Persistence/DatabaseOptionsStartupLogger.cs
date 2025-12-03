@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 
 namespace FSH.Framework.Persistence;
 
-internal sealed class DatabaseOptionsStartupLogger : IHostedService
+public sealed class DatabaseOptionsStartupLogger : IHostedService
 {
     private readonly ILogger<DatabaseOptionsStartupLogger> _logger;
     private readonly IOptions<DatabaseOptions> _options;

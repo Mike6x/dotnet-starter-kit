@@ -41,7 +41,10 @@ public static class Extensions
             }
 
             bool IsHealthPath(PathString path) =>
-                path.StartsWithSegments("/health") || path.StartsWithSegments("/healthz") || path.StartsWithSegments("/ready") || path.StartsWithSegments("/live");
+                path.StartsWithSegments("/health", StringComparison.OrdinalIgnoreCase) ||
+                path.StartsWithSegments("/healthz", StringComparison.OrdinalIgnoreCase) ||
+                path.StartsWithSegments("/ready", StringComparison.OrdinalIgnoreCase) ||
+                path.StartsWithSegments("/live", StringComparison.OrdinalIgnoreCase);
 
             options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
             {

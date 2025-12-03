@@ -35,8 +35,6 @@ public sealed class RefreshTokenCommandHandler
         ArgumentNullException.ThrowIfNull(request);
 
         var http = _http.HttpContext;
-        var ip = http?.Connection.RemoteIpAddress?.ToString() ?? "unknown";
-        var ua = http?.Request.Headers.UserAgent.ToString() ?? "unknown";
         var clientId = http?.Request.Headers["X-Client-Id"].ToString();
         if (string.IsNullOrWhiteSpace(clientId)) clientId = "web";
 
@@ -104,9 +102,7 @@ public sealed class RefreshTokenCommandHandler
 
     private static string Sha256Short(string value)
     {
-        using var sha = System.Security.Cryptography.SHA256.Create();
-        var hash = sha.ComputeHash(System.Text.Encoding.UTF8.GetBytes(value));
+        var hash = System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(value));
         return Convert.ToHexString(hash.AsSpan(0, 8));
     }
 }
-

@@ -55,6 +55,11 @@ public sealed class InMemoryEventBus : IEventBus
 
         foreach (var handler in handlers)
         {
+            if (handler is null)
+            {
+                continue;
+            }
+
             var handlerName = handler.GetType().FullName ?? handler.GetType().Name;
 
             if (inbox != null)

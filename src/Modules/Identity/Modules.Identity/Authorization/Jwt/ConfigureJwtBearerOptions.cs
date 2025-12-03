@@ -11,7 +11,6 @@ namespace FSH.Modules.Identity.Authorization.Jwt;
 public class ConfigureJwtBearerOptions : IConfigureNamedOptions<JwtBearerOptions>
 {
     private readonly JwtOptions _options;
-    private readonly string _hangfireRoute;
 
     public ConfigureJwtBearerOptions(IOptions<JwtOptions> options, IConfiguration configuration)
     {
@@ -19,10 +18,6 @@ public class ConfigureJwtBearerOptions : IConfigureNamedOptions<JwtBearerOptions
         ArgumentNullException.ThrowIfNull(configuration);
 
         _options = options.Value;
-
-        // Read Hangfire dashboard route from configuration (HangfireOptions:Route).
-        // Fallback to "/jobs" if not configured.
-        _hangfireRoute = configuration.GetSection("HangfireOptions").GetValue<string>("Route") ?? "/jobs";
     }
 
     public void Configure(JwtBearerOptions options)

@@ -34,6 +34,7 @@ public sealed class ConnectionStringValidator(IOptions<DatabaseOptions> dbSettin
 
             return true;
         }
+#pragma warning disable CA1031 // Validation should not throw to callers; we log and return false.
         catch (Exception ex)
         {
 #pragma warning disable S6667 // Logging in a catch clause should pass the caught exception as a parameter.
@@ -41,5 +42,6 @@ public sealed class ConnectionStringValidator(IOptions<DatabaseOptions> dbSettin
 #pragma warning restore S6667 // Logging in a catch clause should pass the caught exception as a parameter.
             return false;
         }
+#pragma warning restore CA1031
     }
 }

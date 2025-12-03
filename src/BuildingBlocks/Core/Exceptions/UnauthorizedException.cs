@@ -20,4 +20,9 @@ public class UnauthorizedException : CustomException
         : base(message, errors.ToList(), HttpStatusCode.Unauthorized)
     {
     }
+
+    public UnauthorizedException(string message, Exception innerException)
+        : base(message, innerException, HttpStatusCode.Unauthorized)
+    {
+    }
 }

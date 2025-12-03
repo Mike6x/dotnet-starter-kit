@@ -121,8 +121,7 @@ public sealed class GenerateTokenCommandHandler
 
     private static string Sha256Short(string value)
     {
-        using var sha = System.Security.Cryptography.SHA256.Create();
-        var hash = sha.ComputeHash(System.Text.Encoding.UTF8.GetBytes(value));
+        var hash = System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(value));
         // short printable fingerprint; store only this
         return Convert.ToHexString(hash.AsSpan(0, 8));
     }

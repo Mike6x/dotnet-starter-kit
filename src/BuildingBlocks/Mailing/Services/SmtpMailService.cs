@@ -79,6 +79,7 @@ public class SmtpMailService(IOptions<MailOptions> settings, ILogger<SmtpMailSer
         catch (Exception ex)
         {
             _logger.LogError(ex, "An error occurred while sending email: {Message}", ex.Message);
+            throw new InvalidOperationException("Failed to send email.", ex);
         }
         finally
         {

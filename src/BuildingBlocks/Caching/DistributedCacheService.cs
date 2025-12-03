@@ -99,15 +99,14 @@ public sealed class DistributedCacheService : ICacheService
     private string Normalize(string key)
     {
         if (string.IsNullOrWhiteSpace(key)) throw new ArgumentNullException(nameof(key));
-        if (key.StartsWith(_opts.KeyPrefix, StringComparison.Ordinal))
+        var prefix = _opts.KeyPrefix ?? string.Empty;
+        if (prefix.Length == 0)
         {
-            return string.IsNullOrWhiteSpace(_opts.KeyPrefix) ? key :
-               key;
+            return key;
         }
-        else
-        {
-            return string.IsNullOrWhiteSpace(_opts.KeyPrefix) ? key :
-               (_opts.KeyPrefix + key);
-        }
+
+        return key.StartsWith(prefix, StringComparison.Ordinal)
+            ? key
+            : prefix + key;
     }
 }
