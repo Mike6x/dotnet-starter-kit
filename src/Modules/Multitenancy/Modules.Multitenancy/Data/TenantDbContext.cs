@@ -1,5 +1,6 @@
-﻿using Finbuckle.MultiTenant.EntityFrameworkCore.Stores.EFCoreStore;
+using Finbuckle.MultiTenant.EntityFrameworkCore.Stores;
 using FSH.Framework.Shared.Multitenancy;
+using FSH.Modules.Multitenancy.Provisioning;
 using Microsoft.EntityFrameworkCore;
 
 namespace FSH.Modules.Multitenancy.Data;
@@ -7,11 +8,15 @@ namespace FSH.Modules.Multitenancy.Data;
 public class TenantDbContext : EFCoreStoreDbContext<AppTenantInfo>
 {
     public const string Schema = "tenant";
+
     public TenantDbContext(DbContextOptions<TenantDbContext> options)
         : base(options)
     {
-        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
     }
+
+    public DbSet<TenantProvisioning> TenantProvisionings => Set<TenantProvisioning>();
+
+    public DbSet<TenantProvisioningStep> TenantProvisioningSteps => Set<TenantProvisioningStep>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -19,6 +24,6 @@ public class TenantDbContext : EFCoreStoreDbContext<AppTenantInfo>
 
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<AppTenantInfo>().ToTable("Tenants", Schema);
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(TenantDbContext).Assembly);
     }
 }
