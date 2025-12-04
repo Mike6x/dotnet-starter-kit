@@ -1,4 +1,5 @@
 using FSH.Framework.Blazor.UI;
+using FSH.Playground.Blazor;
 using FSH.Playground.Blazor.Components;
 using FSH.Playground.Blazor.Services;
 
@@ -17,7 +18,9 @@ var apiBaseUrl = builder.Configuration["Api:BaseUrl"]
 builder.Services.AddHttpClient("AuthApi", client =>
 {
     client.BaseAddress = new Uri(apiBaseUrl);
-});
+}).AddHttpMessageHandler<BffAuthDelegatingHandler>();
+
+builder.Services.AddApiClients();
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();

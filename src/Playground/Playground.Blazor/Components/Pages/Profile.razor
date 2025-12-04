@@ -1,0 +1,146 @@
+@page "/profile"
+@inherits ComponentBase
+<MudContainer Class="fsh-section">
+    <MudGrid>
+        <MudItem xs="12" sm="4">
+            <MudPaper Class="fsh-card pa-4">
+                <MudAvatar Class="fsh-avatar mb-2" Size="Size.Large" Src="@_profile.ImageUrl" />
+                <label for="profile-upload">
+                    <MudButton Variant="Variant.Outlined" Color="Color.Primary">Upload Image</MudButton>
+                </label>
+                <InputFile id="profile-upload" OnChange="OnFileSelected" />
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="8">
+            <MudPaper Class="fsh-card pa-4">
+                <MudText Typo="Typo.h6" Class="mb-3">Profile</MudText>
+                <MudForm @ref="_form" Model="@_profile" OnValidSubmit="SaveProfile">
+                    <MudGrid>
+                        <MudItem xs="12" sm="6">
+                            <MudTextField @bind-Value="_profile.FirstName" Label="First Name" Required="true" />
+                        </MudItem>
+                        <MudItem xs="12" sm="6">
+                            <MudTextField @bind-Value="_profile.LastName" Label="Last Name" Required="true" />
+                        </MudItem>
+                        <MudItem xs="12" sm="6">
+                            <MudTextField @bind-Value="_profile.Email" Label="Email" Disabled="true" />
+                        </MudItem>
+                        <MudItem xs="12" sm="6">
+                            <MudTextField @bind-Value="_profile.PhoneNumber" Label="Phone" />
+                        </MudItem>
+                    </MudGrid>
+                    <MudButton Color="Color.Primary" Variant="Variant.Filled" Class="mt-3" ButtonType="ButtonType.Submit">Save</MudButton>
+                </MudForm>
+            </MudPaper>
+            <MudPaper Class="fsh-card pa-4 mt-4">
+                <MudText Typo="Typo.h6" Class="mb-3">Change Password</MudText>
+                <MudForm @ref="_passwordForm" OnValidSubmit="ChangePassword">
+                    <MudTextField @bind-Value="_passwordModel.CurrentPassword" Label="Current Password" InputType="InputType.Password" Required="true" />
+                    <MudTextField @bind-Value="_passwordModel.NewPassword" Label="New Password" InputType="InputType.Password" Required="true" />
+                    <MudTextField @bind-Value="_passwordModel.ConfirmPassword" Label="Confirm Password" InputType="InputType.Password" Required="true" />
+                    <MudButton Color="Color.Primary" Variant="Variant.Filled" Class="mt-3" ButtonType="ButtonType.Submit">Update Password</MudButton>
+                </MudForm>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
+
+@code {
+    private MudForm? _form;
+    private MudForm? _passwordForm;
+    private ProfileDto _profile = new();
+    private PasswordDto _passwordModel = new();
+    [Inject] private FSH.Playground.Blazor.Services.Api.ProfileClient ProfileClient { get; set; } = default!;
+    [Inject] private ISnackbar Snackbar { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await ProfileClient.GetProfileAsync();
+        if (response is not null)
+        {
+            _profile = new ProfileDto
+            {
+                FirstName = response.FirstName,
+                LastName = response.LastName,
+                Email = response.Email,
+                PhoneNumber = response.PhoneNumber,
+                ImageUrl = response.ImageUrl
+            };
+        }
+    }
+
+    private async Task OnFileSelected(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        if (file is null) return;
+        if (file.Size > 1_000_000)
+        {
+            Snackbar.Add("Image too large. Max 1 MB.", Severity.Error);
+            return;
+        }
+        if (!file.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
+        {
+            Snackbar.Add("Only image uploads are allowed.", Severity.Error);
+            return;
+        }
+
+        using var stream = file.OpenReadStream(1_000_000);
+        using var content = new StreamContent(stream);
+        content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
+        var imageUrl = await ProfileClient.UploadProfileImageAsync(content);
+        if (string.IsNullOrWhiteSpace(imageUrl))
+        {
+            Snackbar.Add("Failed to upload image.", Severity.Error);
+            return;
+        }
+
+        _profile.ImageUrl = imageUrl;
+        Snackbar.Add("Profile image updated.", Severity.Success);
+    }
+
+    private async Task SaveProfile()
+    {
+        var request = new FSH.Playground.Blazor.Services.Api.ProfileClient.ProfileUpdateRequest
+        {
+            FirstName = _profile.FirstName,
+            LastName = _profile.LastName,
+            PhoneNumber = _profile.PhoneNumber
+        };
+
+        var ok = await ProfileClient.UpdateProfileAsync(request);
+        Snackbar.Add(ok ? "Profile updated." : "Failed to update profile.", ok ? Severity.Success : Severity.Error);
+    }
+
+    private async Task ChangePassword()
+    {
+        var req = new FSH.Playground.Blazor.Services.Api.ProfileClient.ChangePasswordRequest
+        {
+            CurrentPassword = _passwordModel.CurrentPassword ?? string.Empty,
+            NewPassword = _passwordModel.NewPassword ?? string.Empty,
+            ConfirmPassword = _passwordModel.ConfirmPassword ?? string.Empty
+        };
+
+        var ok = await ProfileClient.ChangePasswordAsync(req);
+        Snackbar.Add(ok ? "Password updated." : "Failed to update password.", ok ? Severity.Success : Severity.Error);
+        if (ok)
+        {
+            _passwordModel = new();
+        }
+    }
+
+    private sealed class ProfileDto
+    {
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? Email { get; set; }
+        public string? PhoneNumber { get; set; }
+        public string? ImageUrl { get; set; }
+    }
+
+    private sealed class PasswordDto
+    {
+        public string? CurrentPassword { get; set; }
+        public string? NewPassword { get; set; }
+        public string? ConfirmPassword { get; set; }
+    }
+}

@@ -9,9 +9,13 @@ public static class ServiceCollectionExtensions
         {
             options.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomRight;
             options.SnackbarConfiguration.ShowCloseIcon = true;
+            options.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
+            options.SnackbarConfiguration.MaxDisplayedSnackbars = 3;
         });
 
         services.AddMudPopoverService();
+        services.AddScoped<FSH.Framework.Blazor.UI.Components.Feedback.Snackbar.FshSnackbar>();
+        services.AddSingleton(FSH.Framework.Blazor.UI.Theme.FshTheme.Build());
 
         return services;
     }

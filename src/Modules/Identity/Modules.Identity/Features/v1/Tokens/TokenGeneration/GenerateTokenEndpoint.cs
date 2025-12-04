@@ -17,7 +17,7 @@ public static class GenerateTokenEndpoint
     {
         ArgumentNullException.ThrowIfNull(endpoint);
 
-        return endpoint.MapPost("/token",
+        return endpoint.MapPost("/token/issue",
             [AllowAnonymous] async Task<Results<Ok<TokenResponse>, UnauthorizedHttpResult, ProblemHttpResult>>
             ([FromBody] GenerateTokenCommand command,
             [DefaultValue("root")][FromHeader] string tenant,

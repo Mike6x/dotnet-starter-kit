@@ -1,0 +1,116 @@
+@page "/audits"
+@using static FSH.Playground.Blazor.Services.Api.Audits.AuditClient
+@using MudBlazor
+@inherits ComponentBase
+<MudContainer Class="fsh-section">
+    <MudPaper Class="fsh-card pa-4 mb-3">
+        <MudGrid>
+            <MudItem xs="12" sm="6" md="3">
+                <MudTextField @bind-Value="_filter.Type" Label="Type" />
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
+                <MudTextField @bind-Value="_filter.User" Label="User" />
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3">
+                <MudTextField @bind-Value="_filter.CorrelationId" Label="Correlation Id" />
+            </MudItem>
+            <MudItem xs="12" sm="6" md="3" Class="d-flex align-center">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="LoadAudits">Search</MudButton>
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+
+    <MudPaper Class="fsh-card pa-4">
+        <MudTable Items="_audits" Dense="true" Hover="true">
+            <HeaderContent>
+                <MudTh>Timestamp</MudTh>
+                <MudTh>Type</MudTh>
+                <MudTh>User</MudTh>
+                <MudTh>Correlation</MudTh>
+                <MudTh></MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Timestamp">@context.TimestampUtc.ToLocalTime()</MudTd>
+                <MudTd DataLabel="Type">@context.Type</MudTd>
+                <MudTd DataLabel="User">@context.UserName</MudTd>
+                <MudTd DataLabel="Correlation">@context.CorrelationId</MudTd>
+                <MudTd>
+                    <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(() => ShowDetails(context))">Details</MudButton>
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+    </MudPaper>
+
+    @if (_showDialog && _selected is not null)
+    {
+        <MudPaper Class="fsh-card pa-4 mt-3">
+            <MudText Typo="Typo.h6">Audit Detail</MudText>
+            <MudText Typo="Typo.subtitle2">Type: @_selected.Type</MudText>
+            <MudText Typo="Typo.subtitle2">User: @_selected.UserName</MudText>
+            <MudText Typo="Typo.subtitle2">Correlation: @_selected.CorrelationId</MudText>
+            <MudText Typo="Typo.subtitle2">Trace: @_selected.TraceId</MudText>
+            <MudText Typo="Typo.subtitle2">Timestamp: @_selected.TimestampUtc.ToLocalTime()</MudText>
+            <MudText Typo="Typo.body2" Class="mt-2">Payload:</MudText>
+            <MudPaper Class="pa-2 mt-1" Outlined="true">
+                <pre>@_selected.Payload</pre>
+            </MudPaper>
+            <MudButton Class="mt-2" OnClick="CloseDialog">Close</MudButton>
+        </MudPaper>
+    }
+</MudContainer>
+
+@code {
+    private FilterDto _filter = new();
+    private List<FSH.Playground.Blazor.Services.Api.Audits.AuditClient.AuditDto> _audits = new();
+    private bool _showDialog;
+    [Inject] private FSH.Playground.Blazor.Services.Api.Audits.AuditClient AuditClient { get; set; } = default!;
+    [Inject] private ISnackbar Snackbar { get; set; } = default!;
+    private AuditDto? _selected;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAudits();
+    }
+
+    private async Task LoadAudits()
+    {
+        try
+        {
+            var result = await AuditClient.GetAuditsAsync(new FSH.Playground.Blazor.Services.Api.Audits.AuditClient.AuditFilter
+            {
+                Type = _filter.Type,
+                User = _filter.User,
+                CorrelationId = _filter.CorrelationId,
+                PageNumber = 1,
+                PageSize = 20
+            });
+            _audits = result.Items;
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Failed to load audits: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private Task ShowDetails(FSH.Playground.Blazor.Services.Api.Audits.AuditClient.AuditDto audit)
+    {
+        _selected = audit;
+        _showDialog = true;
+        return Task.CompletedTask;
+    }
+
+    private Task CloseDialog()
+    {
+        _selected = null;
+        _showDialog = false;
+        return Task.CompletedTask;
+    }
+
+    private sealed class FilterDto
+    {
+        public string? Type { get; set; }
+        public string? User { get; set; }
+        public string? CorrelationId { get; set; }
+    }
+
+}

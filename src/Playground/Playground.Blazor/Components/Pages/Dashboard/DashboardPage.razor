@@ -1,0 +1,110 @@
+@page "/dashboard"
+@page "/"
+@inherits ComponentBase
+@inject FSH.Playground.Blazor.Services.Api.Audits.AuditClient AuditClient
+@inject FSH.Playground.Blazor.Services.Api.Dashboard.DashboardClient DashboardClient
+@inject ISnackbar Snackbar
+
+<MudContainer Class="fsh-section">
+    <MudGrid>
+        <MudItem xs="12" sm="6" md="3">
+            <MudPaper Class="fsh-card pa-4">
+                <MudText Typo="Typo.h6">Users</MudText>
+                <MudText Typo="Typo.h4">@_summary.Users</MudText>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="3">
+            <MudPaper Class="fsh-card pa-4">
+                <MudText Typo="Typo.h6">Roles</MudText>
+                <MudText Typo="Typo.h4">@_summary.Roles</MudText>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="3">
+            <MudPaper Class="fsh-card pa-4">
+                <MudText Typo="Typo.h6">Tenants</MudText>
+                <MudText Typo="Typo.h4">@_summary.Tenants</MudText>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="6" md="3">
+            <MudPaper Class="fsh-card pa-4">
+                <MudText Typo="Typo.h6">Recent Audits</MudText>
+                <MudText Typo="Typo.h4">@_recentAudits.Count</MudText>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+
+    <MudPaper Class="fsh-card pa-4 mt-4">
+        <MudText Typo="Typo.h6" Class="mb-2">Recent Audits</MudText>
+        <MudTable Items="_recentAudits" Dense="true">
+            <HeaderContent>
+                <MudTh>Timestamp</MudTh>
+                <MudTh>Type</MudTh>
+                <MudTh>User</MudTh>
+                <MudTh>Correlation</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Timestamp">@context.TimestampUtc.ToLocalTime()</MudTd>
+                <MudTd DataLabel="Type">@context.Type</MudTd>
+                <MudTd DataLabel="User">@context.UserName</MudTd>
+                <MudTd DataLabel="Correlation">@context.CorrelationId</MudTd>
+            </RowTemplate>
+        </MudTable>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private SummaryDto _summary = new();
+    private List<FSH.Playground.Blazor.Services.Api.Audits.AuditClient.AuditDto> _recentAudits = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadRecentAudits();
+        await LoadSummary();
+    }
+
+    private async Task LoadRecentAudits()
+    {
+        try
+        {
+            var result = await AuditClient.GetAuditsAsync(new FSH.Playground.Blazor.Services.Api.Audits.AuditClient.AuditFilter
+            {
+                PageNumber = 1,
+                PageSize = 5
+            });
+            _recentAudits = result.Items;
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Failed to load audits: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task LoadSummary()
+    {
+        try
+        {
+            var result = await DashboardClient.GetSummaryAsync();
+            _summary = result is null
+                ? new SummaryDto()
+                : new SummaryDto
+                {
+                    Users = result.Users,
+                    Roles = result.Roles,
+                    Tenants = result.Tenants,
+                    RecentAudits = result.RecentAudits
+                };
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Failed to load summary: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private sealed class SummaryDto
+    {
+        public int Users { get; set; }
+        public int Roles { get; set; }
+        public int Tenants { get; set; }
+        public int RecentAudits { get; set; }
+    }
+}
