@@ -263,5 +263,5 @@ dotnet_diagnostic.CA1819.severity = none
 dotnet_diagnostic.CA1040.severity = none
 dotnet_diagnostic.CA1848.severity = none
 
-[**/Migrations/**/*.cs]
+[**/Migrations.PostgreSQL/**/*.cs]
 dotnet_diagnostic.CA1062.severity = none
