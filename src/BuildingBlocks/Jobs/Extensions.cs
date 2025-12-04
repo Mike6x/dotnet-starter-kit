@@ -51,6 +51,7 @@ public static class Extensions
 
             config.UseFilter(new FshJobFilter(provider));
             config.UseFilter(new LogJobFilter());
+            config.UseFilter(new HangfireTelemetryFilter());
         });
 
         services.AddTransient<IJobService, HangfireService>();

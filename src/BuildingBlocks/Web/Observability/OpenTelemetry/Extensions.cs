@@ -1,3 +1,4 @@
+using Mediator;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,6 +40,9 @@ public static class Extensions
             .CreateDefault()
             .AddService(serviceName: builder.Environment.ApplicationName);
 
+        // Shared ActivitySource for spans (Mediator, etc.)
+        builder.Services.AddSingleton(new ActivitySource(builder.Environment.ApplicationName));
+
         ConfigureMetricsAndTracing(builder, options, resourceBuilder);
 
         return builder;
@@ -64,6 +68,17 @@ public static class Extensions
                     .AddHttpClientInstrumentation()
                     .AddNpgsqlInstrumentation()
                     .AddRuntimeInstrumentation();
+
+                // Apply histogram buckets for HTTP server duration
+                if (options.Http.Histograms.Enabled)
+                {
+                    metrics.AddView(
+                        "http.server.duration",
+                        new ExplicitBucketHistogramConfiguration
+                        {
+                            Boundaries = GetHistogramBuckets(options)
+                        });
+                }
 
                 foreach (var meterName in options.Metrics.MeterNames ?? Array.Empty<string>())
                 {
@@ -96,8 +111,15 @@ public static class Extensions
                     .AddHttpClientInstrumentation()
                     .AddNpgsql()
                     .AddEntityFrameworkCoreInstrumentation()
-                    .AddRedisInstrumentation()
-                    .AddSource(builder.Environment.ApplicationName);
+                    .AddRedisInstrumentation(redis =>
+                    {
+                        if (options.Data.FilterRedisCommands)
+                        {
+                            redis.SetVerboseDatabaseStatements = false;
+                        }
+                    })
+                    .AddSource(builder.Environment.ApplicationName)
+                    .AddSource("FSH.Hangfire");
 
                 if (options.Exporter.Otlp.Enabled)
                 {
@@ -107,6 +129,25 @@ public static class Extensions
                     });
                 }
             });
+
+        // Mediator spans (optional): add behavior in DI for pipeline spans.
+        if (options.Mediator.Enabled)
+        {
+            builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(MediatorTracingBehavior<,>));
+        }
+
+        // Hangfire/job instrumentation placeholder: currently enabled via Jobs.Enabled; wire hooks in jobs building block.
+    }
+
+    private static double[] GetHistogramBuckets(OpenTelemetryOptions options)
+    {
+        if (options.Http.Histograms.BucketBoundaries is { Length: > 0 } custom)
+        {
+            return custom;
+        }
+
+        // Default buckets in seconds (fast to slow)
+        return new[] { 0.01, 0.05, 0.1, 0.25, 0.5, 1, 2, 5 };
     }
 
     private static bool IsHealthCheck(PathString path) =>

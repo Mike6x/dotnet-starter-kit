@@ -14,7 +14,7 @@ provider "aws" {
 }
 
 module "app" {
-  source = "../../../modules/app_stack"
+  source = "../../../app_stack"
 
   environment = var.environment
   region      = var.region

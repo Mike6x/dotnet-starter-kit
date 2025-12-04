@@ -18,7 +18,7 @@ locals {
 }
 
 module "network" {
-  source = "../network"
+  source = "../../../modules/network"
 
   name       = "${var.environment}-${var.region}"
   cidr_block = var.vpc_cidr_block
@@ -30,7 +30,7 @@ module "network" {
 }
 
 module "ecs_cluster" {
-  source = "../ecs_cluster"
+  source = "../../../modules/ecs_cluster"
 
   name = "${var.environment}-${var.region}-cluster"
 }
@@ -58,7 +58,7 @@ resource "aws_security_group" "alb" {
 }
 
 module "alb" {
-  source = "../alb"
+  source = "../../../modules/alb"
 
   name              = "${var.environment}-${var.region}-alb"
   subnet_ids        = module.network.public_subnet_ids
@@ -67,14 +67,14 @@ module "alb" {
 }
 
 module "app_s3" {
-  source = "../s3_bucket"
+  source = "../../../modules/s3_bucket"
 
   name = var.app_s3_bucket_name
   tags = local.common_tags
 }
 
 module "rds" {
-  source = "../rds_postgres"
+  source = "../../../modules/rds_postgres"
 
   name                       = "${var.environment}-${var.region}-postgres"
   vpc_id                     = module.network.vpc_id
@@ -94,7 +94,7 @@ locals {
 }
 
 module "redis" {
-  source = "../elasticache_redis"
+  source = "../../../modules/elasticache_redis"
 
   name                       = "${var.environment}-${var.region}-redis"
   vpc_id                     = module.network.vpc_id
@@ -107,7 +107,7 @@ module "redis" {
 }
 
 module "api_service" {
-  source = "../ecs_service"
+  source = "../../../modules/ecs_service"
 
   name            = "${var.environment}-api"
   region          = var.region
@@ -139,7 +139,7 @@ module "api_service" {
 }
 
 module "blazor_service" {
-  source = "../ecs_service"
+  source = "../../../modules/ecs_service"
 
   name            = "${var.environment}-blazor"
   region          = var.region
