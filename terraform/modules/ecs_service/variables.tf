@@ -94,6 +94,12 @@ variable "environment_variables" {
   default     = {}
 }
 
+variable "task_role_arn" {
+  type        = string
+  description = "Optional task role ARN to attach to the task definition."
+  default     = null
+}
+
 variable "tags" {
   type        = map(string)
   description = "Tags to apply to resources."

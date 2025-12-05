@@ -77,6 +77,45 @@ module "app_s3" {
   cloudfront_price_class = var.app_s3_cloudfront_price_class
 }
 
+data "aws_iam_policy_document" "api_task_assume" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["ecs-tasks.amazonaws.com"]
+    }
+  }
+}
+
+data "aws_iam_policy_document" "api_task_s3" {
+  statement {
+    sid     = "AllowBucketReadWrite"
+    actions = [
+      "s3:PutObject",
+      "s3:DeleteObject",
+      "s3:GetObject",
+      "s3:ListBucket"
+    ]
+    resources = [
+      "arn:aws:s3:::${var.app_s3_bucket_name}",
+      "arn:aws:s3:::${var.app_s3_bucket_name}/*"
+    ]
+  }
+}
+
+resource "aws_iam_role" "api_task" {
+  name               = "${var.environment}-api-task"
+  assume_role_policy = data.aws_iam_policy_document.api_task_assume.json
+  tags               = local.common_tags
+}
+
+resource "aws_iam_role_policy" "api_task_s3" {
+  name   = "${var.environment}-api-task-s3"
+  role   = aws_iam_role.api_task.id
+  policy = data.aws_iam_policy_document.api_task_s3.json
+}
+
 module "rds" {
   source = "../../../modules/rds_postgres"
 
@@ -133,6 +172,8 @@ module "api_service" {
 
   health_check_path = "/health/live"
 
+  task_role_arn = aws_iam_role.api_task.arn
+
   environment_variables = {
     ASPNETCORE_ENVIRONMENT            = local.aspnetcore_environment
     DatabaseOptions__ConnectionString = local.db_connection_string
@@ -141,7 +182,6 @@ module "api_service" {
     CorsOptions__AllowedOrigins__0    = "http://${module.alb.dns_name}"
     Storage__Provider                 = "s3"
     Storage__S3__Bucket               = var.app_s3_bucket_name
-    Storage__S3__PublicRead           = false
     Storage__S3__PublicBaseUrl        = module.app_s3.cloudfront_domain_name != "" ? "https://${module.app_s3.cloudfront_domain_name}" : ""
   }
 

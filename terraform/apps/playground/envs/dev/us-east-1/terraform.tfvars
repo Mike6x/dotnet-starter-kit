@@ -33,13 +33,13 @@ db_name     = "fshdb"
 db_username = "fshadmin"
 db_password = "password123!" # Note: In production, use a more secure method for managing secrets.
 
-api_container_image = "ghcr.io/fullstackhero/fsh-playground-api:1c555545cee10cb9703f5ecbbb928e45e5ba8990"
+api_container_image = "ghcr.io/fullstackhero/fsh-playground-api:a6838728a6314c4a635d732e90f8c51c5f890732"
 api_container_port  = 8080
 api_cpu             = "256"
 api_memory          = "512"
 api_desired_count   = 1
 
-blazor_container_image = "ghcr.io/fullstackhero/fsh-playground-blazor:1c555545cee10cb9703f5ecbbb928e45e5ba8990"
+blazor_container_image = "ghcr.io/fullstackhero/fsh-playground-blazor:a6838728a6314c4a635d732e90f8c51c5f890732"
 blazor_container_port  = 8080
 blazor_cpu             = "256"
 blazor_memory          = "512"

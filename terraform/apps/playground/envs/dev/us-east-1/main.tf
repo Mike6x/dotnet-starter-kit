@@ -69,5 +69,5 @@ output "s3_bucket_name" {
 }
 
 output "s3_cloudfront_domain" {
-  value = module.app.s3_cloudfront_domain
+  value = "https://${module.app.s3_cloudfront_domain}"
 }
