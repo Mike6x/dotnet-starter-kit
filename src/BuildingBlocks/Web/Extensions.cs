@@ -17,6 +17,7 @@ using FSH.Framework.Web.Security;
 using FSH.Framework.Web.Versioning;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
@@ -44,14 +45,17 @@ public static class Extensions
         builder.Services.AddHeroDatabaseOptions(builder.Configuration);
         builder.Services.AddHeroRateLimiting(builder.Configuration);
 
-        if (options.EnableCors)
+        var corsEnabled = options.EnableCors && IsCorsEnabled(builder.Configuration);
+        var openApiEnabled = options.EnableOpenApi && IsOpenApiEnabled(builder.Configuration);
+
+        if (corsEnabled)
         {
             builder.Services.AddHeroCors(builder.Configuration);
         }
 
         builder.Services.AddHeroVersioning();
 
-        if (options.EnableOpenApi)
+        if (openApiEnabled)
         {
             builder.Services.AddHeroOpenApi(builder.Configuration);
         }
@@ -89,6 +93,9 @@ public static class Extensions
         var options = new FshPipelineOptions();
         configure?.Invoke(options);
 
+        var corsEnabled = options.UseCors && IsCorsEnabled(app.Configuration);
+        var openApiEnabled = options.UseOpenApi && IsOpenApiEnabled(app.Configuration);
+
         app.UseExceptionHandler();
         app.UseHttpsRedirection();
 
@@ -110,12 +117,12 @@ public static class Extensions
         app.UseRouting();
 
         // CORS should run between routing and authN/authZ
-        if (options.UseCors)
+        if (corsEnabled)
         {
             app.UseHeroCors();
         }
 
-        if (options.UseOpenApi)
+        if (openApiEnabled)
         {
             app.UseHeroOpenApi();
         }
@@ -141,6 +148,18 @@ public static class Extensions
         app.MapHeroHealthEndpoints();
         app.UseMiddleware<CurrentUserMiddleware>();
         return app;
+    }
+
+    private static bool IsCorsEnabled(IConfiguration configuration)
+    {
+        var allowAll = configuration.GetValue("CorsOptions:AllowAll", false);
+        var origins = configuration.GetSection("CorsOptions:AllowedOrigins").Get<string[]>() ?? [];
+        return allowAll || origins.Length > 0;
+    }
+
+    private static bool IsOpenApiEnabled(IConfiguration configuration)
+    {
+        return configuration.GetValue("OpenApiOptions:Enabled", true);
     }
 }
 

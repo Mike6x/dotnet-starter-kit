@@ -32,8 +32,6 @@ var moduleAssemblies = new Assembly[]
 
 builder.AddHeroPlatform(o =>
 {
-    o.EnableCors = true;
-    o.EnableOpenApi = true;
     o.EnableCaching = true;
     o.EnableMailing = true;
     o.EnableJobs = true;
@@ -42,7 +40,10 @@ builder.AddHeroPlatform(o =>
 builder.AddModules(moduleAssemblies);
 var app = builder.Build();
 app.UseHeroMultiTenantDatabases();
-app.UseHeroPlatform(p => { p.MapModules = true; });
+app.UseHeroPlatform(p =>
+{
+    p.MapModules = true;
+});
 app.MapGet("/", () => Results.Ok(new { message = "hello world!" }))
    .WithTags("PlayGround")
    .AllowAnonymous();
