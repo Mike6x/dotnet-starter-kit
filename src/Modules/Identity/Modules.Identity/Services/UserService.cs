@@ -11,13 +11,16 @@ using FSH.Framework.Shared.Multitenancy;
 using FSH.Framework.Storage;
 using FSH.Framework.Storage.DTOs;
 using FSH.Framework.Storage.Services;
+using FSH.Framework.Web.Origin;
 using FSH.Modules.Identity.Contracts.DTOs;
 using FSH.Modules.Identity.Contracts.Events;
 using FSH.Modules.Identity.Contracts.Services;
 using FSH.Modules.Identity.Data;
 using FSH.Modules.Identity.Features.v1.Roles;
 using FSH.Modules.Identity.Features.v1.Users;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
@@ -37,9 +40,14 @@ internal sealed partial class UserService(
     IMailService mailService,
     IMultiTenantContextAccessor<AppTenantInfo> multiTenantContextAccessor,
     IStorageService storageService,
-    IOutboxStore outboxStore
+    IOutboxStore outboxStore,
+    IOptions<OriginOptions> originOptions,
+    IHttpContextAccessor httpContextAccessor
     ) : IUserService
 {
+    private readonly Uri? _originUrl = originOptions.Value.OriginUrl;
+    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
+
     private void EnsureValidTenant()
     {
         if (string.IsNullOrWhiteSpace(multiTenantContextAccessor?.MultiTenantContext?.TenantInfo?.Id))
@@ -105,7 +113,7 @@ internal sealed partial class UserService(
             UserName = user.UserName,
             FirstName = user.FirstName,
             LastName = user.LastName,
-            ImageUrl = user.ImageUrl?.ToString(),
+            ImageUrl = ResolveImageUrl(user.ImageUrl),
             IsActive = user.IsActive
         };
     }
@@ -126,7 +134,7 @@ internal sealed partial class UserService(
                 UserName = user.UserName,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                ImageUrl = user.ImageUrl?.ToString(),
+                ImageUrl = ResolveImageUrl(user.ImageUrl),
                 IsActive = user.IsActive
             });
         }
@@ -224,7 +232,7 @@ internal sealed partial class UserService(
         if (image.Data != null || deleteCurrentImage)
         {
             var imageString = await storageService.UploadAsync<FshUser>(image, FileType.Image);
-            user.ImageUrl = new Uri(imageString);
+            user.ImageUrl = new Uri(imageString, UriKind.RelativeOrAbsolute);
             if (deleteCurrentImage && imageUri != null)
             {
                 await storageService.RemoveAsync(imageUri.ToString());
@@ -351,5 +359,36 @@ internal sealed partial class UserService(
         }
 
         return userRoles;
+    }
+
+    private string? ResolveImageUrl(Uri? imageUrl)
+    {
+        if (imageUrl is null)
+        {
+            return null;
+        }
+
+        // Absolute URLs (e.g., S3) pass through unchanged.
+        if (imageUrl.IsAbsoluteUri)
+        {
+            return imageUrl.ToString();
+        }
+
+        // For relative paths from local storage, prefix with the API origin and wwwroot.
+        if (_originUrl is null)
+        {
+            var request = _httpContextAccessor.HttpContext?.Request;
+            if (request is not null && !string.IsNullOrWhiteSpace(request.Scheme) && request.Host.HasValue)
+            {
+                var baseUri = $"{request.Scheme}://{request.Host.Value}{request.PathBase}";
+                var relativePath = imageUrl.ToString().TrimStart('/');
+                return $"{baseUri.TrimEnd('/')}/{relativePath}";
+            }
+
+            return imageUrl.ToString();
+        }
+
+        var originRelativePath = imageUrl.ToString().TrimStart('/');
+        return $"{_originUrl.AbsoluteUri.TrimEnd('/')}/{originRelativePath}";
     }
 }

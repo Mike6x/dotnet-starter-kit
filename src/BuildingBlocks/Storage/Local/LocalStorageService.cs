@@ -1,13 +1,22 @@
 ﻿using FSH.Framework.Storage.DTOs;
 using FSH.Framework.Storage.Services;
+using Microsoft.AspNetCore.Hosting;
 using System.Text.RegularExpressions;
 
 namespace FSH.Framework.Storage.Local;
 
 public class LocalStorageService : IStorageService
 {
-    private const string RootPath = "wwwroot";
     private const string UploadBasePath = "uploads";
+    private readonly string _rootPath;
+
+    public LocalStorageService(IWebHostEnvironment environment)
+    {
+        ArgumentNullException.ThrowIfNull(environment);
+        _rootPath = string.IsNullOrWhiteSpace(environment.WebRootPath)
+            ? Path.Combine(environment.ContentRootPath, "wwwroot")
+            : environment.WebRootPath;
+    }
 
     public async Task<string> UploadAsync<T>(FileUploadRequest request, FileType fileType, CancellationToken cancellationToken = default)
         where T : class
@@ -33,7 +42,7 @@ public class LocalStorageService : IStorageService
         #pragma warning restore CA1308
         var safeFileName = $"{Guid.NewGuid():N}_{SanitizeFileName(request.FileName)}";
         var relativePath = Path.Combine(UploadBasePath, folder, safeFileName);
-        var fullPath = Path.Combine(RootPath, relativePath);
+        var fullPath = Path.Combine(_rootPath, relativePath);
 
         Directory.CreateDirectory(Path.GetDirectoryName(fullPath)!);
 
@@ -46,7 +55,7 @@ public class LocalStorageService : IStorageService
     {
         if (string.IsNullOrWhiteSpace(path)) return Task.CompletedTask;
 
-        var fullPath = Path.Combine(RootPath, path);
+        var fullPath = Path.Combine(_rootPath, path);
 
         if (File.Exists(fullPath))
         {

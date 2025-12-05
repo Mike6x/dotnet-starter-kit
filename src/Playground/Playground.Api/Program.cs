@@ -7,6 +7,7 @@ using FSH.Modules.Identity.Features.v1.Tokens.TokenGeneration;
 using FSH.Modules.Multitenancy;
 using FSH.Modules.Multitenancy.Contracts.v1.GetTenantStatus;
 using FSH.Modules.Multitenancy.Features.v1.GetTenantStatus;
+using Microsoft.Extensions.FileProviders;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -39,11 +40,24 @@ builder.AddHeroPlatform(o =>
 
 builder.AddModules(moduleAssemblies);
 var app = builder.Build();
+
+// Ensure static files (including uploads) are served from the app's web root before auth.
+var staticRoot = Path.Combine(AppContext.BaseDirectory, "wwwroot");
+if (!Directory.Exists(staticRoot))
+{
+    Directory.CreateDirectory(staticRoot);
+}
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(staticRoot)
+});
+
 app.UseHeroMultiTenantDatabases();
 app.UseHeroPlatform(p =>
 {
     p.MapModules = true;
 });
+
 app.MapGet("/", () => Results.Ok(new { message = "hello world!" }))
    .WithTags("PlayGround")
    .AllowAnonymous();

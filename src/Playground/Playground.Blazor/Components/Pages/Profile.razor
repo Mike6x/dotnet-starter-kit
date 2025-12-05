@@ -4,7 +4,9 @@
     <MudGrid>
         <MudItem xs="12" sm="4">
             <MudPaper Class="fsh-card pa-4">
-                <MudAvatar Class="fsh-avatar mb-2" Size="Size.Large" Src="@_profile.ImageUrl" />
+                <MudAvatar Class="fsh-avatar mb-2" Size="Size.Large">
+                    <MudImage Src="@_profile.ImageUrl" Alt="@_profile.FirstName" />
+                </MudAvatar>
                 <label for="profile-upload">
                     <MudButton Variant="Variant.Outlined" Color="Color.Primary">Upload Image</MudButton>
                 </label>
@@ -48,18 +50,19 @@
 @code {
     private MudForm? _form;
     private MudForm? _passwordForm;
-    private ProfileDto _profile = new();
+    private ProfileModel _profile = new();
     private PasswordDto _passwordModel = new();
-    [Inject] private FSH.Playground.Blazor.Services.Api.ProfileClient ProfileClient { get; set; } = default!;
+    [Inject] private FSH.Playground.Blazor.ApiClient.IIdentityClient IdentityClient { get; set; } = default!;
     [Inject] private ISnackbar Snackbar { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
-        var response = await ProfileClient.GetProfileAsync();
+        var response = await IdentityClient.ProfileGetAsync();
         if (response is not null)
         {
-            _profile = new ProfileDto
+            _profile = new ProfileModel
             {
+                Id = response.Id ?? string.Empty,
                 FirstName = response.FirstName,
                 LastName = response.LastName,
                 Email = response.Email,
@@ -84,52 +87,115 @@
             return;
         }
 
-        using var stream = file.OpenReadStream(1_000_000);
-        using var content = new StreamContent(stream);
-        content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
-        var imageUrl = await ProfileClient.UploadProfileImageAsync(content);
-        if (string.IsNullOrWhiteSpace(imageUrl))
+        try
         {
-            Snackbar.Add("Failed to upload image.", Severity.Error);
-            return;
-        }
+            using var stream = file.OpenReadStream(1_000_000);
+            using var memory = new MemoryStream();
+            await stream.CopyToAsync(memory);
+            var bytes = memory.ToArray().Select(b => (int)b).ToList();
 
-        _profile.ImageUrl = imageUrl;
-        Snackbar.Add("Profile image updated.", Severity.Success);
+            if (string.IsNullOrWhiteSpace(_profile.Id) || string.IsNullOrWhiteSpace(_profile.Email))
+            {
+                Snackbar.Add("Profile not loaded yet.", Severity.Error);
+                return;
+            }
+
+            var update = new FSH.Playground.Blazor.ApiClient.UpdateUserCommand
+            {
+                Id = _profile.Id,
+                FirstName = _profile.FirstName ?? string.Empty,
+                LastName = _profile.LastName ?? string.Empty,
+                PhoneNumber = _profile.PhoneNumber ?? string.Empty,
+                Email = _profile.Email,
+                Image = new FSH.Playground.Blazor.ApiClient.FileUploadRequest
+                {
+                    FileName = file.Name,
+                    ContentType = file.ContentType,
+                    Data = bytes
+                },
+                DeleteCurrentImage = false
+            };
+
+            await IdentityClient.ProfilePutAsync(update);
+            await ReloadProfile();
+            Snackbar.Add("Profile image updated.", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Failed to upload image: {ex.Message}", Severity.Error);
+        }
     }
 
     private async Task SaveProfile()
     {
-        var request = new FSH.Playground.Blazor.Services.Api.ProfileClient.ProfileUpdateRequest
+        if (string.IsNullOrWhiteSpace(_profile.Id) || string.IsNullOrWhiteSpace(_profile.Email))
         {
-            FirstName = _profile.FirstName,
-            LastName = _profile.LastName,
-            PhoneNumber = _profile.PhoneNumber
+            Snackbar.Add("Profile not loaded yet.", Severity.Error);
+            return;
+        }
+
+        var request = new FSH.Playground.Blazor.ApiClient.UpdateUserCommand
+        {
+            Id = _profile.Id,
+            FirstName = _profile.FirstName ?? string.Empty,
+            LastName = _profile.LastName ?? string.Empty,
+            PhoneNumber = _profile.PhoneNumber ?? string.Empty,
+            Email = _profile.Email,
+            DeleteCurrentImage = false
         };
 
-        var ok = await ProfileClient.UpdateProfileAsync(request);
-        Snackbar.Add(ok ? "Profile updated." : "Failed to update profile.", ok ? Severity.Success : Severity.Error);
+        try
+        {
+            await IdentityClient.ProfilePutAsync(request);
+            await ReloadProfile();
+            Snackbar.Add("Profile updated.", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Failed to update profile: {ex.Message}", Severity.Error);
+        }
     }
 
     private async Task ChangePassword()
     {
-        var req = new FSH.Playground.Blazor.Services.Api.ProfileClient.ChangePasswordRequest
+        var req = new FSH.Playground.Blazor.ApiClient.ChangePasswordCommand
         {
-            CurrentPassword = _passwordModel.CurrentPassword ?? string.Empty,
+            Password = _passwordModel.CurrentPassword ?? string.Empty,
             NewPassword = _passwordModel.NewPassword ?? string.Empty,
-            ConfirmPassword = _passwordModel.ConfirmPassword ?? string.Empty
+            ConfirmNewPassword = _passwordModel.ConfirmPassword ?? string.Empty
         };
 
-        var ok = await ProfileClient.ChangePasswordAsync(req);
-        Snackbar.Add(ok ? "Password updated." : "Failed to update password.", ok ? Severity.Success : Severity.Error);
-        if (ok)
+        try
         {
+            await IdentityClient.ChangePasswordAsync(req);
+            Snackbar.Add("Password updated.", Severity.Success);
             _passwordModel = new();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Failed to update password: {ex.Message}", Severity.Error);
         }
     }
 
-    private sealed class ProfileDto
+    private async Task ReloadProfile()
     {
+        var response = await IdentityClient.ProfileGetAsync();
+        _profile = response is null
+            ? new ProfileModel()
+            : new ProfileModel
+            {
+                Id = response.Id ?? string.Empty,
+                FirstName = response.FirstName,
+                LastName = response.LastName,
+                Email = response.Email,
+                PhoneNumber = response.PhoneNumber,
+                ImageUrl = response.ImageUrl
+            };
+    }
+
+    private sealed class ProfileModel
+    {
+        public string Id { get; set; } = string.Empty;
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? Email { get; set; }

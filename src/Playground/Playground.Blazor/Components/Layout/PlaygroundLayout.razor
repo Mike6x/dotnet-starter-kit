@@ -3,10 +3,13 @@
 @using FSH.Framework.Blazor.UI.Components.Layouts
 @using FSH.Playground.Blazor.Components.Pages
 @using Microsoft.AspNetCore.WebUtilities
+@using FSH.Playground.Blazor.Services
 @inject IHttpClientFactory HttpClientFactory
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
 @inject MudTheme FshTheme
+@inject FSH.Playground.Blazor.Services.Api.ITokenSessionAccessor TokenSessionAccessor
+@inject FSH.Playground.Blazor.Services.Api.ITokenAccessor TokenAccessor
 
 <MudThemeProvider Theme="@_theme" IsDarkMode="_isDarkMode" />
 <MudPopoverProvider />
@@ -80,6 +83,10 @@ else
             {
                 var response = await client.GetAsync(uri);
                 _isAuthenticated = response.IsSuccessStatusCode;
+                if (_isAuthenticated)
+                {
+                    await HydrateSessionAsync(client);
+                }
             }
             catch
             {
@@ -150,4 +157,32 @@ else
         true => Icons.Material.Rounded.AutoMode,
         false => Icons.Material.Outlined.DarkMode,
     };
+
+    private async Task HydrateSessionAsync(HttpClient client)
+    {
+        try
+        {
+            var sessionResponse = await client.GetAsync(Navigation.ToAbsoluteUri("/auth/session"));
+            if (!sessionResponse.IsSuccessStatusCode)
+            {
+                return;
+            }
+
+            var sessionInfo = await sessionResponse.Content.ReadFromJsonAsync<SessionInfoResult>();
+            if (sessionInfo is null || string.IsNullOrWhiteSpace(sessionInfo.SessionId))
+            {
+                return;
+            }
+
+            TokenSessionAccessor.SessionId = sessionInfo.SessionId;
+            TokenAccessor.AccessToken = sessionInfo.AccessToken;
+            TokenAccessor.RefreshToken = sessionInfo.RefreshToken;
+            TokenAccessor.AccessTokenExpiresAt = sessionInfo.AccessTokenExpiresAt;
+            TokenAccessor.RefreshTokenExpiresAt = sessionInfo.RefreshTokenExpiresAt;
+        }
+        catch
+        {
+            // swallow; fall back to fresh login if session cannot be hydrated
+        }
+    }
 }

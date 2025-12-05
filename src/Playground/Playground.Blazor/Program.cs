@@ -2,25 +2,36 @@ using FSH.Framework.Blazor.UI;
 using FSH.Playground.Blazor;
 using FSH.Playground.Blazor.Components;
 using FSH.Playground.Blazor.Services;
+using FSH.Playground.Blazor.Services.Api;
+using Microsoft.AspNetCore.Components.Server.Circuits;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddHeroUI();
 builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddHttpClient();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<ITokenStore, InMemoryTokenStore>();
-builder.Services.AddTransient<BffAuthDelegatingHandler>();
+builder.Services.AddScoped<ITokenSessionAccessor, TokenSessionAccessor>();
+builder.Services.AddScoped<ITokenAccessor, TokenAccessor>();
+builder.Services.AddScoped<CircuitHandler, TokenSessionCircuitHandler>();
+builder.Services.AddScoped<BffAuthDelegatingHandler>();
 
 var apiBaseUrl = builder.Configuration["Api:BaseUrl"]
                  ?? throw new InvalidOperationException("Api:BaseUrl configuration is missing.");
 
-builder.Services.AddHttpClient("AuthApi", client =>
+builder.Services.AddScoped(sp =>
 {
-    client.BaseAddress = new Uri(apiBaseUrl);
-}).AddHttpMessageHandler<BffAuthDelegatingHandler>();
+    var handler = sp.GetRequiredService<BffAuthDelegatingHandler>();
+    handler.InnerHandler ??= new HttpClientHandler();
+    return new HttpClient(handler, disposeHandler: false)
+    {
+        BaseAddress = new Uri(apiBaseUrl)
+    };
+});
 
-builder.Services.AddApiClients();
+builder.Services.AddApiClients(builder.Configuration);
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();

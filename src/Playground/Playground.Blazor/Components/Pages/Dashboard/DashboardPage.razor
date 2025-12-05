@@ -1,8 +1,9 @@
 @page "/dashboard"
 @page "/"
+@using System.Linq
 @inherits ComponentBase
-@inject FSH.Playground.Blazor.Services.Api.Audits.AuditClient AuditClient
-@inject FSH.Playground.Blazor.Services.Api.Dashboard.DashboardClient DashboardClient
+@inject FSH.Playground.Blazor.ApiClient.IV1Client V1Client
+@inject FSH.Playground.Blazor.ApiClient.IIdentityClient IdentityClient
 @inject ISnackbar Snackbar
 
 <MudContainer Class="fsh-section">
@@ -38,13 +39,13 @@
         <MudTable Items="_recentAudits" Dense="true">
             <HeaderContent>
                 <MudTh>Timestamp</MudTh>
-                <MudTh>Type</MudTh>
+                <MudTh>Event Type</MudTh>
                 <MudTh>User</MudTh>
                 <MudTh>Correlation</MudTh>
             </HeaderContent>
             <RowTemplate>
-                <MudTd DataLabel="Timestamp">@context.TimestampUtc.ToLocalTime()</MudTd>
-                <MudTd DataLabel="Type">@context.Type</MudTd>
+                <MudTd DataLabel="Timestamp">@context.OccurredAtUtc.ToLocalTime()</MudTd>
+                <MudTd DataLabel="Event Type">@context.EventType</MudTd>
                 <MudTd DataLabel="User">@context.UserName</MudTd>
                 <MudTd DataLabel="Correlation">@context.CorrelationId</MudTd>
             </RowTemplate>
@@ -54,7 +55,7 @@
 
 @code {
     private SummaryDto _summary = new();
-    private List<FSH.Playground.Blazor.Services.Api.Audits.AuditClient.AuditDto> _recentAudits = new();
+    private List<FSH.Playground.Blazor.ApiClient.AuditSummaryDto> _recentAudits = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -66,12 +67,16 @@
     {
         try
         {
-            var result = await AuditClient.GetAuditsAsync(new FSH.Playground.Blazor.Services.Api.Audits.AuditClient.AuditFilter
+            var result = await V1Client.AuditsGetAsync(pageNumber: 1, pageSize: 5);
+            if (result is null)
             {
-                PageNumber = 1,
-                PageSize = 5
-            });
-            _recentAudits = result.Items;
+                _recentAudits = new List<FSH.Playground.Blazor.ApiClient.AuditSummaryDto>();
+                _summary.RecentAudits = 0;
+                return;
+            }
+
+            _recentAudits = result.Items?.ToList() ?? new List<FSH.Playground.Blazor.ApiClient.AuditSummaryDto>();
+            _summary.RecentAudits = (int)result.TotalCount;
         }
         catch (Exception ex)
         {
@@ -83,16 +88,14 @@
     {
         try
         {
-            var result = await DashboardClient.GetSummaryAsync();
-            _summary = result is null
-                ? new SummaryDto()
-                : new SummaryDto
-                {
-                    Users = result.Users,
-                    Roles = result.Roles,
-                    Tenants = result.Tenants,
-                    RecentAudits = result.RecentAudits
-                };
+            var users = await IdentityClient.UsersGetAsync();
+            _summary.Users = users?.Count ?? 0;
+
+            var roles = await IdentityClient.RolesGetAsync();
+            _summary.Roles = roles?.Count ?? 0;
+
+            var tenants = await V1Client.TenantsGetAsync(pageNumber: 1, pageSize: 1);
+            _summary.Tenants = (int)tenants.TotalCount;
         }
         catch (Exception ex)
         {

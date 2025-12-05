@@ -13,4 +13,8 @@
 	  <Folder Include="AWS\" />
 	</ItemGroup>
 	
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+	
 </Project>

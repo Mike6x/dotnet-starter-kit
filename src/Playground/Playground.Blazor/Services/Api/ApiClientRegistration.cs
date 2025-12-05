@@ -1,16 +1,37 @@
-using Microsoft.Extensions.DependencyInjection;
+using System.Net.Http;
+using FSH.Playground.Blazor.ApiClient;
 using FSH.Playground.Blazor.Services.Api;
-using FSH.Playground.Blazor.Services.Api.Audits;
 
 namespace FSH.Playground.Blazor;
 
-public static class ApiClientRegistration
+internal static class ApiClientRegistration
 {
-    public static IServiceCollection AddApiClients(this IServiceCollection services)
+    public static IServiceCollection AddApiClients(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddTransient<ProfileClient>();
-        services.AddTransient<AuditClient>();
-        services.AddTransient<FSH.Playground.Blazor.Services.Api.Dashboard.DashboardClient>();
+        _ = configuration["Api:BaseUrl"]
+            ?? throw new InvalidOperationException("Api:BaseUrl configuration is missing.");
+
+        static HttpClient ResolveClient(IServiceProvider sp) =>
+            sp.GetRequiredService<HttpClient>();
+
+        services.AddTransient<ITokenClient>(sp =>
+            new TokenClient(ResolveClient(sp)));
+
+        services.AddTransient<IIdentityClient>(sp =>
+            new IdentityClient(ResolveClient(sp)));
+
+        services.AddTransient<IAuditsClient>(sp =>
+            new AuditsClient(ResolveClient(sp)));
+
+        services.AddTransient<ITenantsClient>(sp =>
+            new TenantsClient(ResolveClient(sp)));
+
+        services.AddTransient<IUsersClient>(sp =>
+            new UsersClient(ResolveClient(sp)));
+
+        services.AddTransient<IV1Client>(sp =>
+            new V1Client(ResolveClient(sp)));
+
         return services;
     }
 }
