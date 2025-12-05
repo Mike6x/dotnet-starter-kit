@@ -26,20 +26,21 @@ private_subnets = {
 }
 
 app_s3_bucket_name = "dev-fsh-app-bucket"
+app_s3_enable_public_read = false
+app_s3_enable_cloudfront  = true
 
 db_name     = "fshdb"
 db_username = "fshadmin"
 db_password = "password123!" # Note: In production, use a more secure method for managing secrets.
 
-api_container_image = "ghcr.io/fullstackhero/fsh-playground-api:e1b0d3718b65a02df827131bd819ea3dd1939845"
+api_container_image = "ghcr.io/fullstackhero/fsh-playground-api:1c555545cee10cb9703f5ecbbb928e45e5ba8990"
 api_container_port  = 8080
 api_cpu             = "256"
 api_memory          = "512"
 api_desired_count   = 1
 
-blazor_container_image = "ghcr.io/fullstackhero/fsh-playground-blazor:e1b0d3718b65a02df827131bd819ea3dd1939845"
+blazor_container_image = "ghcr.io/fullstackhero/fsh-playground-blazor:1c555545cee10cb9703f5ecbbb928e45e5ba8990"
 blazor_container_port  = 8080
 blazor_cpu             = "256"
 blazor_memory          = "512"
 blazor_desired_count   = 1
-

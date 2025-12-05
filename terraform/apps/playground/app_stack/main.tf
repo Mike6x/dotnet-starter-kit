@@ -69,24 +69,28 @@ module "alb" {
 module "app_s3" {
   source = "../../../modules/s3_bucket"
 
-  name = var.app_s3_bucket_name
-  tags = local.common_tags
+  name                = var.app_s3_bucket_name
+  tags                = local.common_tags
+  enable_public_read  = var.app_s3_enable_public_read
+  public_read_prefix  = var.app_s3_public_read_prefix
+  enable_cloudfront   = var.app_s3_enable_cloudfront
+  cloudfront_price_class = var.app_s3_cloudfront_price_class
 }
 
 module "rds" {
   source = "../../../modules/rds_postgres"
 
-  name                       = "${var.environment}-${var.region}-postgres"
-  vpc_id                     = module.network.vpc_id
-  subnet_ids                 = module.network.private_subnet_ids
+  name       = "${var.environment}-${var.region}-postgres"
+  vpc_id     = module.network.vpc_id
+  subnet_ids = module.network.private_subnet_ids
   allowed_security_group_ids = [
     module.api_service.security_group_id,
     module.blazor_service.security_group_id,
   ]
-  db_name                    = var.db_name
-  username                   = var.db_username
-  password                   = var.db_password
-  tags                       = local.common_tags
+  db_name  = var.db_name
+  username = var.db_username
+  password = var.db_password
+  tags     = local.common_tags
 }
 
 locals {
@@ -96,14 +100,14 @@ locals {
 module "redis" {
   source = "../../../modules/elasticache_redis"
 
-  name                       = "${var.environment}-${var.region}-redis"
-  vpc_id                     = module.network.vpc_id
-  subnet_ids                 = module.network.private_subnet_ids
+  name       = "${var.environment}-${var.region}-redis"
+  vpc_id     = module.network.vpc_id
+  subnet_ids = module.network.private_subnet_ids
   allowed_security_group_ids = [
     module.api_service.security_group_id,
     module.blazor_service.security_group_id,
   ]
-  tags                       = local.common_tags
+  tags = local.common_tags
 }
 
 module "api_service" {
@@ -118,9 +122,9 @@ module "api_service" {
   memory          = var.api_memory
   desired_count   = var.api_desired_count
 
-  vpc_id          = module.network.vpc_id
-  vpc_cidr_block  = module.network.vpc_cidr_block
-  subnet_ids      = module.network.private_subnet_ids
+  vpc_id           = module.network.vpc_id
+  vpc_cidr_block   = module.network.vpc_cidr_block
+  subnet_ids       = module.network.private_subnet_ids
   assign_public_ip = false
 
   listener_arn           = module.alb.listener_arn
@@ -133,6 +137,12 @@ module "api_service" {
     ASPNETCORE_ENVIRONMENT            = local.aspnetcore_environment
     DatabaseOptions__ConnectionString = local.db_connection_string
     CachingOptions__Redis             = "${module.redis.primary_endpoint_address}:6379,ssl=True,abortConnect=False"
+    OriginOptions__OriginUrl          = "http://${module.alb.dns_name}"
+    CorsOptions__AllowedOrigins__0    = "http://${module.alb.dns_name}"
+    Storage__Provider                 = "s3"
+    Storage__S3__Bucket               = var.app_s3_bucket_name
+    Storage__S3__PublicRead           = false
+    Storage__S3__PublicBaseUrl        = module.app_s3.cloudfront_domain_name != "" ? "https://${module.app_s3.cloudfront_domain_name}" : ""
   }
 
   tags = local.common_tags
@@ -150,9 +160,9 @@ module "blazor_service" {
   memory          = var.blazor_memory
   desired_count   = var.blazor_desired_count
 
-  vpc_id          = module.network.vpc_id
-  vpc_cidr_block  = module.network.vpc_cidr_block
-  subnet_ids      = module.network.private_subnet_ids
+  vpc_id           = module.network.vpc_id
+  vpc_cidr_block   = module.network.vpc_cidr_block
+  subnet_ids       = module.network.private_subnet_ids
   assign_public_ip = false
 
   listener_arn           = module.alb.listener_arn
@@ -187,4 +197,12 @@ output "rds_endpoint" {
 
 output "redis_endpoint" {
   value = module.redis.primary_endpoint_address
+}
+
+output "s3_bucket_name" {
+  value = module.app_s3.bucket_name
+}
+
+output "s3_cloudfront_domain" {
+  value = module.app_s3.cloudfront_domain_name
 }

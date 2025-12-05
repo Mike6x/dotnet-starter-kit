@@ -34,6 +34,30 @@ variable "app_s3_bucket_name" {
   description = "S3 bucket for application data."
 }
 
+variable "app_s3_enable_public_read" {
+  type        = bool
+  description = "Whether to enable public read on uploads prefix."
+  default     = false
+}
+
+variable "app_s3_public_read_prefix" {
+  type        = string
+  description = "Prefix to allow public read (e.g., uploads/)."
+  default     = "uploads/"
+}
+
+variable "app_s3_enable_cloudfront" {
+  type        = bool
+  description = "Whether to provision a CloudFront distribution for the app bucket."
+  default     = true
+}
+
+variable "app_s3_cloudfront_price_class" {
+  type        = string
+  description = "Price class for CloudFront."
+  default     = "PriceClass_100"
+}
+
 variable "db_name" {
   type        = string
   description = "Database name."
@@ -98,4 +122,3 @@ variable "blazor_desired_count" {
   type        = number
   description = "Desired Blazor task count."
 }
-

@@ -9,6 +9,7 @@ using FSH.Framework.Infrastructure.Identity.Users.Services;
 using FSH.Framework.Persistence;
 using FSH.Framework.Storage.Local;
 using FSH.Framework.Storage.Services;
+using FSH.Framework.Storage;
 using FSH.Framework.Web.Modules;
 using FSH.Modules.Identity.Authorization;
 using FSH.Modules.Identity.Authorization.Jwt;
@@ -61,7 +62,7 @@ public class IdentityModule : IModule
         services.AddScoped(sp => (ICurrentUserInitializer)sp.GetRequiredService<ICurrentUser>());
         services.AddTransient<IUserService, UserService>();
         services.AddTransient<IRoleService, RoleService>();
-        services.AddTransient<IStorageService, LocalStorageService>();
+        services.AddHeroStorage(builder.Configuration);
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddHeroDbContext<IdentityDbContext>();
         services.AddEventingCore(builder.Configuration);

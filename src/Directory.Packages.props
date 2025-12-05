@@ -94,4 +94,7 @@
     <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Components.Web" Version="10.0.0" />
   </ItemGroup>
+  <ItemGroup Label="AWS">
+    <PackageVersion Include="AWSSDK.S3" Version="3.7.405.0" />
+  </ItemGroup>
 </Project>

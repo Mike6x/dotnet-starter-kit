@@ -16,5 +16,9 @@
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="AWSSDK.S3" />
+	</ItemGroup>
 	
 </Project>
