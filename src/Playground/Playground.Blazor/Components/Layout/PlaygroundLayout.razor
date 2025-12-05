@@ -45,8 +45,10 @@ else
             </MudDrawerHeader>
            <NavMenu />
         </MudDrawer>
-        <MudMainContent Class="pt-20 pa-4">
-            @Body
+        <MudMainContent Class="pt-20" Style="padding-left:0;padding-right:0;">
+            <MudContainer Class="fsh-section page-shell" MaxWidth="MaxWidth.False">
+                @Body
+            </MudContainer>
         </MudMainContent>
     </MudLayout>
 }

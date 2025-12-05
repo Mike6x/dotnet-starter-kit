@@ -1,5 +1,3 @@
-using MudBlazor;
-
 namespace FSH.Framework.Blazor.UI.Theme;
 
 public static class FshTheme
@@ -49,7 +47,7 @@ public static class FshTheme
             },
             LayoutProperties = new LayoutProperties
             {
-                DefaultBorderRadius = "10px"
+                DefaultBorderRadius = "4px"
             }
         };
     }

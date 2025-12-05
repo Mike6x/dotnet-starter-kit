@@ -6,7 +6,7 @@
 @inject FSH.Playground.Blazor.ApiClient.IIdentityClient IdentityClient
 @inject ISnackbar Snackbar
 
-<MudContainer Class="fsh-section">
+<div class="dashboard-shell">
     <MudGrid>
         <MudItem xs="12" sm="6" md="3">
             <MudPaper Class="fsh-card pa-4">
@@ -51,7 +51,7 @@
             </RowTemplate>
         </MudTable>
     </MudPaper>
-</MudContainer>
+</div>
 
 @code {
     private SummaryDto _summary = new();
