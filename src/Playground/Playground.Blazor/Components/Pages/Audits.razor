@@ -827,14 +827,12 @@
 
     private void ApplyQuickRange(TimeSpan span, string filterKey)
     {
-        var nowUtc = DateTime.UtcNow;
+        // Use DateTimeOffset directly to avoid DateTime Kind issues
+        var nowUtc = DateTimeOffset.UtcNow;
         var startUtc = nowUtc.Add(-span);
 
-        // Ensure both dates are explicitly UTC
-        var start = new DateTime(startUtc.Ticks, DateTimeKind.Utc);
-        var end = new DateTime(nowUtc.Ticks, DateTimeKind.Utc);
-
-        _filter.Range = new DateRange(start, end);
+        // Store as DateTime for DateRange, but we'll convert back to DateTimeOffset with UTC info
+        _filter.Range = new DateRange(startUtc.UtcDateTime, nowUtc.UtcDateTime);
         _quickFilter = filterKey;
         _table?.ReloadServerData();
     }
@@ -1190,11 +1188,15 @@
                 if (Range?.Start is null)
                     return null;
 
-                var kind = Range.Start.Value.Kind == DateTimeKind.Unspecified
-                    ? DateTimeKind.Utc
-                    : Range.Start.Value.Kind;
+                var dateTime = Range.Start.Value;
 
-                return DateTime.SpecifyKind(Range.Start.Value, kind).ToUniversalTime();
+                // Convert to UTC based on Kind
+                return dateTime.Kind switch
+                {
+                    DateTimeKind.Utc => new DateTimeOffset(dateTime, TimeSpan.Zero),
+                    DateTimeKind.Local => new DateTimeOffset(dateTime.ToUniversalTime(), TimeSpan.Zero),
+                    _ => new DateTimeOffset(DateTime.SpecifyKind(dateTime, DateTimeKind.Utc), TimeSpan.Zero)
+                };
             }
         }
 
@@ -1205,11 +1207,15 @@
                 if (Range?.End is null)
                     return null;
 
-                var kind = Range.End.Value.Kind == DateTimeKind.Unspecified
-                    ? DateTimeKind.Utc
-                    : Range.End.Value.Kind;
+                var dateTime = Range.End.Value;
 
-                return DateTime.SpecifyKind(Range.End.Value, kind).ToUniversalTime();
+                // Convert to UTC based on Kind
+                return dateTime.Kind switch
+                {
+                    DateTimeKind.Utc => new DateTimeOffset(dateTime, TimeSpan.Zero),
+                    DateTimeKind.Local => new DateTimeOffset(dateTime.ToUniversalTime(), TimeSpan.Zero),
+                    _ => new DateTimeOffset(DateTime.SpecifyKind(dateTime, DateTimeKind.Utc), TimeSpan.Zero)
+                };
             }
         }
     }
