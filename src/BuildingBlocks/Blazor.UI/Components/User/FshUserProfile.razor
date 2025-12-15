@@ -1,0 +1,173 @@
+@using MudBlazor
+
+<div class="fsh-user-profile">
+    <MudMenu AnchorOrigin="Origin.BottomRight"
+             TransformOrigin="Origin.TopRight"
+             Dense="true"
+             Class="fsh-user-menu">
+        <ActivatorContent>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="fsh-user-trigger">
+                @if (!string.IsNullOrWhiteSpace(AvatarUrl))
+                {
+                    <MudAvatar Size="Size.Small" Class="fsh-user-avatar">
+                        <MudImage Src="@AvatarUrl" Alt="@UserName" />
+                    </MudAvatar>
+                }
+                else
+                {
+                    <MudAvatar Size="Size.Small" Color="Color.Primary" Class="fsh-user-avatar">
+                        @GetInitials()
+                    </MudAvatar>
+                }
+                @if (ShowUserName)
+                {
+                    <MudStack Spacing="0" Class="fsh-user-info d-none d-sm-flex">
+                        <MudText Typo="Typo.body2" Class="fsh-user-name">@UserName</MudText>
+                        @if (!string.IsNullOrWhiteSpace(UserRole))
+                        {
+                            <MudText Typo="Typo.caption" Class="fsh-user-role">@UserRole</MudText>
+                        }
+                    </MudStack>
+                }
+                <MudIcon Icon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Class="fsh-chevron" />
+            </MudStack>
+        </ActivatorContent>
+        <ChildContent>
+            @if (ShowUserInfo)
+            {
+                <div class="fsh-menu-header pa-4">
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+                        @if (!string.IsNullOrWhiteSpace(AvatarUrl))
+                        {
+                            <MudAvatar Size="Size.Medium" Class="fsh-menu-avatar">
+                                <MudImage Src="@AvatarUrl" Alt="@UserName" />
+                            </MudAvatar>
+                        }
+                        else
+                        {
+                            <MudAvatar Size="Size.Medium" Color="Color.Primary" Class="fsh-menu-avatar">
+                                @GetInitials()
+                            </MudAvatar>
+                        }
+                        <MudStack Spacing="0">
+                            <MudText Typo="Typo.body1" Class="fw-600">@UserName</MudText>
+                            @if (!string.IsNullOrWhiteSpace(UserEmail))
+                            {
+                                <MudText Typo="Typo.caption" Class="text-muted">@UserEmail</MudText>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(UserRole))
+                            {
+                                <MudChip T="string" Size="Size.Small" Color="Color.Primary" Variant="Variant.Text" Class="mt-1 pa-0">@UserRole</MudChip>
+                            }
+                        </MudStack>
+                    </MudStack>
+                </div>
+                <MudDivider />
+            }
+
+            @if (MenuItems != null)
+            {
+                @MenuItems
+            }
+            else
+            {
+                <MudMenuItem Icon="@Icons.Material.Filled.Person" OnClick="OnProfileClick">
+                    Profile
+                </MudMenuItem>
+                <MudMenuItem Icon="@Icons.Material.Filled.Settings" OnClick="OnSettingsClick">
+                    Settings
+                </MudMenuItem>
+                <MudDivider />
+                <MudMenuItem Icon="@Icons.Material.Filled.Logout" OnClick="OnLogoutClick">
+                    Logout
+                </MudMenuItem>
+            }
+        </ChildContent>
+    </MudMenu>
+</div>
+
+@code {
+    /// <summary>
+    /// User's display name
+    /// </summary>
+    [Parameter, EditorRequired]
+    public string UserName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// User's email address
+    /// </summary>
+    [Parameter]
+    public string? UserEmail { get; set; }
+
+    /// <summary>
+    /// User's role or title
+    /// </summary>
+    [Parameter]
+    public string? UserRole { get; set; }
+
+    /// <summary>
+    /// URL to user's avatar image
+    /// </summary>
+    [Parameter]
+    public string? AvatarUrl { get; set; }
+
+    /// <summary>
+    /// Whether to show username next to avatar in trigger. Default is true.
+    /// </summary>
+    [Parameter]
+    public bool ShowUserName { get; set; } = true;
+
+    /// <summary>
+    /// Whether to show user info in menu header. Default is true.
+    /// </summary>
+    [Parameter]
+    public bool ShowUserInfo { get; set; } = true;
+
+    /// <summary>
+    /// Custom menu items. If not provided, default items (Profile, Settings, Logout) are shown.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? MenuItems { get; set; }
+
+    /// <summary>
+    /// Callback when Profile is clicked (only used with default menu items)
+    /// </summary>
+    [Parameter]
+    public EventCallback OnProfileClick { get; set; }
+
+    /// <summary>
+    /// Callback when Settings is clicked (only used with default menu items)
+    /// </summary>
+    [Parameter]
+    public EventCallback OnSettingsClick { get; set; }
+
+    /// <summary>
+    /// Callback when Logout is clicked (only used with default menu items)
+    /// </summary>
+    [Parameter]
+    public EventCallback OnLogoutClick { get; set; }
+
+    /// <summary>
+    /// Additional CSS classes
+    /// </summary>
+    [Parameter]
+    public string? Class { get; set; }
+
+    private string GetInitials()
+    {
+        if (string.IsNullOrWhiteSpace(UserName))
+            return "?";
+
+        var parts = UserName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length == 0)
+            return "?";
+
+        if (parts.Length == 1)
+            return parts[0].Substring(0, Math.Min(2, parts[0].Length)).ToUpperInvariant();
+
+        return string.Concat(
+            parts[0].Substring(0, 1),
+            parts[^1].Substring(0, 1)
+        ).ToUpperInvariant();
+    }
+}

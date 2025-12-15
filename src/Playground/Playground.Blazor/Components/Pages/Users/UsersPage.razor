@@ -10,9 +10,21 @@
 @inject ISnackbar Snackbar
 @inject FSH.Playground.Blazor.Services.Api.ITokenAccessor TokenAccessor
 
+<FshPageHeader Title="Users"
+               Description="Manage user accounts and permissions">
+    <ActionContent>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Filled.Add"
+                   OnClick="ShowCreate">
+            New User
+        </MudButton>
+    </ActionContent>
+</FshPageHeader>
+
 <MudPaper Class="fsh-card pa-4 mb-3">
     <MudGrid GutterSize="2">
-        <MudItem xs="12" sm="6" md="4">
+        <MudItem xs="12" sm="6">
             <MudTextField @bind-Value="_search"
                           Label="Search (name/email)"
                           Adornment="Adornment.Start"
@@ -20,16 +32,8 @@
                           Immediate="true"
                           OnDebounceIntervalElapsed="OnSearchDebounced" />
         </MudItem>
-        <MudItem xs="12" sm="6" md="4" Class="d-flex align-center">
+        <MudItem xs="12" sm="6" Class="d-flex align-center">
             <MudSwitch T="bool" @bind-Checked="_showInactive" Color="Color.Primary" Label="Include inactive" OnChanged="OnShowInactiveChanged" />
-        </MudItem>
-        <MudItem xs="12" sm="12" md="4" Class="d-flex justify-end align-center">
-            <MudButton Variant="Variant.Filled"
-                       Color="Color.Primary"
-                       StartIcon="@Icons.Material.Filled.Add"
-                       OnClick="ShowCreate">
-                New User
-            </MudButton>
         </MudItem>
     </MudGrid>
 </MudPaper>

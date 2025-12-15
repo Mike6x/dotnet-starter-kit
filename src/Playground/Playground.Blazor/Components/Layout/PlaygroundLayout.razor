@@ -2,6 +2,7 @@
 @implements IDisposable
 @using FSH.Framework.Blazor.UI.Components.Button
 @using FSH.Framework.Blazor.UI.Components.Layouts
+@using FSH.Framework.Blazor.UI.Components.User
 @using FSH.Framework.Blazor.UI.Theme
 @using FSH.Playground.Blazor.Components.Pages
 @using Microsoft.AspNetCore.WebUtilities
@@ -13,6 +14,7 @@
 @inject ITenantThemeState TenantThemeState
 @inject FSH.Playground.Blazor.Services.Api.ITokenSessionAccessor TokenSessionAccessor
 @inject FSH.Playground.Blazor.Services.Api.ITokenAccessor TokenAccessor
+@inject FSH.Playground.Blazor.ApiClient.IIdentityClient IdentityClient
 
 <MudThemeProvider Theme="@_theme" IsDarkMode="_isDarkMode" />
 <MudPopoverProvider />
@@ -38,9 +40,13 @@ else
             <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
             <MudSpacer />
             <MudIconButton Icon="@(DarkLightModeButtonIcon)" Color="Color.Inherit" OnClick="@DarkModeToggle" />
-            <MudButton Color="Color.Inherit" Variant="Variant.Text" OnClick="LogoutAsync">
-                Logout
-            </MudButton>
+            <FshUserProfile UserName="@_userName"
+                           UserEmail="@_userEmail"
+                           UserRole="@_userRole"
+                           AvatarUrl="@_avatarUrl"
+                           OnProfileClick="NavigateToProfile"
+                           OnSettingsClick="NavigateToSettings"
+                           OnLogoutClick="LogoutAsync" />
         </MudAppBar>
         <MudDrawer id="nav-drawer" @bind-Open="_drawerOpen" Elevation="0">
             <MudDrawerHeader>
@@ -68,6 +74,10 @@ else
     private MudTheme? _theme = null;
     private bool _authStatusLoaded;
     private bool _isAuthenticated;
+    private string _userName = "User";
+    private string? _userEmail;
+    private string? _userRole;
+    private string? _avatarUrl;
 
     protected override void OnInitialized()
     {
@@ -107,6 +117,8 @@ else
                     await HydrateSessionAsync(client);
                     // Load tenant theme after authentication
                     await TenantThemeState.LoadThemeAsync();
+                    // Load user profile
+                    await LoadUserProfileAsync();
                 }
             }
             catch
@@ -205,5 +217,40 @@ else
         {
             // swallow; fall back to fresh login if session cannot be hydrated
         }
+    }
+
+    private async Task LoadUserProfileAsync()
+    {
+        try
+        {
+            var profile = await IdentityClient.ProfileGetAsync();
+            if (profile is not null)
+            {
+                _userName = $"{profile.FirstName} {profile.LastName}".Trim();
+                if (string.IsNullOrWhiteSpace(_userName))
+                {
+                    _userName = profile.Email ?? "User";
+                }
+                _userEmail = profile.Email;
+                _avatarUrl = profile.ImageUrl;
+                // You can add role fetching here if needed
+                StateHasChanged();
+            }
+        }
+        catch
+        {
+            // Use defaults if profile loading fails
+            _userName = "User";
+        }
+    }
+
+    private void NavigateToProfile()
+    {
+        Navigation.NavigateTo("/profile");
+    }
+
+    private void NavigateToSettings()
+    {
+        Navigation.NavigateTo("/settings/theme");
     }
 }

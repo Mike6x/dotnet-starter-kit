@@ -4,7 +4,9 @@
       "Bash(Stop-Process -Force)",
       "Bash(pkill:*)",
       "Bash(dotnet clean:*)",
-      "Bash(dotnet run:*)"
+      "Bash(dotnet run:*)",
+      "Bash(mkdir:*)",
+      "Bash(dotnet build:*)"
     ],
     "deny": [],
     "ask": []

@@ -1,0 +1,71 @@
+.fsh-user-profile {
+    display: flex;
+    align-items: center;
+}
+
+.fsh-user-trigger {
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+}
+
+.fsh-user-trigger:hover {
+    background-color: rgba(var(--mud-palette-action-default-hover-rgb), var(--mud-palette-action-default-hover-opacity));
+}
+
+.fsh-user-avatar {
+    border: 2px solid rgba(var(--mud-palette-primary-rgb), 0.1);
+    transition: all 0.2s ease;
+}
+
+.fsh-user-trigger:hover .fsh-user-avatar {
+    border-color: rgba(var(--mud-palette-primary-rgb), 0.3);
+    transform: scale(1.05);
+}
+
+.fsh-user-info {
+    max-width: 150px;
+}
+
+.fsh-user-name {
+    font-weight: 600;
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.fsh-user-role {
+    color: var(--mud-palette-text-secondary);
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.fsh-chevron {
+    transition: transform 0.2s ease;
+    color: var(--mud-palette-text-secondary);
+}
+
+.fsh-user-trigger:hover .fsh-chevron {
+    transform: translateY(2px);
+}
+
+.fsh-menu-header {
+    background: linear-gradient(135deg, rgba(var(--mud-palette-primary-rgb), 0.08), rgba(var(--mud-palette-info-rgb), 0.04));
+    border-bottom: 1px solid var(--mud-palette-divider);
+}
+
+.fsh-menu-avatar {
+    border: 3px solid rgba(var(--mud-palette-primary-rgb), 0.15);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .fsh-user-info {
+        display: none !important;
+    }
+}

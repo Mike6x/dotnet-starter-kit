@@ -491,5 +491,5 @@ team/
 docs/
 spec-os/
 /PLAN.md
-/nul
+**/nul
 **/wwwroot/uploads/*

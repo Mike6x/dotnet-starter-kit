@@ -102,3 +102,73 @@ Key settings (appsettings or env vars):
 - API versioning in URL path (`/api/v1/...`)
 - Mediator library (not MediatR) for commands/queries
 - FluentValidation for request validation
+
+## Blazor UI Components
+
+The framework provides reusable Blazor components in `BuildingBlocks/Blazor.UI/Components/` with consistent styling.
+
+### FshPageHeader Component
+
+Use `FshPageHeader` for consistent page headers across Playground.Blazor:
+
+```razor
+@using FSH.BuildingBlocks.Blazor.UI.Components.Page
+
+<FshPageHeader Title="Page Title"
+               Description="Optional description text">
+    <ActionContent>
+        <!-- Optional action buttons/controls -->
+        <MudButton>Action</MudButton>
+    </ActionContent>
+</FshPageHeader>
+```
+
+**Parameters:**
+- `Title` (required): Main page title
+- `Description` (optional): Description text below title
+- `DescriptionContent` (optional): RenderFragment for complex descriptions
+- `ActionContent` (optional): RenderFragment for action buttons on the right
+- `TitleTypo` (optional): Typography style (default: Typo.h4)
+- `Elevation` (optional): Paper elevation (default: 0)
+- `Class` (optional): Additional CSS classes
+
+**Styling:**
+- Uses `.hero-card` class from `fsh-theme.css`
+- Gradient background with primary color accent border
+- Shared utility classes: `.fw-600`, `.fw-700` for font weights
+
+### FshUserProfile Component
+
+Modern user profile dropdown for app bars/navbars with avatar, user info, and menu:
+
+```razor
+@using FSH.Framework.Blazor.UI.Components.User
+
+<FshUserProfile UserName="@userName"
+                UserEmail="@userEmail"
+                UserRole="@userRole"
+                AvatarUrl="@avatarUrl"
+                OnProfileClick="NavigateToProfile"
+                OnSettingsClick="NavigateToSettings"
+                OnLogoutClick="LogoutAsync" />
+```
+
+**Parameters:**
+- `UserName` (required): User's display name
+- `UserEmail` (optional): User's email address
+- `UserRole` (optional): User's role or title
+- `AvatarUrl` (optional): URL to user's avatar (shows initials if not provided)
+- `ShowUserName` (optional): Show username next to avatar (default: true, hidden on mobile)
+- `ShowUserInfo` (optional): Show user info in menu header (default: true)
+- `MenuItems` (optional): Custom RenderFragment for menu items (uses default Profile/Settings/Logout if not provided)
+- `OnProfileClick` (optional): Callback for Profile menu item
+- `OnSettingsClick` (optional): Callback for Settings menu item
+- `OnLogoutClick` (optional): Callback for Logout menu item
+
+**Features:**
+- Responsive design (hides username on mobile)
+- Avatar with initials fallback
+- Smooth hover animations and transitions
+- Gradient menu header with user info
+- Customizable menu items via RenderFragment
+- Scoped CSS for isolated styling
