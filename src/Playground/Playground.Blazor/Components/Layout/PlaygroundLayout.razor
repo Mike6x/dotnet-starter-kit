@@ -7,13 +7,16 @@
 @using FSH.Playground.Blazor.Components.Pages
 @using Microsoft.AspNetCore.WebUtilities
 @using FSH.Playground.Blazor.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@inject IHttpContextAccessor HttpContextAccessor
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IHttpClientFactory HttpClientFactory
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
 @inject MudTheme FshTheme
 @inject ITenantThemeState TenantThemeState
-@inject FSH.Playground.Blazor.Services.Api.ITokenSessionAccessor TokenSessionAccessor
-@inject FSH.Playground.Blazor.Services.Api.ITokenAccessor TokenAccessor
+@inject IThemeStateFactory ThemeStateFactory
 @inject FSH.Playground.Blazor.ApiClient.IIdentityClient IdentityClient
 
 <MudThemeProvider Theme="@_theme" IsDarkMode="_isDarkMode" />
@@ -31,7 +34,7 @@
 }
 else if (!_isAuthenticated)
 {
-    <Login />
+    <SimpleLogin />
 }
 else
 {
@@ -79,12 +82,44 @@ else
     private string? _userRole;
     private string? _avatarUrl;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        base.OnInitialized();
-        _theme = TenantThemeState.Theme;
-        _isDarkMode = TenantThemeState.IsDarkMode;
+        await base.OnInitializedAsync();
+
+        // SSR-friendly authentication check via HttpContext
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        _isAuthenticated = authState.User?.Identity?.IsAuthenticated ?? false;
+
+        if (_isAuthenticated)
+        {
+            // Extract user info from claims (available in SSR)
+            var user = authState.User;
+            _userName = user.FindFirst(ClaimTypes.Name)?.Value ?? user.FindFirst(ClaimTypes.Email)?.Value ?? "User";
+            _userEmail = user.FindFirst(ClaimTypes.Email)?.Value;
+            _userRole = user.FindFirst(ClaimTypes.Role)?.Value;
+
+            // Load theme from cache (fast, SSR-compatible)
+            var httpContext = HttpContextAccessor.HttpContext;
+            if (httpContext is not null)
+            {
+                var tenantId = httpContext.Request.Cookies["fsh_tenant"] ?? "root";
+                var themeSettings = await ThemeStateFactory.GetThemeAsync(tenantId);
+                _theme = themeSettings.ToMudTheme();
+                // Dark mode preference is user-specific, default to false for SSR
+                _isDarkMode = false;
+            }
+        }
+        else
+        {
+            // Use default theme for non-authenticated users
+            _theme = TenantThemeState.Theme;
+            _isDarkMode = false;
+        }
+
+        // Subscribe to theme changes (for Interactive mode)
         TenantThemeState.OnThemeChanged += HandleThemeChanged;
+
+        _authStatusLoaded = true;
     }
 
     private void HandleThemeChanged()
@@ -103,29 +138,12 @@ else
     {
         await base.OnAfterRenderAsync(firstRender);
 
-        if (firstRender && !_authStatusLoaded)
+        if (firstRender && _isAuthenticated)
         {
-            var client = HttpClientFactory.CreateClient();
-            var uri = Navigation.ToAbsoluteUri("/auth/status");
+            // Load full profile in Interactive mode
+            await LoadUserProfileAsync();
 
-            try
-            {
-                var response = await client.GetAsync(uri);
-                _isAuthenticated = response.IsSuccessStatusCode;
-                if (_isAuthenticated)
-                {
-                    await HydrateSessionAsync(client);
-                    // Load tenant theme after authentication
-                    await TenantThemeState.LoadThemeAsync();
-                    // Load user profile
-                    await LoadUserProfileAsync();
-                }
-            }
-            catch
-            {
-                _isAuthenticated = false;
-            }
-
+            // Handle toast notifications
             var currentUri = new Uri(Navigation.Uri);
             var query = QueryHelpers.ParseQuery(currentUri.Query);
             if (query.TryGetValue("toast", out var toastValues))
@@ -144,7 +162,6 @@ else
                 Navigation.NavigateTo(cleanUri, false);
             }
 
-            _authStatusLoaded = true;
             StateHasChanged();
         }
     }
@@ -152,7 +169,7 @@ else
     private async Task LogoutAsync()
     {
         var client = HttpClientFactory.CreateClient();
-        var uri = Navigation.ToAbsoluteUri("/auth/logout");
+        var uri = Navigation.ToAbsoluteUri("/api/auth/logout");
         try
         {
             var response = await client.PostAsync(uri, content: null);
@@ -190,34 +207,6 @@ else
         true => Icons.Material.Rounded.AutoMode,
         false => Icons.Material.Outlined.DarkMode,
     };
-
-    private async Task HydrateSessionAsync(HttpClient client)
-    {
-        try
-        {
-            var sessionResponse = await client.GetAsync(Navigation.ToAbsoluteUri("/auth/session"));
-            if (!sessionResponse.IsSuccessStatusCode)
-            {
-                return;
-            }
-
-            var sessionInfo = await sessionResponse.Content.ReadFromJsonAsync<SessionInfoResult>();
-            if (sessionInfo is null || string.IsNullOrWhiteSpace(sessionInfo.SessionId))
-            {
-                return;
-            }
-
-            TokenSessionAccessor.SessionId = sessionInfo.SessionId;
-            TokenAccessor.AccessToken = sessionInfo.AccessToken;
-            TokenAccessor.RefreshToken = sessionInfo.RefreshToken;
-            TokenAccessor.AccessTokenExpiresAt = sessionInfo.AccessTokenExpiresAt;
-            TokenAccessor.RefreshTokenExpiresAt = sessionInfo.RefreshTokenExpiresAt;
-        }
-        catch
-        {
-            // swallow; fall back to fresh login if session cannot be hydrated
-        }
-    }
 
     private async Task LoadUserProfileAsync()
     {

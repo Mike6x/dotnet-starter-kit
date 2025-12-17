@@ -1,0 +1,50 @@
+@page "/login"
+@using FSH.Framework.Shared.Multitenancy
+@using FSH.Playground.Blazor.Services
+@inject NavigationManager Navigation
+@inject IHttpClientFactory HttpClientFactory
+
+<MudContainer MaxWidth="MaxWidth.False"
+              Class="d-flex justify-center align-center"
+              Style="min-height:100vh; background-color:#F3F4F6;">
+    <MudPaper Class="pa-6" Elevation="1"
+              Style="max-width:420px; width:100%; background-color:#FFFFFF; border-radius:1rem; border:1px solid #E5E7EB;">
+        <form method="post" action="/api/auth/login">
+            <MudStack Spacing="2">
+                <MudText Typo="Typo.overline" Color="Color.Primary">FSH Playground</MudText>
+                <MudText Typo="Typo.h5">Sign in</MudText>
+                <MudText Typo="Typo.body2" Class="mb-2" Color="Color.Secondary">
+                    Use your FSH credentials for the <b>root</b> tenant.
+                </MudText>
+
+                <input type="hidden" name="Tenant" value="root" />
+
+                <MudTextField @bind-Value="_email"
+                              Label="Email"
+                              name="Email"
+                              Variant="Variant.Outlined"
+                              Class="mb-3" />
+
+                <MudTextField @bind-Value="_password"
+                              Label="Password"
+                              name="Password"
+                              InputType="InputType.Password"
+                              Variant="Variant.Outlined"
+                              Class="mb-4" />
+
+                <MudButton ButtonType="ButtonType.Submit"
+                           Color="Color.Primary"
+                           Variant="Variant.Filled"
+                           FullWidth="true"
+                           Class="mb-2">
+                    Sign in
+                </MudButton>
+            </MudStack>
+        </form>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private string _email = MultitenancyConstants.Root.EmailAddress;
+    private string _password = MultitenancyConstants.DefaultPassword;
+}

@@ -4,11 +4,12 @@
 @using System.IdentityModel.Tokens.Jwt
 @using System.Security.Claims
 @using FSH.Framework.Shared.Constants
+@using Microsoft.AspNetCore.Components.Authorization
 @inject IIdentityClient IdentityClient
 @inject IUsersClient UsersClient
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
-@inject FSH.Playground.Blazor.Services.Api.ITokenAccessor TokenAccessor
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <FshPageHeader Title="Users"
                Description="Manage user accounts and permissions">
@@ -160,32 +161,18 @@
         StateHasChanged();
     }
 
-    private void ResolveCurrentUser()
+    private async void ResolveCurrentUser()
     {
         try
         {
-            var token = TokenAccessor.AccessToken;
-            if (string.IsNullOrWhiteSpace(token))
-            {
-                return;
-            }
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
 
-            var handler = new JwtSecurityTokenHandler();
-            if (!handler.CanReadToken(token))
-            {
-                return;
-            }
-
-            var jwt = handler.ReadJwtToken(token);
-            _currentUserId = jwt.Claims.FirstOrDefault(c =>
-                    string.Equals(c.Type, JwtRegisteredClaimNames.Sub, StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(c.Type, ClaimTypes.NameIdentifier, StringComparison.OrdinalIgnoreCase))
-                ?.Value;
-
+            _currentUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         }
         catch
         {
-            // Best-effort parsing; ignore token decode issues in the UI.
+            // Best-effort parsing; ignore if unable to get current user.
         }
     }
 
