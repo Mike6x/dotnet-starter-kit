@@ -1,12 +1,35 @@
+@inject NavigationManager Navigation
 
-<MudNavMenu>
-    <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard">Dashboard</MudNavLink>
-    <MudNavLink Href="/profile" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Person">Profile</MudNavLink>
-    <MudNavLink Href="/users" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Group">Users</MudNavLink>
-    <MudNavLink Href="/audits" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Audits</MudNavLink>
-    <MudDivider Class="my-2" />
-    <MudNavGroup Title="Settings" Icon="@Icons.Material.Filled.Settings" Expanded="false">
-        <MudNavLink Href="/settings/profile" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.ManageAccounts">Account Settings</MudNavLink>
-        <MudNavLink Href="/settings/theme" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Palette">Theme Settings</MudNavLink>
-    </MudNavGroup>
-</MudNavMenu>
+<nav class="fsh-nav">
+    <!-- Main Navigation -->
+    <div class="fsh-nav-section">
+        <span class="fsh-nav-section-title">Main</span>
+        <MudNavMenu Class="fsh-nav-menu" Rounded="true" Margin="Margin.Dense" Color="Color.Primary">
+            <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Dashboard" Class="fsh-nav-item">
+                Dashboard
+            </MudNavLink>
+            <MudNavLink Href="/users" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.Group" Class="fsh-nav-item">
+                Users
+            </MudNavLink>
+            <MudNavLink Href="/audits" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.History" Class="fsh-nav-item">
+                Audit Logs
+            </MudNavLink>
+        </MudNavMenu>
+    </div>
+
+    <!-- Settings Section -->
+    <div class="fsh-nav-section">
+        <span class="fsh-nav-section-title">Settings</span>
+        <MudNavMenu Class="fsh-nav-menu" Rounded="true" Margin="Margin.Dense" Color="Color.Primary">
+            <MudNavLink Href="/settings/profile" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.ManageAccounts" Class="fsh-nav-item">
+                Account
+            </MudNavLink>
+            <MudNavLink Href="/settings/theme" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.Palette" Class="fsh-nav-item">
+                Appearance
+            </MudNavLink>
+        </MudNavMenu>
+    </div>
+</nav>
+
+@code {
+}

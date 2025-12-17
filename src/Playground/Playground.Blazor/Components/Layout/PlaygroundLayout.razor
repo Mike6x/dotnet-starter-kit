@@ -3,6 +3,7 @@
 @using FSH.Framework.Blazor.UI.Components.Button
 @using FSH.Framework.Blazor.UI.Components.Layouts
 @using FSH.Framework.Blazor.UI.Components.User
+@using FSH.Framework.Blazor.UI.Components.Dialogs
 @using FSH.Framework.Blazor.UI.Theme
 @using FSH.Playground.Blazor.Components.Pages
 @using Microsoft.AspNetCore.WebUtilities
@@ -19,6 +20,7 @@
 @inject IThemeStateFactory ThemeStateFactory
 @inject FSH.Playground.Blazor.ApiClient.IIdentityClient IdentityClient
 @inject IUserProfileState UserProfileState
+@inject IDialogService DialogService
 
 <MudThemeProvider Theme="@_theme" IsDarkMode="_isDarkMode" />
 <MudPopoverProvider />
@@ -44,12 +46,19 @@ else
             <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
             <MudSpacer />
             <MudIconButton Icon="@(DarkLightModeButtonIcon)" Color="Color.Inherit" OnClick="@DarkModeToggle" />
+            <FshAccountMenu UserName="@_userName"
+                            UserEmail="@_userEmail"
+                            UserRole="@_userRole"
+                            AvatarUrl="@_avatarUrl"
+                            OnProfileClick="NavigateToProfile"
+                            OnAuditingClick="NavigateToAuditing"
+                            OnLogoutClick="ConfirmAndLogoutAsync" />
         </MudAppBar>
         <MudDrawer id="nav-drawer" @bind-Open="_drawerOpen" Elevation="0">
             <MudDrawerHeader>
                 <FshDrawerHeader Title="FSH Playground" />
             </MudDrawerHeader>
-           <NavMenu />
+            <NavMenu />
         </MudDrawer>
         <MudMainContent Class="pt-20" Style="padding-left:0;padding-right:0;">
             <MudContainer Class="fsh-section page-shell" MaxWidth="MaxWidth.False">
@@ -173,6 +182,15 @@ else
         }
     }
 
+    private async Task ConfirmAndLogoutAsync()
+    {
+        var confirmed = await DialogService.ShowSignOutConfirmAsync();
+        if (confirmed)
+        {
+            await LogoutAsync();
+        }
+    }
+
     private async Task LogoutAsync()
     {
         var client = HttpClientFactory.CreateClient();
@@ -251,5 +269,10 @@ else
     private void NavigateToSettings()
     {
         Navigation.NavigateTo("/settings/profile");
+    }
+
+    private void NavigateToAuditing()
+    {
+        Navigation.NavigateTo("/audits");
     }
 }
