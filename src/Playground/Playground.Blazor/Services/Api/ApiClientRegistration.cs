@@ -8,14 +8,26 @@ internal static class ApiClientRegistration
 {
     public static IServiceCollection AddApiClients(this IServiceCollection services, IConfiguration configuration)
     {
-        _ = configuration["Api:BaseUrl"]
+        var apiBaseUrl = configuration["Api:BaseUrl"]
             ?? throw new InvalidOperationException("Api:BaseUrl configuration is missing.");
 
         static HttpClient ResolveClient(IServiceProvider sp) =>
             sp.GetRequiredService<HttpClient>();
 
+        // Register a named HttpClient for token operations (no auth handler to avoid circular dependency)
+        services.AddHttpClient("TokenClient", client =>
+        {
+            client.BaseAddress = new Uri(apiBaseUrl);
+        });
+
+        // TokenClient uses the named HttpClient without the AuthorizationHeaderHandler
+        // This avoids circular dependency: TokenRefreshService -> ITokenClient -> HttpClient -> AuthorizationHeaderHandler -> TokenRefreshService
         services.AddTransient<ITokenClient>(sp =>
-            new TokenClient(ResolveClient(sp)));
+        {
+            var factory = sp.GetRequiredService<IHttpClientFactory>();
+            var client = factory.CreateClient("TokenClient");
+            return new TokenClient(client);
+        });
 
         services.AddTransient<IIdentityClient>(sp =>
             new IdentityClient(ResolveClient(sp)));

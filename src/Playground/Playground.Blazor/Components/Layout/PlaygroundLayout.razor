@@ -173,6 +173,10 @@ else
                 {
                     Snackbar.Add("Signed out.", Severity.Success);
                 }
+                else if (toast == "session_expired")
+                {
+                    Snackbar.Add("Your session has expired. Please sign in again.", Severity.Warning);
+                }
 
                 var cleanUri = currentUri.GetLeftPart(UriPartial.Path);
                 Navigation.NavigateTo(cleanUri, false);
@@ -191,30 +195,12 @@ else
         }
     }
 
-    private async Task LogoutAsync()
+    private Task LogoutAsync()
     {
-        var client = HttpClientFactory.CreateClient();
-        var uri = Navigation.ToAbsoluteUri("/api/auth/logout");
-        try
-        {
-            var response = await client.PostAsync(uri, content: null);
-            if (response.IsSuccessStatusCode)
-            {
-                Navigation.NavigateTo("/", false);
-                Snackbar.Add("Signed Out.", Severity.Success);
-            }
-            else
-            {
-                Snackbar.Add("Sign out failed.", Severity.Error);
-            }
-        }
-        catch
-        {
-            Snackbar.Add("Sign out failed.", Severity.Error);
-        }
-
-        _isAuthenticated = false;
-        _authStatusLoaded = true;
+        // Use browser navigation to ensure the cookie is cleared properly
+        // The server will clear the auth cookie and redirect to login page
+        Navigation.NavigateTo("/auth/logout", forceLoad: true);
+        return Task.CompletedTask;
     }
 
     private void DrawerToggle()

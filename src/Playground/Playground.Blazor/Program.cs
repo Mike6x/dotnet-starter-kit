@@ -55,6 +55,9 @@ builder.Services.AddScoped<IUserProfileState, UserProfileState>();
 // Authorization header handler for API calls
 builder.Services.AddScoped<AuthorizationHeaderHandler>();
 
+// Token refresh service for handling expired access tokens
+builder.Services.AddScoped<ITokenRefreshService, TokenRefreshService>();
+
 builder.Services.AddHttpClient();
 
 var apiBaseUrl = builder.Configuration["Api:BaseUrl"]

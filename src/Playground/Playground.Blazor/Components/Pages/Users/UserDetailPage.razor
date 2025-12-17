@@ -57,21 +57,33 @@
         </MudItem>
         <MudItem xs="12" md="6">
             <MudPaper Class="fsh-card pa-4">
-                <MudText Typo="Typo.subtitle1">Roles</MudText>
-                @if (_roles.Count == 0)
+                <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="mb-2">
+                    <MudText Typo="Typo.subtitle1">Roles</MudText>
+                    <MudButton Variant="Variant.Outlined"
+                               Color="Color.Primary"
+                               Size="Size.Small"
+                               StartIcon="@Icons.Material.Filled.Edit"
+                               OnClick="GoToRoles">
+                        Manage Roles
+                    </MudButton>
+                </MudStack>
+                @if (_roles.Count == 0 || !_roles.Any(r => r.Enabled))
                 {
-                    <MudText Typo="Typo.caption" Color="Color.Secondary">No roles assigned.</MudText>
+                    <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Dense="true">
+                        No roles assigned to this user.
+                    </MudAlert>
                 }
                 else
                 {
-                    <MudStack Row="true" Spacing="1">
-                        @foreach (var role in _roles)
+                    <MudStack Row="true" Spacing="1" Wrap="Wrap.Wrap">
+                        @foreach (var role in _roles.Where(r => r.Enabled))
                         {
-                            <MudChip T="string" Color="Color.Primary" Variant="Variant.Outlined">@role.RoleName</MudChip>
+                            <MudChip T="string" Color="@GetRoleColor(role.RoleName)" Variant="Variant.Filled" Size="Size.Small">
+                                @role.RoleName
+                            </MudChip>
                         }
                     </MudStack>
                 }
-                <MudText Typo="Typo.caption" Color="Color.Secondary" Class="mt-2">Role assignment editing is handled in Roles/Permissions PRD.</MudText>
             </MudPaper>
         </MudItem>
         <MudItem xs="12" md="6">
@@ -296,6 +308,22 @@ else
     {
         _confirmModel.Code = string.Empty;
     }
+
+    private void GoToRoles()
+    {
+        Navigation.NavigateTo($"/users/{Id}/roles");
+    }
+
+    private static Color GetRoleColor(string? roleName) => roleName?.ToLowerInvariant() switch
+    {
+        "admin" => Color.Error,
+        "administrator" => Color.Error,
+        "basic" => Color.Info,
+        "user" => Color.Default,
+        "manager" => Color.Warning,
+        "moderator" => Color.Secondary,
+        _ => Color.Primary
+    };
 
     private sealed class ConfirmEmailModel
     {

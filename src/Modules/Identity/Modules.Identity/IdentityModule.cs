@@ -33,6 +33,7 @@ using FSH.Modules.Identity.Features.v1.Users.GetUserProfile;
 using FSH.Modules.Identity.Features.v1.Users.GetUserRoles;
 using FSH.Modules.Identity.Features.v1.Users.GetUsers;
 using FSH.Modules.Identity.Features.v1.Users.RegisterUser;
+using FSH.Modules.Identity.Features.v1.Users.SearchUsers;
 using FSH.Modules.Identity.Features.v1.Users.ResetPassword;
 using FSH.Modules.Identity.Features.v1.Users.ToggleUserStatus;
 using FSH.Modules.Identity.Features.v1.Users.UpdateUser;
@@ -138,6 +139,7 @@ public class IdentityModule : IModule
         group.MapGetMeEndpoint();
         group.MapGetUserRolesEndpoint();
         group.MapGetUsersListEndpoint();
+        group.MapSearchUsersEndpoint();
         group.MapRegisterUserEndpoint();
         group.MapResetPasswordEndpoint();
         group.MapSelfRegisterUserEndpoint();

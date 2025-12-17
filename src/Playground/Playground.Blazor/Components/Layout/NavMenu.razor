@@ -1,75 +1,75 @@
 @inject NavigationManager Navigation
 
 <nav class="fsh-nav">
-    <MudNavMenu Class="fsh-nav-menu" Rounded="true" Margin="Margin.Dense" Color="Color.Primary">
+    <MudNavMenu Class="pa-2" Rounded="true" Margin="Margin.Dense" Color="Color.Primary">
         <!-- Home - Root Item -->
-        <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Home" Class="fsh-nav-item">
+        <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Home">
             Home
         </MudNavLink>
 
         <!-- Administration Section -->
         <div class="fsh-nav-section-title">Administration</div>
 
-        <MudNavGroup Title="User Management" Icon="@Icons.Material.Outlined.People" Class="fsh-nav-group" Expanded="false">
-            <MudNavLink Href="/users" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.Person" Class="fsh-nav-subitem">
+        <MudNavGroup Title="User Management" Icon="@Icons.Material.Outlined.People" Expanded="false">
+            <MudNavLink Href="/users" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.Person">
                 Users
             </MudNavLink>
-            <MudNavLink Href="/roles" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.AdminPanelSettings" Class="fsh-nav-subitem">
+            <MudNavLink Href="/roles" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.AdminPanelSettings">
                 Roles
             </MudNavLink>
         </MudNavGroup>
 
-        <MudNavGroup Title="Tenant Management" Icon="@Icons.Material.Outlined.Business" Class="fsh-nav-group" Expanded="false">
-            <MudNavLink Href="/tenants" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.CorporateFare" Class="fsh-nav-subitem">
+        <MudNavGroup Title="Tenants" Icon="@Icons.Material.Outlined.Business" Expanded="false">
+            <MudNavLink Href="/tenants" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.CorporateFare">
                 Tenants
             </MudNavLink>
-            <MudNavLink Href="/tenants/settings" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.Tune" Class="fsh-nav-subitem">
+            <MudNavLink Href="/tenants/settings" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.Tune">
                 Tenant Settings
             </MudNavLink>
         </MudNavGroup>
 
-        <MudNavLink Href="/audits" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.History" Class="fsh-nav-item">
+        <MudNavLink Href="/audits" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.History">
             Audit Logs
         </MudNavLink>
 
         <!-- Communication Section -->
         <div class="fsh-nav-section-title">Communication</div>
 
-        <MudNavLink Href="/chat" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.Chat" Class="fsh-nav-item">
+        <MudNavLink Href="/chat" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.Chat">
             Chat
         </MudNavLink>
 
-        <MudNavLink Href="/notifications" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.Notifications" Class="fsh-nav-item">
+        <MudNavLink Href="/notifications" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.Notifications">
             Notifications
         </MudNavLink>
 
         <!-- System Section -->
         <div class="fsh-nav-section-title">System</div>
 
-        <MudNavLink Href="/health" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.MonitorHeart" Class="fsh-nav-item">
+        <MudNavLink Href="/health" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.MonitorHeart">
             Health
         </MudNavLink>
 
-        <MudNavLink Href="/logs" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.Terminal" Class="fsh-nav-item">
+        <MudNavLink Href="/logs" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.Terminal">
             Logs
         </MudNavLink>
 
         <!-- Settings Section -->
         <div class="fsh-nav-section-title">Settings</div>
 
-        <MudNavGroup Title="Settings" Icon="@Icons.Material.Outlined.Settings" Class="fsh-nav-group" Expanded="false">
-            <MudNavLink Href="/settings/profile" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.ManageAccounts" Class="fsh-nav-subitem">
+        <MudNavGroup Title="Settings" Icon="@Icons.Material.Outlined.Settings" Expanded="false">
+            <MudNavLink Href="/settings/profile" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.ManageAccounts">
                 Account
             </MudNavLink>
-            <MudNavLink Href="/settings/theme" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.Palette" Class="fsh-nav-subitem">
+            <MudNavLink Href="/settings/theme" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.Palette">
                 Theme
             </MudNavLink>
-            <MudNavLink Href="/settings/security" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.Security" Class="fsh-nav-subitem">
+            <MudNavLink Href="/settings/security" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.Security">
                 Security
             </MudNavLink>
         </MudNavGroup>
 
-        <MudNavLink Href="/about" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.Info" Class="fsh-nav-item">
+        <MudNavLink Href="/about" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.Info">
             About
         </MudNavLink>
     </MudNavMenu>

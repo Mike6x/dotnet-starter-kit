@@ -101,11 +101,29 @@ public sealed class IdentityService : IIdentityService
 
         var hashedToken = HashToken(refreshToken);
 
+        _logger.LogDebug(
+            "Validating refresh token for tenant {TenantId}. Token hash: {TokenHash}",
+            currentTenant.Id,
+            hashedToken[..Math.Min(8, hashedToken.Length)] + "...");
+
         var user = await _userManager.Users
             .FirstOrDefaultAsync(u => u.RefreshToken == hashedToken, ct);
 
-        if (user is null || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
+        if (user is null)
         {
+            _logger.LogWarning(
+                "No user found with matching refresh token hash for tenant {TenantId}",
+                currentTenant.Id);
+            throw new UnauthorizedException("refresh token is invalid or expired");
+        }
+
+        if (user.RefreshTokenExpiryTime <= DateTime.UtcNow)
+        {
+            _logger.LogWarning(
+                "Refresh token expired for user {UserId}. Expired at: {ExpiryTime}, Current time: {CurrentTime}",
+                user.Id,
+                user.RefreshTokenExpiryTime,
+                DateTime.UtcNow);
             throw new UnauthorizedException("refresh token is invalid or expired");
         }
 
@@ -168,8 +186,16 @@ public sealed class IdentityService : IIdentityService
             throw new UnauthorizedException("user not found");
         }
 
-        user.RefreshToken = HashToken(refreshToken);
+        var hashedToken = HashToken(refreshToken);
+        user.RefreshToken = hashedToken;
         user.RefreshTokenExpiryTime = expiresAtUtc;
+
+        _logger.LogDebug(
+            "Storing refresh token for user {UserId} in tenant {TenantId}. Token hash: {TokenHash}, Expires: {ExpiresAt}",
+            subject,
+            currentTenant.Id,
+            hashedToken[..Math.Min(8, hashedToken.Length)] + "...",
+            expiresAtUtc);
 
         var result = await _userManager.UpdateAsync(user);
 

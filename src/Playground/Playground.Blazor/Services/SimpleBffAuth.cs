@@ -48,6 +48,8 @@ public static class SimpleBffAuth
                     new(ClaimTypes.NameIdentifier, jwtToken.Subject ?? Guid.NewGuid().ToString()),
                     new(ClaimTypes.Email, email),
                     new("access_token", token.AccessToken), // Store JWT for API calls
+                    new("refresh_token", token.RefreshToken), // Store refresh token for token renewal
+                    new("tenant", tenant ?? "root"), // Store tenant for token refresh
                 };
 
                 // Add name claim
@@ -89,13 +91,21 @@ public static class SimpleBffAuth
         .AllowAnonymous()
         .DisableAntiforgery();
 
-        // Logout endpoint
+        // Logout endpoint - POST for API calls
         app.MapPost("/api/auth/logout", async (HttpContext httpContext) =>
         {
             await httpContext.SignOutAsync("Cookies");
             return Results.Ok();
         })
         .DisableAntiforgery();
+
+        // Logout endpoint - GET for browser redirects (ensures cookie is cleared in browser)
+        app.MapGet("/auth/logout", async (HttpContext httpContext) =>
+        {
+            await httpContext.SignOutAsync("Cookies");
+            return Results.Redirect("/login?toast=logout_success");
+        })
+        .AllowAnonymous();
     }
 
     public record LoginRequest(string Email, string Password, string? Tenant);
