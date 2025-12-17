@@ -3,39 +3,6 @@
 @inherits FshComponentBase
 
 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="py-4">
-    <div class="d-flex justify-space-between align-center mb-4">
-        <div>
-            <MudText Typo="Typo.h4">Theme Customization</MudText>
-            <MudText Typo="Typo.body2" Color="Color.Secondary">
-                Customize the look and feel of your application
-            </MudText>
-        </div>
-        <div class="d-flex gap-2">
-            <MudButton Variant="Variant.Outlined"
-                      Color="Color.Default"
-                      StartIcon="@Icons.Material.Outlined.Refresh"
-                      OnClick="@ResetToDefaults"
-                      Disabled="@_isSaving">
-                Reset to Defaults
-            </MudButton>
-            <MudButton Variant="Variant.Filled"
-                      Color="Color.Primary"
-                      StartIcon="@Icons.Material.Outlined.Save"
-                      OnClick="@SaveChanges"
-                      Disabled="@_isSaving">
-                @if (_isSaving)
-                {
-                    <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
-                    <span>Saving...</span>
-                }
-                else
-                {
-                    <span>Save Changes</span>
-                }
-            </MudButton>
-        </div>
-    </div>
-
     @if (_isLoading)
     {
         <MudProgressLinear Indeterminate="true" Color="Color.Primary" />
@@ -126,6 +93,11 @@
     private bool _isLoading = true;
     private bool _isSaving = false;
 
+    /// <summary>
+    /// Indicates whether the theme is currently being saved.
+    /// </summary>
+    public bool IsSaving => _isSaving;
+
     protected override async Task OnInitializedAsync()
     {
         await LoadTheme();
@@ -155,7 +127,10 @@
         }
     }
 
-    private async Task SaveChanges()
+    /// <summary>
+    /// Saves the current theme changes.
+    /// </summary>
+    public async Task SaveChangesAsync()
     {
         _isSaving = true;
         StateHasChanged();
@@ -185,7 +160,10 @@
         }
     }
 
-    private async Task ResetToDefaults()
+    /// <summary>
+    /// Resets the theme to default settings.
+    /// </summary>
+    public async Task ResetToDefaultsAsync()
     {
         var confirmed = await DialogService.ShowMessageBox(
             "Reset Theme",

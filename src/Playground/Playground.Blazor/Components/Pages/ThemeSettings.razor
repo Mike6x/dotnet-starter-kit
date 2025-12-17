@@ -1,6 +1,7 @@
 @page "/settings/theme"
 @using FSH.Framework.Blazor.UI.Theme
 @using FSH.Framework.Blazor.UI.Components.Theme
+@using FSH.Framework.Blazor.UI.Components.Page
 @using FSH.Playground.Blazor.Services
 @inject ITenantThemeState ThemeState
 @inject ISnackbar Snackbar
@@ -8,13 +9,57 @@
 <PageTitle>Theme Settings</PageTitle>
 
 <FshPageHeader Title="Theme Settings"
-               Description="Customize your application's appearance and branding" />
+               Description="Customize your application's appearance and branding">
+    <ActionContent>
+        <MudButton Variant="Variant.Outlined"
+                   Color="Color.Default"
+                   StartIcon="@Icons.Material.Outlined.Refresh"
+                   OnClick="@ResetToDefaults"
+                   Disabled="@(_customizer?.IsSaving ?? false)">
+            Reset to Defaults
+        </MudButton>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Outlined.Save"
+                   OnClick="@SaveChanges"
+                   Disabled="@(_customizer?.IsSaving ?? false)">
+            @if (_customizer?.IsSaving ?? false)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                <span>Saving...</span>
+            }
+            else
+            {
+                <span>Save Changes</span>
+            }
+        </MudButton>
+    </ActionContent>
+</FshPageHeader>
 
-<FshThemeCustomizer ThemeState="@ThemeState"
-                   OnThemeSaved="@OnThemeSaved"
-                   OnAssetUpload="@HandleAssetUpload" />
+<FshThemeCustomizer @ref="_customizer"
+                    ThemeState="@ThemeState"
+                    OnThemeSaved="@OnThemeSaved"
+                    OnAssetUpload="@HandleAssetUpload" />
 
 @code {
+    private FshThemeCustomizer? _customizer;
+
+    private async Task SaveChanges()
+    {
+        if (_customizer != null)
+        {
+            await _customizer.SaveChangesAsync();
+        }
+    }
+
+    private async Task ResetToDefaults()
+    {
+        if (_customizer != null)
+        {
+            await _customizer.ResetToDefaultsAsync();
+        }
+    }
+
     private async Task OnThemeSaved()
     {
         // Reload theme after save to get the actual uploaded URLs

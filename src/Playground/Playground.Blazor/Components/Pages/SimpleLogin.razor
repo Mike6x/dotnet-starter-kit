@@ -4,47 +4,147 @@
 @inject NavigationManager Navigation
 @inject IHttpClientFactory HttpClientFactory
 
-<MudContainer MaxWidth="MaxWidth.False"
-              Class="d-flex justify-center align-center"
-              Style="min-height:100vh; background-color:#F3F4F6;">
-    <MudPaper Class="pa-6" Elevation="1"
-              Style="max-width:420px; width:100%; background-color:#FFFFFF; border-radius:1rem; border:1px solid #E5E7EB;">
-        <form method="post" action="/api/auth/login">
-            <MudStack Spacing="2">
-                <MudText Typo="Typo.overline" Color="Color.Primary">FSH Playground</MudText>
-                <MudText Typo="Typo.h5">Sign in</MudText>
-                <MudText Typo="Typo.body2" Class="mb-2" Color="Color.Secondary">
-                    Use your FSH credentials for the <b>root</b> tenant.
-                </MudText>
+<div class="login-container">
+    @* Left Panel - Login Form *@
+    <div class="login-panel">
+        <div class="login-content">
+            @* Logo/Brand *@
+            <div class="login-brand">
+                <div class="brand-icon">
+                    <MudIcon Icon="@Icons.Material.Filled.Rocket" Size="Size.Large" />
+                </div>
+            </div>
 
+            @* Header *@
+            <div class="login-header">
+                <h1 class="login-title">Login to your account</h1>
+                <p class="login-subtitle">Welcome back, please enter your details</p>
+            </div>
+
+            @* Login Form *@
+            <form method="post" action="/api/auth/login" class="login-form">
                 <input type="hidden" name="Tenant" value="root" />
 
-                <MudTextField @bind-Value="_email"
-                              Label="Email"
-                              name="Email"
-                              Variant="Variant.Outlined"
-                              Class="mb-3" />
+                <div class="form-group">
+                    <label class="form-label">Email address <span class="required">*</span></label>
+                    <div class="input-wrapper">
+                        <MudIcon Icon="@Icons.Material.Outlined.Email" Class="input-icon" Size="Size.Small" />
+                        <input type="email"
+                               name="Email"
+                               value="@_email"
+                               placeholder="name@website.com"
+                               class="form-input"
+                               required />
+                    </div>
+                </div>
 
-                <MudTextField @bind-Value="_password"
-                              Label="Password"
-                              name="Password"
-                              InputType="InputType.Password"
-                              Variant="Variant.Outlined"
-                              Class="mb-4" />
+                <div class="form-group">
+                    <div class="label-row">
+                        <label class="form-label">Password <span class="required">*</span></label>
+                        <a href="#" class="forgot-link">Forgot password?</a>
+                    </div>
+                    <div class="input-wrapper">
+                        <MudIcon Icon="@Icons.Material.Outlined.Lock" Class="input-icon" Size="Size.Small" />
+                        <input type="@(_showPassword ? "text" : "password")"
+                               name="Password"
+                               value="@_password"
+                               placeholder="Enter your password"
+                               class="form-input"
+                               required />
+                        <button type="button" class="toggle-password" @onclick="TogglePassword" @onclick:preventDefault>
+                            <MudIcon Icon="@(_showPassword ? Icons.Material.Outlined.VisibilityOff : Icons.Material.Outlined.Visibility)" Size="Size.Small" />
+                        </button>
+                    </div>
+                </div>
 
-                <MudButton ButtonType="ButtonType.Submit"
-                           Color="Color.Primary"
-                           Variant="Variant.Filled"
-                           FullWidth="true"
-                           Class="mb-2">
-                    Sign in
-                </MudButton>
-            </MudStack>
-        </form>
-    </MudPaper>
-</MudContainer>
+                <div class="remember-row">
+                    <label class="checkbox-wrapper">
+                        <input type="checkbox" name="RememberMe" checked="@_rememberMe" />
+                        <span class="checkmark"></span>
+                        <span class="checkbox-label">Keep me logged in</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="login-button">
+                    <span>Log in</span>
+                    <MudIcon Icon="@Icons.Material.Filled.ArrowForward" Size="Size.Small" />
+                </button>
+
+                <div class="divider">
+                    <span>OR</span>
+                </div>
+
+                <div class="social-buttons">
+                    <button type="button" class="social-button" disabled>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                        </svg>
+                    </button>
+                    <button type="button" class="social-button" disabled>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="#1877f2">
+                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                        </svg>
+                    </button>
+                    <button type="button" class="social-button" disabled>
+                        <svg width="20" height="20" viewBox="0 0 24 24">
+                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <p class="signup-text">
+                    Not registered yet? <a href="#" class="signup-link">Create an account</a>
+                </p>
+            </form>
+
+            @* Footer *@
+            <div class="login-footer">
+                <span>&copy; @DateTime.Now.Year FSH Playground. All Rights Reserved.</span>
+            </div>
+        </div>
+    </div>
+
+    @* Right Panel - Testimonial/Feature *@
+    <div class="feature-panel">
+        <div class="feature-content">
+            <div class="feature-text">
+                <div class="stars">
+                    <MudIcon Icon="@Icons.Material.Filled.Star" Size="Size.Small" />
+                    <MudIcon Icon="@Icons.Material.Filled.Star" Size="Size.Small" />
+                    <MudIcon Icon="@Icons.Material.Filled.Star" Size="Size.Small" />
+                    <MudIcon Icon="@Icons.Material.Filled.Star" Size="Size.Small" />
+                    <MudIcon Icon="@Icons.Material.Filled.Star" Size="Size.Small" />
+                </div>
+                <blockquote class="testimonial">
+                    "FullStackHero transformed our development workflow. It's a game-changer for building modern .NET applications!"
+                </blockquote>
+                <div class="author">
+                    <div class="author-avatar">
+                        <MudIcon Icon="@Icons.Material.Filled.Person" />
+                    </div>
+                    <div class="author-info">
+                        <span class="author-name">Developer Community</span>
+                        <span class="author-role">.NET Enthusiasts</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="feature-overlay"></div>
+        <div class="feature-pattern"></div>
+    </div>
+</div>
 
 @code {
     private string _email = MultitenancyConstants.Root.EmailAddress;
     private string _password = MultitenancyConstants.DefaultPassword;
+    private bool _showPassword = false;
+    private bool _rememberMe = true;
+
+    private void TogglePassword()
+    {
+        _showPassword = !_showPassword;
+    }
 }
