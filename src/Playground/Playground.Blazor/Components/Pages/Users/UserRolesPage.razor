@@ -159,8 +159,8 @@ else
                             <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Style="width: 100%;">
                                 <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
                                     <MudCheckBox T="bool"
-                                                 Checked="@isAssigned"
-                                                 CheckedChanged="@((bool val) => ToggleRole(role, val))"
+                                                 Value="@isAssigned"
+                                                 ValueChanged="@((bool val) => ToggleRole(role, val))"
                                                  Color="@GetRoleColor(role.Name)" />
                                     <MudAvatar Size="Size.Small" Style="@GetRoleAvatarStyle(role.Name)">
                                         <MudIcon Icon="@GetRoleIcon(role.Name)" Size="Size.Small" />
@@ -334,6 +334,7 @@ else
 
             var command = new AssignUserRolesCommand
             {
+                UserId = Id.ToString(),
                 UserRoles = userRoles
             };
 

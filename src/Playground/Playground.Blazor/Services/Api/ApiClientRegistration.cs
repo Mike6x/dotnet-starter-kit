@@ -44,6 +44,9 @@ internal static class ApiClientRegistration
         services.AddTransient<IV1Client>(sp =>
             new V1Client(ResolveClient(sp)));
 
+        services.AddTransient<IHealthClient>(sp =>
+            new HealthClient(ResolveClient(sp)));
+
         return services;
     }
 }

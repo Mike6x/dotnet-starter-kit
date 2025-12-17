@@ -112,7 +112,7 @@ public sealed class TenantService : ITenantService
             throw new CustomException("At least one active tenant is required.");
         }
 
-        if (!tenant.Id.Equals(MultitenancyConstants.Root.Id, StringComparison.OrdinalIgnoreCase))
+        if (tenant.Id.Equals(MultitenancyConstants.Root.Id, StringComparison.OrdinalIgnoreCase))
         {
             throw new CustomException("The root tenant cannot be deactivated.");
         }
@@ -160,7 +160,13 @@ public sealed class TenantService : ITenantService
     public async Task<DateTime> UpgradeSubscription(string id, DateTime extendedExpiryDate)
     {
         var tenant = await GetTenantInfoAsync(id).ConfigureAwait(false);
-        tenant.SetValidity(extendedExpiryDate);
+
+        // Ensure the date is UTC for PostgreSQL compatibility
+        var utcExpiryDate = extendedExpiryDate.Kind == DateTimeKind.Utc
+            ? extendedExpiryDate
+            : DateTime.SpecifyKind(extendedExpiryDate, DateTimeKind.Utc);
+
+        tenant.SetValidity(utcExpiryDate);
         await _tenantStore.UpdateAsync(tenant).ConfigureAwait(false);
         return tenant.ValidUpto;
     }

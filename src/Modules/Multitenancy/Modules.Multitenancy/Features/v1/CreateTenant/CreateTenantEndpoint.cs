@@ -16,10 +16,11 @@ public static class CreateTenantEndpoint
         return endpoints.MapPost("/", async (
             [FromBody] CreateTenantCommand command,
             [FromServices] IMediator mediator)
-            => Results.Accepted(string.Empty, await mediator.Send(command)))
+            => TypedResults.Ok(await mediator.Send(command)))
             .WithName("CreateTenant")
             .WithSummary("Create tenant")
             .RequirePermission(MultitenancyConstants.Permissions.Create)
-            .WithDescription("Create a new tenant.");
+            .WithDescription("Create a new tenant.")
+            .Produces<CreateTenantCommandResponse>(StatusCodes.Status200OK);
     }
 }
