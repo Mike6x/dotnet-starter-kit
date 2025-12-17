@@ -49,6 +49,9 @@ builder.Services.AddScoped<AuthenticationStateProvider, CookieAuthenticationStat
 builder.Services.AddScoped<ITenantThemeState, TenantThemeState>(); // For Interactive mode
 builder.Services.AddScoped<IThemeStateFactory, CachedThemeStateFactory>(); // For SSR mode
 
+// User profile state for syncing across components
+builder.Services.AddScoped<IUserProfileState, UserProfileState>();
+
 // Authorization header handler for API calls
 builder.Services.AddScoped<AuthorizationHeaderHandler>();
 

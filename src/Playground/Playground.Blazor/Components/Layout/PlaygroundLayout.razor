@@ -18,6 +18,7 @@
 @inject ITenantThemeState TenantThemeState
 @inject IThemeStateFactory ThemeStateFactory
 @inject FSH.Playground.Blazor.ApiClient.IIdentityClient IdentityClient
+@inject IUserProfileState UserProfileState
 
 <MudThemeProvider Theme="@_theme" IsDarkMode="_isDarkMode" />
 <MudPopoverProvider />
@@ -43,13 +44,6 @@ else
             <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
             <MudSpacer />
             <MudIconButton Icon="@(DarkLightModeButtonIcon)" Color="Color.Inherit" OnClick="@DarkModeToggle" />
-            <FshUserProfile UserName="@_userName"
-                           UserEmail="@_userEmail"
-                           UserRole="@_userRole"
-                           AvatarUrl="@_avatarUrl"
-                           OnProfileClick="NavigateToProfile"
-                           OnSettingsClick="NavigateToSettings"
-                           OnLogoutClick="LogoutAsync" />
         </MudAppBar>
         <MudDrawer id="nav-drawer" @bind-Open="_drawerOpen" Elevation="0">
             <MudDrawerHeader>
@@ -119,6 +113,9 @@ else
         // Subscribe to theme changes (for Interactive mode)
         TenantThemeState.OnThemeChanged += HandleThemeChanged;
 
+        // Subscribe to profile changes (for syncing across components)
+        UserProfileState.OnProfileChanged += HandleProfileChanged;
+
         _authStatusLoaded = true;
     }
 
@@ -129,9 +126,19 @@ else
         InvokeAsync(StateHasChanged);
     }
 
+    private void HandleProfileChanged()
+    {
+        _userName = UserProfileState.UserName;
+        _userEmail = UserProfileState.UserEmail;
+        _userRole = UserProfileState.UserRole;
+        _avatarUrl = UserProfileState.AvatarUrl;
+        InvokeAsync(StateHasChanged);
+    }
+
     public void Dispose()
     {
         TenantThemeState.OnThemeChanged -= HandleThemeChanged;
+        UserProfileState.OnProfileChanged -= HandleProfileChanged;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -222,7 +229,10 @@ else
                 }
                 _userEmail = profile.Email;
                 _avatarUrl = profile.ImageUrl;
-                // You can add role fetching here if needed
+
+                // Update shared profile state so other components can access it
+                UserProfileState.UpdateProfile(_userName, _userEmail, _userRole, _avatarUrl);
+
                 StateHasChanged();
             }
         }
@@ -240,6 +250,6 @@ else
 
     private void NavigateToSettings()
     {
-        Navigation.NavigateTo("/settings/theme");
+        Navigation.NavigateTo("/settings/profile");
     }
 }
