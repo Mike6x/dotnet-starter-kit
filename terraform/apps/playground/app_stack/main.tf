@@ -185,6 +185,9 @@ data "aws_iam_policy_document" "api_task_s3" {
   }
 }
 
+# Note: The api_task role doesn't need secrets access because the connection string
+# is injected via ECS secrets (handled by task execution role in ecs_service module).
+# This policy document is kept for potential future runtime secret access needs.
 data "aws_iam_policy_document" "api_task_secrets" {
   count = var.db_manage_master_user_password ? 1 : 0
 
@@ -194,7 +197,7 @@ data "aws_iam_policy_document" "api_task_secrets" {
       "secretsmanager:GetSecretValue"
     ]
     resources = [
-      module.rds.secret_arn
+      aws_secretsmanager_secret.db_connection_string[0].arn
     ]
   }
 }
@@ -256,12 +259,40 @@ module "rds" {
   tags = local.common_tags
 }
 
+################################################################################
+# Connection String Secret (for managed password)
+# When using AWS-managed password, we need to create a separate secret that
+# contains the full connection string, constructed using the password from
+# the RDS-managed secret.
+################################################################################
+
+# Read the RDS-managed secret to get the password
+data "aws_secretsmanager_secret_version" "rds_password" {
+  count     = var.db_manage_master_user_password ? 1 : 0
+  secret_id = module.rds.secret_arn
+}
+
+# Create a secret for the full connection string
+resource "aws_secretsmanager_secret" "db_connection_string" {
+  count = var.db_manage_master_user_password ? 1 : 0
+
+  name        = "${var.environment}-db-connection-string"
+  description = "Full PostgreSQL connection string for .NET application"
+
+  tags = local.common_tags
+}
+
+resource "aws_secretsmanager_secret_version" "db_connection_string" {
+  count     = var.db_manage_master_user_password ? 1 : 0
+  secret_id = aws_secretsmanager_secret.db_connection_string[0].id
+
+  secret_string = "Host=${module.rds.endpoint};Port=${module.rds.port};Database=${var.db_name};Username=${var.db_username};Password=${jsondecode(data.aws_secretsmanager_secret_version.rds_password[0].secret_string)["password"]};Pooling=true;SSL Mode=Require;Trust Server Certificate=true;"
+}
+
 locals {
-  db_connection_string = var.db_manage_master_user_password ? (
-    "Host=${module.rds.endpoint};Port=${module.rds.port};Database=${var.db_name};Username=${var.db_username};Pooling=true;"
-  ) : (
-    "Host=${module.rds.endpoint};Port=${module.rds.port};Database=${var.db_name};Username=${var.db_username};Password=${var.db_password};Pooling=true;"
-  )
+  # Connection string for non-managed password (directly in env var)
+  # Only constructed when db_password is provided (i.e., not using managed password)
+  db_connection_string_plain = var.db_manage_master_user_password ? "" : "Host=${module.rds.endpoint};Port=${module.rds.port};Database=${var.db_name};Username=${var.db_username};Password=${var.db_password};Pooling=true;SSL Mode=Require;Trust Server Certificate=true;"
 }
 
 ################################################################################
@@ -321,14 +352,19 @@ module "api_service" {
   enable_circuit_breaker = var.api_enable_circuit_breaker
   use_fargate_spot       = var.api_use_fargate_spot
 
+  # When using managed password, connection string comes from secrets
+  # When not using managed password, connection string is set directly in env vars
   environment_variables = merge(
     {
-      ASPNETCORE_ENVIRONMENT            = local.aspnetcore_environment
-      DatabaseOptions__ConnectionString = local.db_connection_string
-      CachingOptions__Redis             = module.redis.connection_string
-      Storage__Provider                 = "s3"
-      Storage__S3__Bucket               = var.app_s3_bucket_name
-      Storage__S3__PublicBaseUrl        = module.app_s3.cloudfront_domain_name != "" ? "https://${module.app_s3.cloudfront_domain_name}" : ""
+      ASPNETCORE_ENVIRONMENT = local.aspnetcore_environment
+      CachingOptions__Redis  = module.redis.connection_string
+      Storage__Provider      = "s3"
+      Storage__S3__Bucket    = var.app_s3_bucket_name
+      Storage__S3__PublicBaseUrl = module.app_s3.cloudfront_domain_name != "" ? "https://${module.app_s3.cloudfront_domain_name}" : ""
+    },
+    # Only set connection string in env vars when NOT using managed password
+    var.db_manage_master_user_password ? {} : {
+      DatabaseOptions__ConnectionString = local.db_connection_string_plain
     },
     var.enable_https && var.domain_name != null ? {
       OriginOptions__OriginUrl       = "https://${var.domain_name}"
@@ -340,10 +376,11 @@ module "api_service" {
     var.api_extra_environment_variables
   )
 
+  # When using managed password, inject the full connection string from Secrets Manager
   secrets = var.db_manage_master_user_password ? [
     {
-      name      = "DatabaseOptions__Password"
-      valueFrom = module.rds.secret_arn
+      name      = "DatabaseOptions__ConnectionString"
+      valueFrom = aws_secretsmanager_secret.db_connection_string[0].arn
     }
   ] : []
 

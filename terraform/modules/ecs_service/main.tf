@@ -135,6 +135,7 @@ resource "aws_iam_role_policy" "task_execution_secrets" {
         Action = [
           "secretsmanager:GetSecretValue"
         ]
+        # Use the secret ARN directly - callers should provide the base secret ARN
         Resource = [for s in var.secrets : s.valueFrom]
       }
     ]
