@@ -1,21 +1,20 @@
-terraform {
-  required_version = ">= 1.5.0"
-
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
-    }
-  }
-}
+################################################################################
+# S3 Bucket
+################################################################################
 
 resource "aws_s3_bucket" "this" {
-  bucket = var.name
+  bucket        = var.name
+  force_destroy = var.force_destroy
 
-  tags = var.tags
+  tags = merge(var.tags, {
+    Name = var.name
+  })
 }
 
-# Enforce bucket owner ownership (disables ACLs).
+################################################################################
+# Bucket Ownership Controls
+################################################################################
+
 resource "aws_s3_bucket_ownership_controls" "this" {
   bucket = aws_s3_bucket.this.id
 
@@ -24,23 +23,37 @@ resource "aws_s3_bucket_ownership_controls" "this" {
   }
 }
 
+################################################################################
+# Versioning
+################################################################################
+
 resource "aws_s3_bucket_versioning" "this" {
   bucket = aws_s3_bucket.this.id
 
   versioning_configuration {
-    status = "Enabled"
+    status = var.versioning_enabled ? "Enabled" : "Suspended"
   }
 }
+
+################################################################################
+# Server-Side Encryption
+################################################################################
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
   bucket = aws_s3_bucket.this.id
 
   rule {
     apply_server_side_encryption_by_default {
-      sse_algorithm = "AES256"
+      sse_algorithm     = var.kms_key_arn != null ? "aws:kms" : "AES256"
+      kms_master_key_id = var.kms_key_arn
     }
+    bucket_key_enabled = var.kms_key_arn != null
   }
 }
+
+################################################################################
+# Public Access Block
+################################################################################
 
 resource "aws_s3_bucket_public_access_block" "this" {
   bucket                  = aws_s3_bucket.this.id
@@ -50,14 +63,121 @@ resource "aws_s3_bucket_public_access_block" "this" {
   restrict_public_buckets = var.enable_public_read ? false : true
 }
 
-resource "aws_cloudfront_origin_access_control" "this" {
-  count                            = var.enable_cloudfront ? 1 : 0
-  name                             = "${aws_s3_bucket.this.bucket}-oac"
-  description                      = "Access control for ${aws_s3_bucket.this.bucket}"
-  origin_access_control_origin_type = "s3"
-  signing_behavior                 = "always"
-  signing_protocol                 = "sigv4"
+################################################################################
+# Lifecycle Rules
+################################################################################
+
+resource "aws_s3_bucket_lifecycle_configuration" "this" {
+  count = length(var.lifecycle_rules) > 0 || var.enable_intelligent_tiering ? 1 : 0
+
+  bucket = aws_s3_bucket.this.id
+
+  dynamic "rule" {
+    for_each = var.lifecycle_rules
+    content {
+      id     = rule.value.id
+      status = rule.value.enabled ? "Enabled" : "Disabled"
+
+      filter {
+        prefix = rule.value.prefix
+      }
+
+      dynamic "transition" {
+        for_each = rule.value.transitions
+        content {
+          days          = transition.value.days
+          storage_class = transition.value.storage_class
+        }
+      }
+
+      dynamic "expiration" {
+        for_each = rule.value.expiration_days != null ? [1] : []
+        content {
+          days = rule.value.expiration_days
+        }
+      }
+
+      dynamic "noncurrent_version_transition" {
+        for_each = rule.value.noncurrent_version_transitions
+        content {
+          noncurrent_days = noncurrent_version_transition.value.days
+          storage_class   = noncurrent_version_transition.value.storage_class
+        }
+      }
+
+      dynamic "noncurrent_version_expiration" {
+        for_each = rule.value.noncurrent_version_expiration_days != null ? [1] : []
+        content {
+          noncurrent_days = rule.value.noncurrent_version_expiration_days
+        }
+      }
+
+      dynamic "abort_incomplete_multipart_upload" {
+        for_each = rule.value.abort_incomplete_multipart_upload_days != null ? [1] : []
+        content {
+          days_after_initiation = rule.value.abort_incomplete_multipart_upload_days
+        }
+      }
+    }
+  }
+
+  dynamic "rule" {
+    for_each = var.enable_intelligent_tiering ? [1] : []
+    content {
+      id     = "intelligent-tiering"
+      status = "Enabled"
+
+      filter {
+        prefix = ""
+      }
+
+      transition {
+        storage_class = "INTELLIGENT_TIERING"
+      }
+    }
+  }
+
+  depends_on = [aws_s3_bucket_versioning.this]
 }
+
+################################################################################
+# CORS Configuration
+################################################################################
+
+resource "aws_s3_bucket_cors_configuration" "this" {
+  count = length(var.cors_rules) > 0 ? 1 : 0
+
+  bucket = aws_s3_bucket.this.id
+
+  dynamic "cors_rule" {
+    for_each = var.cors_rules
+    content {
+      allowed_headers = cors_rule.value.allowed_headers
+      allowed_methods = cors_rule.value.allowed_methods
+      allowed_origins = cors_rule.value.allowed_origins
+      expose_headers  = cors_rule.value.expose_headers
+      max_age_seconds = cors_rule.value.max_age_seconds
+    }
+  }
+}
+
+################################################################################
+# CloudFront Origin Access Control
+################################################################################
+
+resource "aws_cloudfront_origin_access_control" "this" {
+  count = var.enable_cloudfront ? 1 : 0
+
+  name                              = "${aws_s3_bucket.this.bucket}-oac"
+  description                       = "Access control for ${aws_s3_bucket.this.bucket}"
+  origin_access_control_origin_type = "s3"
+  signing_behavior                  = "always"
+  signing_protocol                  = "sigv4"
+}
+
+################################################################################
+# CloudFront Distribution
+################################################################################
 
 resource "aws_cloudfront_distribution" "this" {
   count = var.enable_cloudfront ? 1 : 0
@@ -65,7 +185,9 @@ resource "aws_cloudfront_distribution" "this" {
   enabled             = true
   comment             = var.cloudfront_comment != "" ? var.cloudfront_comment : "Public assets for ${aws_s3_bucket.this.bucket}"
   price_class         = var.cloudfront_price_class
-  default_root_object = ""
+  default_root_object = var.cloudfront_default_root_object
+  aliases             = var.cloudfront_aliases
+  http_version        = "http2and3"
 
   origin {
     domain_name              = aws_s3_bucket.this.bucket_regional_domain_name
@@ -76,31 +198,44 @@ resource "aws_cloudfront_distribution" "this" {
   default_cache_behavior {
     target_origin_id       = "s3-${aws_s3_bucket.this.bucket}"
     viewer_protocol_policy = "redirect-to-https"
-    allowed_methods        = ["GET", "HEAD"]
+    allowed_methods        = ["GET", "HEAD", "OPTIONS"]
     cached_methods         = ["GET", "HEAD"]
+    compress               = true
 
-    forwarded_values {
-      query_string = false
-      cookies {
-        forward = "none"
+    cache_policy_id          = var.cloudfront_cache_policy_id
+    origin_request_policy_id = var.cloudfront_origin_request_policy_id
+
+    dynamic "forwarded_values" {
+      for_each = var.cloudfront_cache_policy_id == null ? [1] : []
+      content {
+        query_string = false
+        cookies {
+          forward = "none"
+        }
       }
     }
-
-    compress = true
   }
 
   restrictions {
     geo_restriction {
-      restriction_type = "none"
+      restriction_type = var.cloudfront_geo_restriction_type
+      locations        = var.cloudfront_geo_restriction_locations
     }
   }
 
   viewer_certificate {
-    cloudfront_default_certificate = true
+    cloudfront_default_certificate = var.cloudfront_acm_certificate_arn == null
+    acm_certificate_arn            = var.cloudfront_acm_certificate_arn
+    ssl_support_method             = var.cloudfront_acm_certificate_arn != null ? "sni-only" : null
+    minimum_protocol_version       = var.cloudfront_acm_certificate_arn != null ? "TLSv1.2_2021" : null
   }
 
   tags = var.tags
 }
+
+################################################################################
+# Bucket Policy
+################################################################################
 
 locals {
   bucket_policy_statements = concat(
@@ -115,8 +250,8 @@ locals {
     ] : [],
     var.enable_cloudfront ? [
       {
-        Sid      = "AllowCloudFrontRead"
-        Effect   = "Allow"
+        Sid    = "AllowCloudFrontRead"
+        Effect = "Allow"
         Principal = {
           Service = "cloudfront.amazonaws.com"
         }
@@ -128,7 +263,8 @@ locals {
           }
         }
       }
-    ] : []
+    ] : [],
+    var.additional_bucket_policy_statements
   )
 }
 
@@ -139,18 +275,6 @@ resource "aws_s3_bucket_policy" "this" {
     Version   = "2012-10-17"
     Statement = local.bucket_policy_statements
   })
-}
 
-output "bucket_name" {
-  value = aws_s3_bucket.this.id
-}
-
-output "cloudfront_domain_name" {
-  value       = var.enable_cloudfront ? aws_cloudfront_distribution.this[0].domain_name : ""
-  description = "CloudFront domain for public access (when enabled)."
-}
-
-output "cloudfront_distribution_id" {
-  value       = var.enable_cloudfront ? aws_cloudfront_distribution.this[0].id : ""
-  description = "CloudFront distribution ID (when enabled)."
+  depends_on = [aws_s3_bucket_public_access_block.this]
 }
