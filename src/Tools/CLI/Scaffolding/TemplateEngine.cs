@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using FSH.CLI.Models;
 
 namespace FSH.CLI.Scaffolding;
@@ -6,7 +7,19 @@ namespace FSH.CLI.Scaffolding;
 [SuppressMessage("Globalization", "CA1308:Normalize strings to uppercase", Justification = "Lowercase is required for Docker, Terraform, and GitHub Actions naming conventions")]
 internal static class TemplateEngine
 {
-    private const string FrameworkVersion = "3.0.0";
+    private static readonly string FrameworkVersion = GetFrameworkVersion();
+
+    private static string GetFrameworkVersion()
+    {
+        var assembly = Assembly.GetExecutingAssembly();
+        var version = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
+            ?? assembly.GetName().Version?.ToString()
+            ?? "10.0.0";
+
+        // Remove any +buildmetadata suffix (e.g., "10.0.0-rc.1+abc123" -> "10.0.0-rc.1")
+        var plusIndex = version.IndexOf('+', StringComparison.Ordinal);
+        return plusIndex > 0 ? version[..plusIndex] : version;
+    }
 
     public static string GenerateSolution(ProjectOptions options)
     {
@@ -65,14 +78,14 @@ internal static class TemplateEngine
               </PropertyGroup>
 
               <ItemGroup>
-                <!-- FSH Framework packages -->
-                <PackageReference Include="FSH.Framework.Core" />
-                <PackageReference Include="FSH.Framework.Persistence" />
-                <PackageReference Include="FSH.Framework.Caching" />
-                <PackageReference Include="FSH.Framework.Web" />
-                <PackageReference Include="FSH.Modules.Identity" />
-                <PackageReference Include="FSH.Modules.Multitenancy" />
-                <PackageReference Include="FSH.Modules.Auditing" />
+                <!-- FullStackHero Framework packages -->
+                <PackageReference Include="FullStackHero.Framework.Core" />
+                <PackageReference Include="FullStackHero.Framework.Persistence" />
+                <PackageReference Include="FullStackHero.Framework.Caching" />
+                <PackageReference Include="FullStackHero.Framework.Web" />
+                <PackageReference Include="FullStackHero.Modules.Identity" />
+                <PackageReference Include="FullStackHero.Modules.Multitenancy" />
+                <PackageReference Include="FullStackHero.Modules.Auditing" />
               </ItemGroup>
             {{(serverless ? """
 
@@ -233,7 +246,7 @@ internal static class TemplateEngine
             <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" />
             <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" />
             <PackageReference Include="MudBlazor" />
-            <PackageReference Include="FSH.Framework.Blazor.UI" />
+            <PackageReference Include="FullStackHero.Framework.Blazor.UI" />
           </ItemGroup>
 
         </Project>
@@ -564,8 +577,8 @@ internal static class TemplateEngine
               </PropertyGroup>
 
               <ItemGroup>
-                <PackageReference Include="FSH.Framework.Core" />
-                <PackageReference Include="FSH.Framework.Persistence" />
+                <PackageReference Include="FullStackHero.Framework.Core" />
+                <PackageReference Include="FullStackHero.Framework.Persistence" />
               </ItemGroup>
 
               <ItemGroup>
@@ -1055,15 +1068,15 @@ jobs:
                 <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
               </PropertyGroup>
 
-              <ItemGroup Label="FSH Framework">
-                <PackageVersion Include="FSH.Framework.Core" Version="{{FrameworkVersion}}" />
-                <PackageVersion Include="FSH.Framework.Persistence" Version="{{FrameworkVersion}}" />
-                <PackageVersion Include="FSH.Framework.Caching" Version="{{FrameworkVersion}}" />
-                <PackageVersion Include="FSH.Framework.Web" Version="{{FrameworkVersion}}" />
-                <PackageVersion Include="FSH.Framework.Blazor.UI" Version="{{FrameworkVersion}}" />
-                <PackageVersion Include="FSH.Modules.Identity" Version="{{FrameworkVersion}}" />
-                <PackageVersion Include="FSH.Modules.Multitenancy" Version="{{FrameworkVersion}}" />
-                <PackageVersion Include="FSH.Modules.Auditing" Version="{{FrameworkVersion}}" />
+              <ItemGroup Label="FullStackHero Framework">
+                <PackageVersion Include="FullStackHero.Framework.Core" Version="{{FrameworkVersion}}" />
+                <PackageVersion Include="FullStackHero.Framework.Persistence" Version="{{FrameworkVersion}}" />
+                <PackageVersion Include="FullStackHero.Framework.Caching" Version="{{FrameworkVersion}}" />
+                <PackageVersion Include="FullStackHero.Framework.Web" Version="{{FrameworkVersion}}" />
+                <PackageVersion Include="FullStackHero.Framework.Blazor.UI" Version="{{FrameworkVersion}}" />
+                <PackageVersion Include="FullStackHero.Modules.Identity" Version="{{FrameworkVersion}}" />
+                <PackageVersion Include="FullStackHero.Modules.Multitenancy" Version="{{FrameworkVersion}}" />
+                <PackageVersion Include="FullStackHero.Modules.Auditing" Version="{{FrameworkVersion}}" />
               </ItemGroup>
 
               <ItemGroup Label="Aspire">
