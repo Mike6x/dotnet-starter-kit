@@ -94,17 +94,21 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish API container
+        env:
+          CONTAINER_TAGS: ${{ steps.version.outputs.version }};latest
         run: |
           dotnet publish src/Playground/Playground.Api/Playground.Api.csproj \
             -c Release -r linux-x64 \
             -p:PublishProfile=DefaultContainer \
             -p:ContainerRepository=ghcr.io/${{ github.repository_owner }}/fsh-playground-api \
-            '-p:ContainerImageTags=${{ steps.version.outputs.version }};latest'
+            -p:ContainerImageTags="$CONTAINER_TAGS"
 
       - name: Publish Blazor container
+        env:
+          CONTAINER_TAGS: ${{ steps.version.outputs.version }};latest
         run: |
           dotnet publish src/Playground/Playground.Blazor/Playground.Blazor.csproj \
             -c Release -r linux-x64 \
             -p:PublishProfile=DefaultContainer \
             -p:ContainerRepository=ghcr.io/${{ github.repository_owner }}/fsh-playground-blazor \
-            '-p:ContainerImageTags=${{ steps.version.outputs.version }};latest'
+            -p:ContainerImageTags="$CONTAINER_TAGS"
