@@ -93,20 +93,28 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Publish API container
+      - name: Build API container
         run: |
           dotnet publish src/Playground/Playground.Api/Playground.Api.csproj \
             -c Release -r linux-x64 \
             -p:PublishProfile=DefaultContainer \
             -p:ContainerRepository=ghcr.io/${{ github.repository_owner }}/fsh-playground-api \
-            -p:ContainerImageTags='"${{ steps.version.outputs.version }};latest"' \
-            -p:ContainerPushToRegistry=true
+            -p:ContainerImageTags='"${{ steps.version.outputs.version }};latest"'
 
-      - name: Publish Blazor container
+      - name: Build Blazor container
         run: |
           dotnet publish src/Playground/Playground.Blazor/Playground.Blazor.csproj \
             -c Release -r linux-x64 \
             -p:PublishProfile=DefaultContainer \
             -p:ContainerRepository=ghcr.io/${{ github.repository_owner }}/fsh-playground-blazor \
-            -p:ContainerImageTags='"${{ steps.version.outputs.version }};latest"' \
-            -p:ContainerPushToRegistry=true
+            -p:ContainerImageTags='"${{ steps.version.outputs.version }};latest"'
+
+      - name: Push API container to GHCR
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/fsh-playground-api:${{ steps.version.outputs.version }}
+          docker push ghcr.io/${{ github.repository_owner }}/fsh-playground-api:latest
+
+      - name: Push Blazor container to GHCR
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/fsh-playground-blazor:${{ steps.version.outputs.version }}
+          docker push ghcr.io/${{ github.repository_owner }}/fsh-playground-blazor:latest
