@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<RootNamespace>FSH.Playground.Blazor</RootNamespace>
 		<AssemblyName>FSH.Playground.Blazor</AssemblyName>
+		<IsPackable>false</IsPackable>
 
 		<!-- .NET 10 Performance Optimizations -->
 		<TieredCompilation>true</TieredCompilation>

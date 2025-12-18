@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<RootNamespace>FSH.Playground.Api</RootNamespace>
 		<AssemblyName>FSH.Playground.Api</AssemblyName>
+		<IsPackable>false</IsPackable>
 
 		<!-- Container configuration -->
 		<ContainerPort>8080</ContainerPort>
