@@ -10,7 +10,8 @@ public static class SimpleBffAuth
     public static void MapSimpleBffAuthEndpoints(this WebApplication app)
     {
         // Login endpoint - calls identity API, sets cookie, returns success
-        app.MapPost("/api/auth/login", async (
+        // Note: Uses /bff/ prefix to avoid conflict with ALB routing /api/* to the API service
+        app.MapPost("/bff/auth/login", async (
             HttpContext httpContext,
             ITokenClient tokenClient,
             ILogger<Program> logger) =>
@@ -92,7 +93,7 @@ public static class SimpleBffAuth
         .DisableAntiforgery();
 
         // Logout endpoint - POST for API calls
-        app.MapPost("/api/auth/logout", async (HttpContext httpContext) =>
+        app.MapPost("/bff/auth/logout", async (HttpContext httpContext) =>
         {
             await httpContext.SignOutAsync("Cookies");
             return Results.Ok();
