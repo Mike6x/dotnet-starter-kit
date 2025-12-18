@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<RootNamespace>FSH.Modules.Identity</RootNamespace>
 		<AssemblyName>FSH.Modules.Identity</AssemblyName>
+		<PackageId>FullStackHero.Modules.Identity</PackageId>
 		<NoWarn>CA1031;CA1812;CA2208;S3267;S3928;CS1591</NoWarn>
 	</PropertyGroup>
 	<ItemGroup>

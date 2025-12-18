@@ -9,7 +9,7 @@
     <!-- Tool packaging -->
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>fsh</ToolCommandName>
-    <PackageId>FSH.CLI</PackageId>
+    <PackageId>FullStackHero.CLI</PackageId>
     <PackageOutputPath>./nupkg</PackageOutputPath>
 
     <!-- NuGet metadata -->

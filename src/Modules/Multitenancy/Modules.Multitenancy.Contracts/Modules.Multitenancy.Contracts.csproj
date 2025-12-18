@@ -2,6 +2,7 @@
 	<PropertyGroup>
 		<RootNamespace>FSH.Modules.Multitenancy.Contracts</RootNamespace>
 		<AssemblyName>FSH.Modules.Multitenancy.Contracts</AssemblyName>
+		<PackageId>FullStackHero.Modules.Multitenancy.Contracts</PackageId>
 	</PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Mediator.Abstractions" />

@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<RootNamespace>FSH.Modules.Auditing</RootNamespace>
 		<AssemblyName>FSH.Modules.Auditing</AssemblyName>
+		<PackageId>FullStackHero.Modules.Auditing</PackageId>
 	</PropertyGroup>
 
 	<ItemGroup>

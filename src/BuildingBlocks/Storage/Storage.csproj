@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<RootNamespace>FSH.Framework.Storage</RootNamespace>
 		<AssemblyName>FSH.Framework.Storage</AssemblyName>
+		<PackageId>FullStackHero.Framework.Storage</PackageId>
 	</PropertyGroup>
 	
 	<ItemGroup>

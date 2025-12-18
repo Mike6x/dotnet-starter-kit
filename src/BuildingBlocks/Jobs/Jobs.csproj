@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<RootNamespace>FSH.Framework.Jobs</RootNamespace>
 		<AssemblyName>FSH.Framework.Jobs</AssemblyName>
+		<PackageId>FullStackHero.Framework.Jobs</PackageId>
 	</PropertyGroup>
 	
 	<ItemGroup>

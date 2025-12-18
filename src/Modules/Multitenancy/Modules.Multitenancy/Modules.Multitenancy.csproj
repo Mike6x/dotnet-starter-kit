@@ -2,6 +2,7 @@
 	<PropertyGroup>
 		<RootNamespace>FSH.Modules.Multitenancy</RootNamespace>
 		<AssemblyName>FSH.Modules.Multitenancy</AssemblyName>
+		<PackageId>FullStackHero.Modules.Multitenancy</PackageId>
 	</PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Finbuckle.MultiTenant" />
