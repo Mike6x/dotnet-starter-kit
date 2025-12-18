@@ -69,13 +69,23 @@ internal sealed class NewCommand : AsyncCommand<NewCommand.Settings>
         [DefaultValue(null)]
         public bool? CI { get; set; }
 
+        [CommandOption("--git")]
+        [Description("Initialize git repository")]
+        [DefaultValue(null)]
+        public bool? Git { get; set; }
+
+        [CommandOption("-v|--fsh-version")]
+        [Description("FullStackHero package version (e.g., 10.0.0 or 10.0.0-rc.1)")]
+        [DefaultValue(null)]
+        public string? FshVersion { get; set; }
+
         [CommandOption("--no-interactive")]
         [Description("Disable interactive mode")]
         [DefaultValue(false)]
         public bool NoInteractive { get; set; }
     }
 
-    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, Settings settings, CancellationToken cancellationToken)
     {
         try
         {
@@ -97,10 +107,10 @@ internal sealed class NewCommand : AsyncCommand<NewCommand.Settings>
             }
             else
             {
-                options = ProjectWizard.Run(settings.Name);
+                options = ProjectWizard.Run(settings.Name, settings.FshVersion);
             }
 
-            await SolutionGenerator.GenerateAsync(options);
+            await SolutionGenerator.GenerateAsync(options, cancellationToken);
 
             return 0;
         }
@@ -150,6 +160,8 @@ internal sealed class NewCommand : AsyncCommand<NewCommand.Settings>
             if (settings.Sample.HasValue) options.IncludeSampleModule = settings.Sample.Value;
             if (settings.Terraform.HasValue) options.IncludeTerraform = settings.Terraform.Value;
             if (settings.CI.HasValue) options.IncludeGitHubActions = settings.CI.Value;
+            if (settings.Git.HasValue) options.InitializeGit = settings.Git.Value;
+            if (!string.IsNullOrEmpty(settings.FshVersion)) options.FrameworkVersion = settings.FshVersion;
 
             return options;
         }
@@ -164,11 +176,13 @@ internal sealed class NewCommand : AsyncCommand<NewCommand.Settings>
             Type = ParseProjectType(settings.Type),
             Architecture = ParseArchitecture(settings.Architecture),
             Database = ParseDatabase(settings.Database),
+            InitializeGit = settings.Git ?? true,
             IncludeDocker = settings.Docker ?? true,
             IncludeAspire = settings.Aspire ?? true,
             IncludeSampleModule = settings.Sample ?? false,
             IncludeTerraform = settings.Terraform ?? false,
-            IncludeGitHubActions = settings.CI ?? false
+            IncludeGitHubActions = settings.CI ?? false,
+            FrameworkVersion = settings.FshVersion
         };
     }
 

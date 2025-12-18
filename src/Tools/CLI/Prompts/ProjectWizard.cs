@@ -1,3 +1,4 @@
+using System.Reflection;
 using FSH.CLI.Models;
 using FSH.CLI.UI;
 using FSH.CLI.Validation;
@@ -7,7 +8,7 @@ namespace FSH.CLI.Prompts;
 
 internal static class ProjectWizard
 {
-    public static ProjectOptions Run(string? initialName = null)
+    public static ProjectOptions Run(string? initialName = null, string? initialVersion = null)
     {
         ConsoleTheme.WriteBanner();
 
@@ -19,9 +20,13 @@ internal static class ProjectWizard
             var preset = Presets.All.First(p => p.Name == startChoice);
             var presetName = PromptProjectName(initialName);
             var presetPath = PromptOutputPath();
+            var presetVersion = PromptFrameworkVersion(initialVersion);
 
-            ShowSummary(preset.ToProjectOptions(presetName, presetPath));
-            return preset.ToProjectOptions(presetName, presetPath);
+            var presetOptions = preset.ToProjectOptions(presetName, presetPath);
+            presetOptions.FrameworkVersion = presetVersion;
+
+            ShowSummary(presetOptions);
+            return presetOptions;
         }
 
         // Custom flow
@@ -31,6 +36,7 @@ internal static class ProjectWizard
         var database = PromptDatabase(architecture);
         var features = PromptFeatures(architecture);
         var outputPath = PromptOutputPath();
+        var frameworkVersion = PromptFrameworkVersion(initialVersion);
 
         var options = new ProjectOptions
         {
@@ -38,12 +44,14 @@ internal static class ProjectWizard
             Type = type,
             Architecture = architecture,
             Database = database,
+            InitializeGit = features.Contains("Git Repository"),
             IncludeDocker = features.Contains("Docker Compose"),
             IncludeAspire = features.Contains("Aspire AppHost"),
-            IncludeSampleModule = features.Contains("Sample Module (Todo)"),
+            IncludeSampleModule = features.Contains("Sample Module (Catalog)"),
             IncludeTerraform = features.Contains("Terraform (AWS)"),
             IncludeGitHubActions = features.Contains("GitHub Actions CI"),
-            OutputPath = outputPath
+            OutputPath = outputPath,
+            FrameworkVersion = frameworkVersion
         };
 
         ShowSummary(options);
@@ -57,17 +65,17 @@ internal static class ProjectWizard
 
         var choice = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
-                .Title("How would you like to start?")
+                .Title("[dim]Select template[/]")
                 .PageSize(10)
                 .HighlightStyle(ConsoleTheme.PrimaryStyle)
                 .AddChoices(choices)
                 .UseConverter(c =>
                 {
                     if (c == "Custom")
-                        return "[bold]Custom[/] - Choose your own options";
+                        return "Custom [dim]- configure manually[/]";
 
                     var preset = Presets.All.First(p => p.Name == c);
-                    return $"[bold]{preset.Name}[/] - {preset.Description}";
+                    return $"{preset.Name} [dim]- {preset.Description}[/]";
                 }));
 
         return choice;
@@ -81,19 +89,19 @@ internal static class ProjectWizard
         }
 
         return AnsiConsole.Prompt(
-            new TextPrompt<string>("Project [green]name[/]:")
+            new TextPrompt<string>("[dim]Project name:[/]")
                 .PromptStyle(ConsoleTheme.PrimaryStyle)
-                .ValidationErrorMessage("[red]Invalid project name[/]")
+                .ValidationErrorMessage("[red]Invalid name[/]")
                 .Validate(name =>
                 {
                     if (string.IsNullOrWhiteSpace(name))
-                        return Spectre.Console.ValidationResult.Error("Project name is required");
+                        return Spectre.Console.ValidationResult.Error("Required");
 
                     if (!char.IsLetter(name[0]))
-                        return Spectre.Console.ValidationResult.Error("Project name must start with a letter");
+                        return Spectre.Console.ValidationResult.Error("Must start with a letter");
 
                     if (!name.All(c => char.IsLetterOrDigit(c) || c == '_' || c == '-' || c == '.'))
-                        return Spectre.Console.ValidationResult.Error("Project name can only contain letters, numbers, underscores, hyphens, or dots");
+                        return Spectre.Console.ValidationResult.Error("Only letters, numbers, _, -, or .");
 
                     return Spectre.Console.ValidationResult.Success();
                 }));
@@ -103,38 +111,38 @@ internal static class ProjectWizard
     {
         var choice = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
-                .Title("Project [green]type[/]:")
+                .Title("[dim]Project type[/]")
                 .HighlightStyle(ConsoleTheme.PrimaryStyle)
-                .AddChoices("API only", "API + Blazor (Full Stack)"));
+                .AddChoices("API", "API + Blazor"));
 
-        return choice == "API only" ? ProjectType.Api : ProjectType.ApiBlazor;
+        return choice == "API" ? ProjectType.Api : ProjectType.ApiBlazor;
     }
 
     private static ArchitectureStyle PromptArchitecture(ProjectType projectType)
     {
         var choices = new List<string>
         {
-            "Monolith (single deployable)",
-            "Microservices (separate services)"
+            "Monolith",
+            "Microservices"
         };
 
         // Serverless not available with Blazor
         if (projectType == ProjectType.Api)
         {
-            choices.Add("Serverless (AWS Lambda)");
+            choices.Add("Serverless");
         }
 
         var choice = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
-                .Title("Architecture [green]style[/]:")
+                .Title("[dim]Architecture[/]")
                 .HighlightStyle(ConsoleTheme.PrimaryStyle)
                 .AddChoices(choices));
 
         return choice switch
         {
-            "Monolith (single deployable)" => ArchitectureStyle.Monolith,
-            "Microservices (separate services)" => ArchitectureStyle.Microservices,
-            "Serverless (AWS Lambda)" => ArchitectureStyle.Serverless,
+            "Monolith" => ArchitectureStyle.Monolith,
+            "Microservices" => ArchitectureStyle.Microservices,
+            "Serverless" => ArchitectureStyle.Serverless,
             _ => ArchitectureStyle.Monolith
         };
     }
@@ -150,12 +158,12 @@ internal static class ProjectWizard
         // SQLite not available with Microservices
         if (architecture != ArchitectureStyle.Microservices)
         {
-            choices.Add("SQLite (dev only)");
+            choices.Add("SQLite");
         }
 
         var choice = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
-                .Title("Database [green]provider[/]:")
+                .Title("[dim]Database[/]")
                 .HighlightStyle(ConsoleTheme.PrimaryStyle)
                 .AddChoices(choices));
 
@@ -163,7 +171,7 @@ internal static class ProjectWizard
         {
             "PostgreSQL" => DatabaseProvider.PostgreSQL,
             "SQL Server" => DatabaseProvider.SqlServer,
-            "SQLite (dev only)" => DatabaseProvider.SQLite,
+            "SQLite" => DatabaseProvider.SQLite,
             _ => DatabaseProvider.PostgreSQL
         };
     }
@@ -172,8 +180,9 @@ internal static class ProjectWizard
     {
         var choices = new List<string>
         {
+            "Git Repository",
             "Docker Compose",
-            "Sample Module (Todo)",
+            "Sample Module (Catalog)",
             "Terraform (AWS)",
             "GitHub Actions CI"
         };
@@ -181,19 +190,19 @@ internal static class ProjectWizard
         // Aspire not available with Serverless
         if (architecture != ArchitectureStyle.Serverless)
         {
-            choices.Insert(1, "Aspire AppHost");
+            choices.Insert(2, "Aspire AppHost");
         }
 
-        var defaults = new List<string> { "Docker Compose" };
+        var defaults = new List<string> { "Git Repository", "Docker Compose" };
         if (architecture != ArchitectureStyle.Serverless)
         {
             defaults.Add("Aspire AppHost");
         }
 
         var prompt = new MultiSelectionPrompt<string>()
-            .Title("Additional [green]features[/]:")
+            .Title("[dim]Features[/] [dim italic](space to toggle)[/]")
             .HighlightStyle(ConsoleTheme.PrimaryStyle)
-            .InstructionsText("[grey](Press [blue]<space>[/] to toggle, [green]<enter>[/] to accept)[/]")
+            .InstructionsText("")
             .AddChoices(choices);
 
         foreach (var item in defaults)
@@ -206,7 +215,7 @@ internal static class ProjectWizard
 
     private static string PromptOutputPath()
     {
-        var useCurrentDir = AnsiConsole.Confirm("Create in [green]current directory[/]?", true);
+        var useCurrentDir = AnsiConsole.Confirm("[dim]Create in current directory?[/]", true);
 
         if (useCurrentDir)
         {
@@ -214,50 +223,95 @@ internal static class ProjectWizard
         }
 
         return AnsiConsole.Prompt(
-            new TextPrompt<string>("Output [green]path[/]:")
+            new TextPrompt<string>("[dim]Output path:[/]")
                 .PromptStyle(ConsoleTheme.PrimaryStyle)
                 .DefaultValue(".")
                 .ValidationErrorMessage("[red]Invalid path[/]")
                 .Validate(path =>
                 {
                     if (string.IsNullOrWhiteSpace(path))
-                        return Spectre.Console.ValidationResult.Error("Path is required");
+                        return Spectre.Console.ValidationResult.Error("Required");
 
                     return Spectre.Console.ValidationResult.Success();
                 }));
     }
 
+    private static string? PromptFrameworkVersion(string? initialVersion)
+    {
+        // If a version was provided via CLI, use it
+        if (!string.IsNullOrWhiteSpace(initialVersion))
+        {
+            return initialVersion;
+        }
+
+        var defaultVersion = GetDefaultFrameworkVersion();
+
+        var useDefault = AnsiConsole.Confirm(
+            $"[dim]Use default FSH version[/] [cyan]{defaultVersion}[/][dim]?[/]",
+            true);
+
+        if (useDefault)
+        {
+            return null; // null means use CLI's version
+        }
+
+        return AnsiConsole.Prompt(
+            new TextPrompt<string>("[dim]FSH version:[/]")
+                .PromptStyle(ConsoleTheme.PrimaryStyle)
+                .DefaultValue(defaultVersion)
+                .ValidationErrorMessage("[red]Invalid version[/]")
+                .Validate(version =>
+                {
+                    if (string.IsNullOrWhiteSpace(version))
+                        return Spectre.Console.ValidationResult.Error("Required");
+
+                    // Basic semver validation
+                    if (!System.Text.RegularExpressions.Regex.IsMatch(version, @"^\d+\.\d+\.\d+(-[\w\d\.]+)?$"))
+                        return Spectre.Console.ValidationResult.Error("Use semver format (e.g., 10.0.0)");
+
+                    return Spectre.Console.ValidationResult.Success();
+                }));
+    }
+
+    private static string GetDefaultFrameworkVersion()
+    {
+        var assembly = Assembly.GetExecutingAssembly();
+        var version = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
+            ?? assembly.GetName().Version?.ToString()
+            ?? "10.0.0";
+
+        // Remove any +buildmetadata suffix
+        var plusIndex = version.IndexOf('+', StringComparison.Ordinal);
+        return plusIndex > 0 ? version[..plusIndex] : version;
+    }
+
     private static void ShowSummary(ProjectOptions options)
     {
-        AnsiConsole.WriteLine();
+        ConsoleTheme.WriteHeader("Configuration");
 
-        var table = new Table()
-            .Border(TableBorder.Rounded)
-            .BorderColor(ConsoleTheme.Primary)
-            .AddColumn(new TableColumn("[bold]Option[/]").LeftAligned())
-            .AddColumn(new TableColumn("[bold]Value[/]").LeftAligned());
+        ConsoleTheme.WriteKeyValue("Name", options.Name, highlight: true);
+        ConsoleTheme.WriteKeyValue("Type", FormatEnum(options.Type));
+        ConsoleTheme.WriteKeyValue("Architecture", FormatEnum(options.Architecture));
+        ConsoleTheme.WriteKeyValue("Database", FormatEnum(options.Database));
+        ConsoleTheme.WriteKeyValue("Version", options.FrameworkVersion ?? GetDefaultFrameworkVersion());
+        ConsoleTheme.WriteKeyValue("Output", options.OutputPath);
 
-        table.AddRow("Project Name", $"[green]{options.Name}[/]");
-        table.AddRow("Project Type", FormatEnum(options.Type));
-        table.AddRow("Architecture", FormatEnum(options.Architecture));
-        table.AddRow("Database", FormatEnum(options.Database));
-        table.AddRow("Docker Compose", FormatBool(options.IncludeDocker));
-        table.AddRow("Aspire AppHost", FormatBool(options.IncludeAspire));
-        table.AddRow("Sample Module", FormatBool(options.IncludeSampleModule));
-        table.AddRow("Terraform (AWS)", FormatBool(options.IncludeTerraform));
-        table.AddRow("GitHub Actions CI", FormatBool(options.IncludeGitHubActions));
-        table.AddRow("Output Path", options.OutputPath);
+        // Build features list
+        var features = new List<string>();
+        if (options.InitializeGit) features.Add("Git");
+        if (options.IncludeDocker) features.Add("Docker");
+        if (options.IncludeAspire) features.Add("Aspire");
+        if (options.IncludeSampleModule) features.Add("Sample");
+        if (options.IncludeTerraform) features.Add("Terraform");
+        if (options.IncludeGitHubActions) features.Add("CI");
 
-        AnsiConsole.Write(new Panel(table)
-            .Header("[bold] Project Configuration [/]")
-            .HeaderAlignment(Justify.Center)
-            .BorderColor(ConsoleTheme.Primary));
+        ConsoleTheme.WriteKeyValue("Features", features.Count > 0 ? string.Join(", ", features) : "none");
 
         AnsiConsole.WriteLine();
 
-        if (!AnsiConsole.Confirm("Proceed with this configuration?", true))
+        if (!AnsiConsole.Confirm("Create project?", true))
         {
-            AnsiConsole.MarkupLine("[yellow]Aborted.[/]");
+            AnsiConsole.MarkupLine("[dim]Cancelled.[/]");
             Environment.Exit(0);
         }
     }
@@ -265,14 +319,11 @@ internal static class ProjectWizard
     private static string FormatEnum<T>(T value) where T : Enum =>
         value.ToString() switch
         {
-            "Api" => "API only",
+            "Api" => "API",
             "ApiBlazor" => "API + Blazor",
             "PostgreSQL" => "PostgreSQL",
             "SqlServer" => "SQL Server",
             "SQLite" => "SQLite",
             _ => value.ToString()
         };
-
-    private static string FormatBool(bool value) =>
-        value ? "[green]Yes[/]" : "[grey]No[/]";
 }

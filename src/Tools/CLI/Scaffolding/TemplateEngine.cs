@@ -67,6 +67,16 @@ internal static class TemplateEngine
 
         var serverless = options.Architecture == ArchitectureStyle.Serverless;
 
+        var sampleModuleRef = options.IncludeSampleModule
+            ? $"""
+
+              <ItemGroup>
+                <!-- Sample Module -->
+                <ProjectReference Include="..\Modules\{options.Name}.Catalog\{options.Name}.Catalog.csproj" />
+              </ItemGroup>
+            """
+            : string.Empty;
+
         return $$"""
             <Project Sdk="Microsoft.NET.Sdk.Web">
 
@@ -83,9 +93,19 @@ internal static class TemplateEngine
                 <PackageReference Include="FullStackHero.Framework.Persistence" />
                 <PackageReference Include="FullStackHero.Framework.Caching" />
                 <PackageReference Include="FullStackHero.Framework.Web" />
+                <!-- FullStackHero Modules -->
                 <PackageReference Include="FullStackHero.Modules.Identity" />
+                <PackageReference Include="FullStackHero.Modules.Identity.Contracts" />
                 <PackageReference Include="FullStackHero.Modules.Multitenancy" />
+                <PackageReference Include="FullStackHero.Modules.Multitenancy.Contracts" />
                 <PackageReference Include="FullStackHero.Modules.Auditing" />
+                <PackageReference Include="FullStackHero.Modules.Auditing.Contracts" />
+                <!-- Mediator -->
+                <PackageReference Include="Mediator.Abstractions" />
+                <PackageReference Include="Mediator.SourceGenerator">
+                  <PrivateAssets>all</PrivateAssets>
+                  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+                </PackageReference>
               </ItemGroup>
             {{(serverless ? """
 
@@ -93,7 +113,7 @@ internal static class TemplateEngine
                 <!-- AWS Lambda -->
                 <PackageReference Include="Amazon.Lambda.AspNetCoreServer.Hosting" />
               </ItemGroup>
-            """ : "")}}
+            """ : "")}}{{sampleModuleRef}}
             </Project>
             """;
     }
@@ -106,8 +126,18 @@ internal static class TemplateEngine
 
         if (serverless)
         {
-            return """
-                using FSH.Framework.Web;
+            var serverlessModuleUsing = options.IncludeSampleModule
+                ? $"using {options.Name}.Catalog;\n"
+                : string.Empty;
+
+            var serverlessModuleAssembly = options.IncludeSampleModule
+                ? $",\n    typeof(CatalogModule).Assembly"
+                : string.Empty;
+
+            return $$"""
+                {{serverlessModuleUsing}}using FSH.Framework.Web;
+                using FSH.Framework.Web.Modules;
+                using System.Reflection;
 
                 var builder = WebApplication.CreateBuilder(args);
 
@@ -118,12 +148,15 @@ internal static class TemplateEngine
                 builder.AddHeroPlatform(platform =>
                 {
                     platform.EnableOpenApi = true;
-                    platform.EnableAuth = true;
                     platform.EnableCaching = true;
                 });
 
                 // Add modules
-                builder.AddModules(typeof(Program).Assembly);
+                var moduleAssemblies = new Assembly[]
+                {
+                    typeof(Program).Assembly{{serverlessModuleAssembly}}
+                };
+                builder.AddModules(moduleAssemblies);
 
                 var app = builder.Build();
 
@@ -133,27 +166,64 @@ internal static class TemplateEngine
                     platform.MapModules = true;
                 });
 
-                app.Run();
+                await app.RunAsync();
                 """;
         }
 
-        return """
-            using FSH.Framework.Web;
+        var sampleModuleUsing = options.IncludeSampleModule
+            ? $"using {options.Name}.Catalog;\n"
+            : string.Empty;
+
+        var sampleModuleAssembly = options.IncludeSampleModule
+            ? ",\n    typeof(CatalogModule).Assembly"
+            : string.Empty;
+
+        return $$"""
+            {{sampleModuleUsing}}using FSH.Framework.Web;
+            using FSH.Framework.Web.Modules;
+            using FSH.Modules.Auditing;
+            using FSH.Modules.Identity;
+            using FSH.Modules.Identity.Contracts.v1.Tokens.TokenGeneration;
+            using FSH.Modules.Identity.Features.v1.Tokens.TokenGeneration;
+            using FSH.Modules.Multitenancy;
+            using FSH.Modules.Multitenancy.Contracts.v1.GetTenantStatus;
+            using FSH.Modules.Multitenancy.Features.v1.GetTenantStatus;
+            using System.Reflection;
 
             var builder = WebApplication.CreateBuilder(args);
+
+            // Configure Mediator with required assemblies
+            builder.Services.AddMediator(o =>
+            {
+                o.ServiceLifetime = ServiceLifetime.Scoped;
+                o.Assemblies = [
+                    typeof(GenerateTokenCommand),
+                    typeof(GenerateTokenCommandHandler),
+                    typeof(GetTenantStatusQuery),
+                    typeof(GetTenantStatusQueryHandler),
+                    typeof(FSH.Modules.Auditing.Contracts.AuditEnvelope),
+                    typeof(FSH.Modules.Auditing.Persistence.AuditDbContext)];
+            });
+
+            // FSH Module assemblies
+            var moduleAssemblies = new Assembly[]
+            {
+                typeof(IdentityModule).Assembly,
+                typeof(MultitenancyModule).Assembly,
+                typeof(AuditingModule).Assembly{{sampleModuleAssembly}}
+            };
 
             // Add FSH Platform
             builder.AddHeroPlatform(platform =>
             {
                 platform.EnableOpenApi = true;
-                platform.EnableAuth = true;
                 platform.EnableCaching = true;
                 platform.EnableJobs = true;
                 platform.EnableMailing = true;
             });
 
             // Add modules
-            builder.AddModules(typeof(Program).Assembly);
+            builder.AddModules(moduleAssemblies);
 
             var app = builder.Build();
 
@@ -166,7 +236,7 @@ internal static class TemplateEngine
                 platform.MapModules = true;
             });
 
-            app.Run();
+            await app.RunAsync();
             """;
     }
 
@@ -381,14 +451,14 @@ internal static class TemplateEngine
         };
 
         return $$"""
-            <Project Sdk="Microsoft.NET.Sdk">
+            <Project Sdk="Aspire.AppHost.Sdk/13.0.0">
 
               <PropertyGroup>
                 <OutputType>Exe</OutputType>
                 <TargetFramework>net10.0</TargetFramework>
                 <ImplicitUsings>enable</ImplicitUsings>
                 <Nullable>enable</Nullable>
-                <IsAspireHost>true</IsAspireHost>
+                <IsPackable>false</IsPackable>
               </PropertyGroup>
 
               <ItemGroup>
@@ -409,50 +479,81 @@ internal static class TemplateEngine
     {
         ArgumentNullException.ThrowIfNull(options);
 
-        var (db, apiRef) = options.Database switch
-        {
-            DatabaseProvider.PostgreSQL => (
-                """
-                var postgres = builder.AddPostgres("postgres")
-                    .WithPgAdmin()
-                    .AddDatabase("db");
-                """,
-                ".WithReference(postgres)"),
-            DatabaseProvider.SqlServer => (
-                """
-                var sqlserver = builder.AddSqlServer("sqlserver")
-                    .AddDatabase("db");
-                """,
-                ".WithReference(sqlserver)"),
-            DatabaseProvider.SQLite => (
-                "// SQLite runs embedded - no container needed",
-                string.Empty),
-            _ => ("// Database configured externally", string.Empty)
-        };
-
+        var projectNameLower = options.Name.ToLowerInvariant();
         var projectNameSafe = options.Name.Replace(".", "_", StringComparison.Ordinal);
 
-        var blazorProject = options.Type == ProjectType.ApiBlazor
-            ? $"""
+        var (dbSetup, dbProvider, dbRef, dbWait, migrationsAssembly) = options.Database switch
+        {
+            DatabaseProvider.PostgreSQL => (
+                $"""
+                // Postgres container + database
+                var postgres = builder.AddPostgres("postgres").WithDataVolume("{projectNameLower}-postgres-data").AddDatabase("{projectNameLower}");
+                """,
+                "POSTGRESQL",
+                ".WithReference(postgres)",
+                ".WaitFor(postgres)",
+                $"{options.Name}.Migrations"),
+            DatabaseProvider.SqlServer => (
+                $"""
+                // SQL Server container + database
+                var sqlserver = builder.AddSqlServer("sqlserver").WithDataVolume("{projectNameLower}-sqlserver-data").AddDatabase("{projectNameLower}");
+                """,
+                "MSSQL",
+                ".WithReference(sqlserver)",
+                ".WaitFor(sqlserver)",
+                $"{options.Name}.Migrations"),
+            DatabaseProvider.SQLite => (
+                "// SQLite runs embedded - no container needed",
+                "SQLITE",
+                string.Empty,
+                string.Empty,
+                $"{options.Name}.Migrations"),
+            _ => ("// Database configured externally", "POSTGRESQL", string.Empty, string.Empty, $"{options.Name}.Migrations")
+        };
 
-                builder.AddProject<Projects.{projectNameSafe}_Blazor>("blazor")
-                    .WithReference(api);
+        var redisSetup = $"""
+            var redis = builder.AddRedis("redis").WithDataVolume("{projectNameLower}-redis-data");
+            """;
+
+        // Build database environment variables
+        var dbResourceName = options.Database == DatabaseProvider.PostgreSQL ? "postgres" : "sqlserver";
+        var dbEnvVars = options.Database != DatabaseProvider.SQLite
+            ? $$"""
+                .WithEnvironment("DatabaseOptions__Provider", "{{dbProvider}}")
+                .WithEnvironment("DatabaseOptions__ConnectionString", {{dbResourceName}}.Resource.ConnectionStringExpression)
+                .WithEnvironment("DatabaseOptions__MigrationsAssembly", "{{migrationsAssembly}}")
+                {{dbWait}}
                 """
-            : string.Empty;
+            : """
+                .WithEnvironment("DatabaseOptions__Provider", "SQLITE")
+                """;
+
+        // When Blazor is included, api variable is referenced; otherwise suppress unused warning
+        var (apiDeclaration, blazorProject) = options.Type == ProjectType.ApiBlazor
+            ? ($"var api = builder.AddProject<Projects.{projectNameSafe}_Api>(\"{projectNameLower}-api\")",
+               $"""
+
+                builder.AddProject<Projects.{projectNameSafe}_Blazor>("{projectNameLower}-blazor");
+                """)
+            : ($"builder.AddProject<Projects.{projectNameSafe}_Api>(\"{projectNameLower}-api\")", string.Empty);
 
         return $$"""
             var builder = DistributedApplication.CreateBuilder(args);
 
-            {{db}}
+            {{dbSetup}}
 
-            var redis = builder.AddRedis("redis");
+            {{redisSetup}}
 
-            var api = builder.AddProject<Projects.{{projectNameSafe}}_Api>("api")
-                {{apiRef}}
-                .WithReference(redis);
+            {{apiDeclaration}}
+                {{dbRef}}
+                .WithEnvironment("ASPNETCORE_ENVIRONMENT", "Development")
+                {{dbEnvVars}}
+                .WithReference(redis)
+                .WithEnvironment("CachingOptions__Redis", redis.Resource.ConnectionStringExpression)
+                .WaitFor(redis);
             {{blazorProject}}
 
-            builder.Build().Run();
+            await builder.Build().RunAsync();
             """;
     }
 
@@ -579,6 +680,7 @@ internal static class TemplateEngine
               <ItemGroup>
                 <PackageReference Include="FullStackHero.Framework.Core" />
                 <PackageReference Include="FullStackHero.Framework.Persistence" />
+                <PackageReference Include="FullStackHero.Framework.Web" />
               </ItemGroup>
 
               <ItemGroup>
@@ -594,8 +696,10 @@ internal static class TemplateEngine
         ArgumentNullException.ThrowIfNull(options);
 
         return $$"""
-            using FSH.Framework.Core.Module;
+            using {{options.Name}}.Catalog.Features.v1.Products;
+            using FSH.Framework.Web.Modules;
             using Microsoft.AspNetCore.Builder;
+            using Microsoft.AspNetCore.Http;
             using Microsoft.AspNetCore.Routing;
             using Microsoft.Extensions.Hosting;
 
@@ -1059,8 +1163,13 @@ jobs:
             """;
     }
 
-    public static string GenerateDirectoryPackagesProps()
+    public static string GenerateDirectoryPackagesProps(ProjectOptions options)
     {
+        ArgumentNullException.ThrowIfNull(options);
+
+        // Use custom version from options, or fall back to CLI's version
+        var version = options.FrameworkVersion ?? FrameworkVersion;
+
         return $$"""
             <Project>
               <PropertyGroup>
@@ -1069,14 +1178,25 @@ jobs:
               </PropertyGroup>
 
               <ItemGroup Label="FullStackHero Framework">
-                <PackageVersion Include="FullStackHero.Framework.Core" Version="{{FrameworkVersion}}" />
-                <PackageVersion Include="FullStackHero.Framework.Persistence" Version="{{FrameworkVersion}}" />
-                <PackageVersion Include="FullStackHero.Framework.Caching" Version="{{FrameworkVersion}}" />
-                <PackageVersion Include="FullStackHero.Framework.Web" Version="{{FrameworkVersion}}" />
-                <PackageVersion Include="FullStackHero.Framework.Blazor.UI" Version="{{FrameworkVersion}}" />
-                <PackageVersion Include="FullStackHero.Modules.Identity" Version="{{FrameworkVersion}}" />
-                <PackageVersion Include="FullStackHero.Modules.Multitenancy" Version="{{FrameworkVersion}}" />
-                <PackageVersion Include="FullStackHero.Modules.Auditing" Version="{{FrameworkVersion}}" />
+                <PackageVersion Include="FullStackHero.Framework.Core" Version="{{version}}" />
+                <PackageVersion Include="FullStackHero.Framework.Shared" Version="{{version}}" />
+                <PackageVersion Include="FullStackHero.Framework.Persistence" Version="{{version}}" />
+                <PackageVersion Include="FullStackHero.Framework.Caching" Version="{{version}}" />
+                <PackageVersion Include="FullStackHero.Framework.Mailing" Version="{{version}}" />
+                <PackageVersion Include="FullStackHero.Framework.Jobs" Version="{{version}}" />
+                <PackageVersion Include="FullStackHero.Framework.Storage" Version="{{version}}" />
+                <PackageVersion Include="FullStackHero.Framework.Eventing" Version="{{version}}" />
+                <PackageVersion Include="FullStackHero.Framework.Web" Version="{{version}}" />
+                <PackageVersion Include="FullStackHero.Framework.Blazor.UI" Version="{{version}}" />
+              </ItemGroup>
+
+              <ItemGroup Label="FullStackHero Modules">
+                <PackageVersion Include="FullStackHero.Modules.Identity" Version="{{version}}" />
+                <PackageVersion Include="FullStackHero.Modules.Identity.Contracts" Version="{{version}}" />
+                <PackageVersion Include="FullStackHero.Modules.Multitenancy" Version="{{version}}" />
+                <PackageVersion Include="FullStackHero.Modules.Multitenancy.Contracts" Version="{{version}}" />
+                <PackageVersion Include="FullStackHero.Modules.Auditing" Version="{{version}}" />
+                <PackageVersion Include="FullStackHero.Modules.Auditing.Contracts" Version="{{version}}" />
               </ItemGroup>
 
               <ItemGroup Label="Aspire">
@@ -1101,6 +1221,11 @@ jobs:
 
               <ItemGroup Label="AWS">
                 <PackageVersion Include="Amazon.Lambda.AspNetCoreServer.Hosting" Version="1.7.2" />
+              </ItemGroup>
+
+              <ItemGroup Label="Mediator">
+                <PackageVersion Include="Mediator.Abstractions" Version="3.1.0-preview.14" />
+                <PackageVersion Include="Mediator.SourceGenerator" Version="3.1.0-preview.14" />
               </ItemGroup>
 
               <ItemGroup Label="Code Quality">

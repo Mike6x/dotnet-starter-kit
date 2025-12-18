@@ -11,7 +11,13 @@ internal sealed class ProjectOptions
     public bool IncludeSampleModule { get; set; }
     public bool IncludeTerraform { get; set; }
     public bool IncludeGitHubActions { get; set; }
+    public bool InitializeGit { get; set; } = true;
     public string OutputPath { get; set; } = ".";
+
+    /// <summary>
+    /// Version of FullStackHero packages to use. If null, uses the CLI's version.
+    /// </summary>
+    public string? FrameworkVersion { get; set; }
 }
 
 internal enum ProjectType

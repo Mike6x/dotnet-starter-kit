@@ -7,7 +7,7 @@ namespace FSH.CLI.Scaffolding;
 
 internal static class SolutionGenerator
 {
-    public static async Task GenerateAsync(ProjectOptions options)
+    public static async Task GenerateAsync(ProjectOptions options, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(options);
 
@@ -15,102 +15,83 @@ internal static class SolutionGenerator
 
         if (Directory.Exists(projectPath) &&
             Directory.EnumerateFileSystemEntries(projectPath).Any() &&
-            !AnsiConsole.Confirm($"Directory [yellow]{projectPath}[/] is not empty. Continue anyway?", false))
+            !await AnsiConsole.ConfirmAsync($"[dim]Directory[/] [yellow]{projectPath}[/] [dim]exists. Overwrite?[/]", false, cancellationToken))
         {
-            AnsiConsole.MarkupLine("[yellow]Aborted.[/]");
+            AnsiConsole.MarkupLine("[dim]Cancelled.[/]");
             return;
         }
 
         AnsiConsole.WriteLine();
+        AnsiConsole.MarkupLine("[dim]Creating project...[/]");
 
-        await AnsiConsole.Progress()
-            .AutoClear(false)
-            .HideCompleted(false)
-            .Columns(
-                new TaskDescriptionColumn(),
-                new ProgressBarColumn(),
-                new SpinnerColumn())
-            .StartAsync(async ctx =>
-            {
-                var mainTask = ctx.AddTask("[green]Creating project...[/]");
+        // Create directory structure
+        ConsoleTheme.WriteStep("Directory structure");
+        await CreateDirectoryStructureAsync(projectPath, options);
 
-                // Create directory structure
-                var structureTask = ctx.AddTask("Creating directory structure");
-                await CreateDirectoryStructureAsync(projectPath, options);
-                structureTask.Increment(100);
+        // Create solution file
+        ConsoleTheme.WriteStep("Solution file");
+        await CreateSolutionFileAsync(projectPath, options);
 
-                // Create solution file
-                var solutionTask = ctx.AddTask("Creating solution file");
-                await CreateSolutionFileAsync(projectPath, options);
-                solutionTask.Increment(100);
+        // Create API project
+        ConsoleTheme.WriteStep("API project");
+        await CreateApiProjectAsync(projectPath, options);
 
-                // Create API project
-                var apiTask = ctx.AddTask("Creating API project");
-                await CreateApiProjectAsync(projectPath, options);
-                apiTask.Increment(100);
+        // Create Blazor project if needed
+        if (options.Type == ProjectType.ApiBlazor)
+        {
+            ConsoleTheme.WriteStep("Blazor project");
+            await CreateBlazorProjectAsync(projectPath, options);
+        }
 
-                // Create Blazor project if needed
-                if (options.Type == ProjectType.ApiBlazor)
-                {
-                    var blazorTask = ctx.AddTask("Creating Blazor project");
-                    await CreateBlazorProjectAsync(projectPath, options);
-                    blazorTask.Increment(100);
-                }
+        // Create migrations project
+        ConsoleTheme.WriteStep("Migrations project");
+        await CreateMigrationsProjectAsync(projectPath, options);
 
-                // Create migrations project
-                var migrationsTask = ctx.AddTask("Creating migrations project");
-                await CreateMigrationsProjectAsync(projectPath, options);
-                migrationsTask.Increment(100);
+        // Create AppHost if Aspire enabled
+        if (options.IncludeAspire)
+        {
+            ConsoleTheme.WriteStep("Aspire AppHost");
+            await CreateAspireAppHostAsync(projectPath, options);
+        }
 
-                // Create AppHost if Aspire enabled
-                if (options.IncludeAspire)
-                {
-                    var aspireTask = ctx.AddTask("Creating Aspire AppHost");
-                    await CreateAspireAppHostAsync(projectPath, options);
-                    aspireTask.Increment(100);
-                }
+        // Create Docker Compose if enabled
+        if (options.IncludeDocker)
+        {
+            ConsoleTheme.WriteStep("Docker Compose");
+            await CreateDockerComposeAsync(projectPath, options);
+        }
 
-                // Create Docker Compose if enabled
-                if (options.IncludeDocker)
-                {
-                    var dockerTask = ctx.AddTask("Creating Docker Compose");
-                    await CreateDockerComposeAsync(projectPath, options);
-                    dockerTask.Increment(100);
-                }
+        // Create sample module if enabled
+        if (options.IncludeSampleModule)
+        {
+            ConsoleTheme.WriteStep("Sample module");
+            await CreateSampleModuleAsync(projectPath, options);
+        }
 
-                // Create sample module if enabled
-                if (options.IncludeSampleModule)
-                {
-                    var sampleTask = ctx.AddTask("Creating sample module");
-                    await CreateSampleModuleAsync(projectPath, options);
-                    sampleTask.Increment(100);
-                }
+        // Create Terraform if enabled
+        if (options.IncludeTerraform)
+        {
+            ConsoleTheme.WriteStep("Terraform");
+            await CreateTerraformAsync(projectPath, options);
+        }
 
-                // Create Terraform if enabled
-                if (options.IncludeTerraform)
-                {
-                    var terraformTask = ctx.AddTask("Creating Terraform files");
-                    await CreateTerraformAsync(projectPath, options);
-                    terraformTask.Increment(100);
-                }
+        // Create GitHub Actions if enabled
+        if (options.IncludeGitHubActions)
+        {
+            ConsoleTheme.WriteStep("GitHub Actions");
+            await CreateGitHubActionsAsync(projectPath, options);
+        }
 
-                // Create GitHub Actions if enabled
-                if (options.IncludeGitHubActions)
-                {
-                    var ciTask = ctx.AddTask("Creating GitHub Actions");
-                    await CreateGitHubActionsAsync(projectPath, options);
-                    ciTask.Increment(100);
-                }
+        // Create common files
+        ConsoleTheme.WriteStep("Common files");
+        await CreateCommonFilesAsync(projectPath, options);
 
-                // Create common files
-                var commonTask = ctx.AddTask("Creating common files");
-                await CreateCommonFilesAsync(projectPath, options);
-                commonTask.Increment(100);
-
-                mainTask.Increment(100);
-            });
-
-        AnsiConsole.WriteLine();
+        // Initialize git repository if enabled
+        if (options.InitializeGit)
+        {
+            ConsoleTheme.WriteStep("Git repository");
+            await InitializeGitRepositoryAsync(projectPath);
+        }
 
         // Run dotnet restore
         await RunDotnetRestoreAsync(projectPath, options);
@@ -342,7 +323,7 @@ internal static class SolutionGenerator
         await File.WriteAllTextAsync(Path.Combine(projectPath, "src", "Directory.Build.props"), buildProps);
 
         // Create Directory.Packages.props
-        var packagesProps = TemplateEngine.GenerateDirectoryPackagesProps();
+        var packagesProps = TemplateEngine.GenerateDirectoryPackagesProps(options);
         await File.WriteAllTextAsync(Path.Combine(projectPath, "src", "Directory.Packages.props"), packagesProps);
 
         // Create README.md
@@ -350,11 +331,71 @@ internal static class SolutionGenerator
         await File.WriteAllTextAsync(Path.Combine(projectPath, "README.md"), readme);
     }
 
+    private static async Task InitializeGitRepositoryAsync(string projectPath)
+    {
+        // Run git init
+        using var initProcess = new Process
+        {
+            StartInfo = new ProcessStartInfo
+            {
+                FileName = "git",
+                Arguments = "init",
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WorkingDirectory = projectPath
+            }
+        };
+
+        try
+        {
+            initProcess.Start();
+            await initProcess.WaitForExitAsync();
+
+            if (initProcess.ExitCode != 0)
+            {
+                var error = await initProcess.StandardError.ReadToEndAsync();
+                ConsoleTheme.WriteWarning($"git init failed: {error}");
+                return;
+            }
+
+            // Run dotnet new gitignore to get a comprehensive .NET gitignore
+            using var gitignoreProcess = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "dotnet",
+                    Arguments = "new gitignore --force",
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    WorkingDirectory = projectPath
+                }
+            };
+
+            gitignoreProcess.Start();
+            await gitignoreProcess.WaitForExitAsync();
+
+            // If dotnet new gitignore fails, we already have our basic .gitignore so it's fine
+        }
+        catch (System.ComponentModel.Win32Exception ex)
+        {
+            // Git not installed or not in PATH
+            ConsoleTheme.WriteWarning($"Could not initialize git repository (is git installed?): {ex.Message}");
+        }
+        catch (InvalidOperationException ex)
+        {
+            ConsoleTheme.WriteWarning($"Could not initialize git repository: {ex.Message}");
+        }
+    }
+
     private static async Task RunDotnetRestoreAsync(string projectPath, ProjectOptions options)
     {
-        AnsiConsole.MarkupLine("[grey]Running dotnet restore...[/]");
+        ConsoleTheme.WriteStep("Restoring packages");
 
-        var slnPath = Path.Combine(projectPath, $"{options.Name}.slnx");
+        var slnPath = Path.Combine(projectPath, "src", $"{options.Name}.slnx");
 
         using var process = new Process
         {
@@ -373,46 +414,32 @@ internal static class SolutionGenerator
         process.Start();
         await process.WaitForExitAsync();
 
-        if (process.ExitCode == 0)
-        {
-            ConsoleTheme.WriteSuccess("Dependencies restored successfully");
-        }
-        else
+        if (process.ExitCode != 0)
         {
             var error = await process.StandardError.ReadToEndAsync();
-            ConsoleTheme.WriteWarning($"dotnet restore completed with warnings: {error}");
+            ConsoleTheme.WriteWarning($"Restore warnings: {error}");
         }
     }
 
     private static void ShowNextSteps(ProjectOptions options)
     {
+        ConsoleTheme.WriteDone($"Created [bold]{options.Name}[/]");
+
         AnsiConsole.WriteLine();
-        AnsiConsole.Write(new Rule("[green]Project created successfully![/]").RuleStyle(ConsoleTheme.PrimaryStyle));
+        AnsiConsole.MarkupLine("[dim]Get started:[/]");
+        AnsiConsole.MarkupLine($"  cd {options.Name}");
+
+        if (options.IncludeAspire)
+        {
+            AnsiConsole.MarkupLine($"  dotnet run --project src/{options.Name}.AppHost");
+        }
+        else
+        {
+            AnsiConsole.MarkupLine($"  dotnet run --project src/{options.Name}.Api");
+        }
+
         AnsiConsole.WriteLine();
-
-        var panel = new Panel(new Markup($"""
-            [bold]Next steps:[/]
-
-            1. [grey]cd[/] [green]{options.Name}[/]
-            {(options.IncludeAspire
-                ? $"2. [grey]dotnet run --project[/] [green]src/{options.Name}.AppHost[/]"
-                : $"2. [grey]dotnet run --project[/] [green]src/{options.Name}.Api[/]")}
-
-            [bold]Useful commands:[/]
-
-            [grey]dotnet build[/]          Build the solution
-            [grey]dotnet test[/]           Run tests
-            {(options.IncludeDocker ? "[grey]docker-compose up[/]    Start infrastructure" : "")}
-
-            [bold]Documentation:[/]
-            [link]https://fullstackhero.net[/]
-            """))
-            .Header("[bold] Getting Started [/]")
-            .HeaderAlignment(Justify.Center)
-            .BorderColor(ConsoleTheme.Primary)
-            .Padding(2, 1);
-
-        AnsiConsole.Write(panel);
+        AnsiConsole.MarkupLine("[dim]Docs:[/] https://fullstackhero.net");
         AnsiConsole.WriteLine();
     }
 }

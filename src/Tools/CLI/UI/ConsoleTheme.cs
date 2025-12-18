@@ -11,6 +11,7 @@ internal static class ConsoleTheme
     public static Color Warning { get; } = Color.Yellow;
     public static Color Error { get; } = Color.Red;
     public static Color Muted { get; } = Color.Grey;
+    public static Color Dim { get; } = new(128, 128, 128);
 
     public static Style PrimaryStyle { get; } = new(Primary);
     public static Style SecondaryStyle { get; } = new(Secondary);
@@ -18,24 +19,12 @@ internal static class ConsoleTheme
     public static Style WarningStyle { get; } = new(Warning);
     public static Style ErrorStyle { get; } = new(Error);
     public static Style MutedStyle { get; } = new(Muted);
-
-    public const string Banner = """
-
-        ███████╗███████╗██╗  ██╗
-        ██╔════╝██╔════╝██║  ██║
-        █████╗  ███████╗███████║
-        ██╔══╝  ╚════██║██╔══██║
-        ██║     ███████║██║  ██║
-        ╚═╝     ╚══════╝╚═╝  ╚═╝
-
-        """;
-
-    public const string Tagline = "FullStackHero .NET Starter Kit";
+    public static Style DimStyle { get; } = new(Dim);
 
     public static void WriteBanner()
     {
-        AnsiConsole.Write(new Text(Banner, PrimaryStyle));
-        AnsiConsole.MarkupLine($"  [bold]{Tagline}[/]");
+        AnsiConsole.WriteLine();
+        AnsiConsole.MarkupLine($"[bold {Primary.ToMarkup()}]FSH[/] [dim]•[/] FullStackHero .NET Starter Kit");
         AnsiConsole.WriteLine();
     }
 
@@ -49,8 +38,19 @@ internal static class ConsoleTheme
         AnsiConsole.MarkupLine($"[yellow]![/] {message}");
 
     public static void WriteInfo(string message) =>
-        AnsiConsole.MarkupLine($"[blue]i[/] {message}");
+        AnsiConsole.MarkupLine($"[blue]ℹ[/] {message}");
 
     public static void WriteStep(string message) =>
-        AnsiConsole.MarkupLine($"[{Primary.ToMarkup()}]>[/] {message}");
+        AnsiConsole.MarkupLine($"  [dim]→[/] {message}");
+
+    public static void WriteDone(string message) =>
+        AnsiConsole.MarkupLine($"\n[green]Done![/] {message}");
+
+    public static void WriteHeader(string message) =>
+        AnsiConsole.MarkupLine($"\n[bold]{message}[/]");
+
+    public static void WriteKeyValue(string key, string value, bool highlight = false) =>
+        AnsiConsole.MarkupLine(highlight
+            ? $"  [dim]{key}:[/] [{Primary.ToMarkup()}]{value}[/]"
+            : $"  [dim]{key}:[/] {value}");
 }
