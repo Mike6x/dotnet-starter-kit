@@ -1,8 +1,11 @@
 @page "/login"
+@layout EmptyLayout
 @using FSH.Framework.Shared.Multitenancy
 @using FSH.Playground.Blazor.Services
+@using Microsoft.AspNetCore.Components.Authorization
 @inject NavigationManager Navigation
 @inject IHttpClientFactory HttpClientFactory
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <div class="login-page">
     <div class="login-wrapper">
@@ -108,6 +111,15 @@
     private string _email = MultitenancyConstants.Root.EmailAddress;
     private string _password = MultitenancyConstants.DefaultPassword;
     private bool _showPassword = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        if (authState.User.Identity?.IsAuthenticated == true)
+        {
+            Navigation.NavigateTo("/", replace: true);
+        }
+    }
 
     private void TogglePassword()
     {

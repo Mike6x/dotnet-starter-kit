@@ -273,22 +273,6 @@
     }
 }
 
-/* ===== Animations ===== */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(8px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.login-wrapper {
-    animation: fadeIn 0.4s ease-out;
-}
-
 /* ===== Focus States for Accessibility ===== */
 .login-button:focus-visible,
 .social-button:focus-visible,
@@ -301,4 +285,11 @@
 
 .form-input:focus-visible {
     outline: none;
+}
+
+/* Remove focus outline from card/form containers */
+.login-page *:focus:not(.form-input):not(.login-button):not(.social-button),
+.login-page *:focus-visible:not(.form-input):not(.login-button):not(.social-button) {
+    outline: none !important;
+    box-shadow: none !important;
 }
