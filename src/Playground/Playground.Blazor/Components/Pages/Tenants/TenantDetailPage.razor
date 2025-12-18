@@ -19,6 +19,8 @@
 }
 else if (_loading)
 {
+    <FshPageHeader Title="Tenant Details"
+                   Description="Loading tenant details..." />
     <MudStack AlignItems="AlignItems.Center" Class="pa-8">
         <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
         <MudText>Loading tenant details...</MudText>
@@ -26,52 +28,59 @@ else if (_loading)
 }
 else if (_tenant is null)
 {
+    <FshPageHeader Title="Tenant Details"
+                   Description="Tenant not found" />
     <MudAlert Severity="Severity.Error" Class="mb-4">
         <MudText>Tenant not found.</MudText>
     </MudAlert>
 }
 else
 {
-    <MudPaper Class="fsh-card pa-4 mb-4">
-        <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
-            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
-                <MudIconButton Icon="@Icons.Material.Filled.ArrowBack"
-                               OnClick="GoBack"
-                               Color="Color.Default" />
-                <MudAvatar Size="Size.Large" Class="tenant-avatar-lg">
-                    @GetInitials(_tenant)
-                </MudAvatar>
-                <MudStack Spacing="0">
-                    <MudText Typo="Typo.h5" Class="fw-700">@_tenant.Name</MudText>
-                    <MudText Typo="Typo.caption" Class="text-muted">@_tenant.Id</MudText>
-                </MudStack>
-                @if (_tenant.IsActive)
-                {
-                    <MudChip T="string" Color="Color.Success" Size="Size.Small" Variant="Variant.Filled">Active</MudChip>
-                }
-                else
-                {
-                    <MudChip T="string" Color="Color.Error" Size="Size.Small" Variant="Variant.Filled">Inactive</MudChip>
-                }
-            </MudStack>
-            <MudStack Row="true" Spacing="2">
-                <MudButton Variant="Variant.Outlined"
-                           Color="Color.Primary"
-                           StartIcon="@Icons.Material.Filled.Upgrade"
-                           OnClick="ShowUpgrade">
-                    Upgrade
+    <FshPageHeader Title="Tenant Details"
+                   Description="@($"Managing {_tenant.Name}")">
+        <ActionContent>
+            <MudButton Variant="Variant.Text"
+                       Color="Color.Default"
+                       StartIcon="@Icons.Material.Outlined.ArrowBack"
+                       OnClick="GoBack">
+                Back to Tenants
+            </MudButton>
+            <MudButton Variant="Variant.Outlined"
+                       Color="Color.Primary"
+                       StartIcon="@Icons.Material.Filled.Upgrade"
+                       OnClick="ShowUpgrade">
+                Upgrade
+            </MudButton>
+            @if (!IsRootTenant)
+            {
+                <MudButton Variant="Variant.Filled"
+                           Color="@(_tenant.IsActive ? Color.Warning : Color.Success)"
+                           StartIcon="@(_tenant.IsActive ? Icons.Material.Filled.Block : Icons.Material.Filled.CheckCircle)"
+                           OnClick="ToggleStatus"
+                           Disabled="_busy">
+                    @(_tenant.IsActive ? "Deactivate" : "Activate")
                 </MudButton>
-                @if (!IsRootTenant)
-                {
-                    <MudButton Variant="Variant.Filled"
-                               Color="@(_tenant.IsActive ? Color.Warning : Color.Success)"
-                               StartIcon="@(_tenant.IsActive ? Icons.Material.Filled.Block : Icons.Material.Filled.CheckCircle)"
-                               OnClick="ToggleStatus"
-                               Disabled="_busy">
-                        @(_tenant.IsActive ? "Deactivate" : "Activate")
-                    </MudButton>
-                }
+            }
+        </ActionContent>
+    </FshPageHeader>
+
+    <MudPaper Class="fsh-card pa-4 mb-4">
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+            <MudAvatar Size="Size.Large" Class="tenant-avatar-lg">
+                @GetInitials(_tenant)
+            </MudAvatar>
+            <MudStack Spacing="0">
+                <MudText Typo="Typo.h5" Class="fw-700">@_tenant.Name</MudText>
+                <MudText Typo="Typo.caption" Class="text-muted">@_tenant.Id</MudText>
             </MudStack>
+            @if (_tenant.IsActive)
+            {
+                <MudChip T="string" Color="Color.Success" Size="Size.Small" Variant="Variant.Filled">Active</MudChip>
+            }
+            else
+            {
+                <MudChip T="string" Color="Color.Error" Size="Size.Small" Variant="Variant.Filled">Inactive</MudChip>
+            }
         </MudStack>
     </MudPaper>
 

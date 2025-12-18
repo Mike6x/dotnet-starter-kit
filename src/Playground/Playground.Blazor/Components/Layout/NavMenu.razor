@@ -14,25 +14,21 @@
         <!-- Administration Section -->
         <div class="fsh-nav-section-title">Administration</div>
 
-        <MudNavGroup Title="User Management" Icon="@Icons.Material.Outlined.People" Expanded="false">
-            <MudNavLink Href="/users" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.Person">
-                Users
-            </MudNavLink>
-            <MudNavLink Href="/roles" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.AdminPanelSettings">
-                Roles
-            </MudNavLink>
-        </MudNavGroup>
+        <MudNavLink Href="/users" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.Person">
+            Users
+        </MudNavLink>
+        <MudNavLink Href="/roles" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.AdminPanelSettings">
+            Roles
+        </MudNavLink>
 
         @if (_isRootTenantAdmin)
         {
-            <MudNavGroup Title="Tenants" Icon="@Icons.Material.Outlined.Business" Expanded="false">
-                <MudNavLink Href="/tenants" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.CorporateFare">
-                    Tenants
-                </MudNavLink>
-                <MudNavLink Href="/tenants/settings" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.Tune">
-                    Tenant Settings
-                </MudNavLink>
-            </MudNavGroup>
+            <MudNavLink Href="/tenants" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.CorporateFare">
+                Tenants
+            </MudNavLink>
+            <MudNavLink Href="/tenants/settings" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.Tune">
+                Tenant Settings
+            </MudNavLink>
         }
 
         <MudNavLink Href="/audits" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.History">
@@ -64,17 +60,15 @@
         <!-- Settings Section -->
         <div class="fsh-nav-section-title">Settings</div>
 
-        <MudNavGroup Title="Settings" Icon="@Icons.Material.Outlined.Settings" Expanded="false">
-            <MudNavLink Href="/settings/profile" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.ManageAccounts">
-                Account
-            </MudNavLink>
-            <MudNavLink Href="/settings/theme" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.Palette">
-                Theme
-            </MudNavLink>
-            <MudNavLink Href="/settings/security" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.Security">
-                Security
-            </MudNavLink>
-        </MudNavGroup>
+        <MudNavLink Href="/settings/profile" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.ManageAccounts">
+            Account
+        </MudNavLink>
+        <MudNavLink Href="/settings/theme" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.Palette">
+            Theme
+        </MudNavLink>
+        <MudNavLink Href="/settings/security" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.Security">
+            Security
+        </MudNavLink>
 
         <MudNavLink Href="/about" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Outlined.Info">
             About
