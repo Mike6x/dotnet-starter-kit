@@ -49,4 +49,9 @@
 		<!-- Enable NuGet pack globally (overridden in Playground/Tests) -->
 		<IsPackable>true</IsPackable>
 	</PropertyGroup>
+
+	<!-- Include root README.md in NuGet packages -->
+	<ItemGroup Condition="'$(IsPackable)' == 'true'">
+		<None Include="$(MSBuildThisFileDirectory)../README.md" Pack="true" PackagePath="/" />
+	</ItemGroup>
 </Project>
