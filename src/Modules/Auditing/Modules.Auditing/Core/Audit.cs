@@ -70,7 +70,7 @@ public static class Audit
         return AuditSeverity.Error;
     }
 
-    private static IReadOnlyList<string> StackTop(Exception ex, int maxFrames)
+    private static List<string> StackTop(Exception ex, int maxFrames)
     {
         var frames = new List<string>(maxFrames);
         var trace = new StackTrace(ex, true);
@@ -86,11 +86,15 @@ public static class Audit
         return frames;
     }
 
-    private static IReadOnlyDictionary<string, object?>? ToDict(System.Collections.IDictionary? data)
+    private static Dictionary<string, object?>? ToDict(System.Collections.IDictionary? data)
     {
         if (data is null || data.Count == 0) return null;
         var dict = new Dictionary<string, object?>(data.Count);
-        foreach (var k in data.Keys) dict[k?.ToString() ?? "key"] = data[k];
+        foreach (var k in data.Keys)
+        {
+            var key = k?.ToString() ?? "key";
+            dict[key] = data[key];
+        }
         return dict;
     }
 

@@ -20,11 +20,11 @@ public sealed class AuditingConfigurator : IHostedService
         _enrichers = enrichers;
     }
 
-    public Task StartAsync(CancellationToken _)
+    public Task StartAsync(CancellationToken cancellationToken)
     {
         Audit.Configure(_publisher, _serializer, _enrichers);
         return Task.CompletedTask;
     }
-    public Task StopAsync(CancellationToken _) => Task.CompletedTask;
+    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 }
 

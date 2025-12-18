@@ -43,7 +43,7 @@ internal static class EntityDiffBuilder
                 if (p.Metadata.IsConcurrencyToken) continue;
                 if (p.Metadata.IsIndexerProperty()) continue;
                 if (p.Metadata.IsKey()) continue; // keys are in "key" string already
-                if (p.Metadata.IsNullable == false && p.Metadata.ClrType.IsClass && p.Metadata.IsForeignKey()) continue; // nav FKs often noisy
+                if (!p.Metadata.IsNullable && p.Metadata.ClrType.IsClass && p.Metadata.IsForeignKey()) continue; // nav FKs often noisy
 
                 // Include only scalar types
                 if (!IsScalar(p.Metadata.ClrType)) continue;
@@ -116,14 +116,15 @@ internal static class EntityDiffBuilder
         if (prop is null) return false;
         var orig = prop.OriginalValue as bool? ?? false;
         var curr = prop.CurrentValue as bool? ?? false;
-        return orig == false && curr == true;
+        return !orig && curr;
     }
 
     private static bool IsSensitive(string propertyName)
     {
         // Simple heuristic. Replace with attribute-based masking later.
-        var n = propertyName.ToLowerInvariant();
-        return n.Contains("password") || n.Contains("secret") || n.Contains("token");
+        return propertyName.Contains("password", StringComparison.OrdinalIgnoreCase)
+            || propertyName.Contains("secret", StringComparison.OrdinalIgnoreCase)
+            || propertyName.Contains("token", StringComparison.OrdinalIgnoreCase);
     }
 
     private static bool IsScalar(Type t)

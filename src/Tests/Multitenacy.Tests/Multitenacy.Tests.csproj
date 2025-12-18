@@ -5,6 +5,7 @@
 		<IsPublishable>false</IsPublishable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		<NoWarn>$(NoWarn);S125;S3261</NoWarn>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="NetArchTest.Rules" />

@@ -4,7 +4,7 @@
 		<RootNamespace>FSH.Modules.Identity.Contracts</RootNamespace>
 		<AssemblyName>FSH.Modules.Identity.Contracts</AssemblyName>
 		<PackageId>FullStackHero.Modules.Identity.Contracts</PackageId>
-		<NoWarn>CA1002;CA1056;CS1572;CS1591</NoWarn>
+		<NoWarn>$(NoWarn);CA1002;CA1056;CS1572;S2094</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>

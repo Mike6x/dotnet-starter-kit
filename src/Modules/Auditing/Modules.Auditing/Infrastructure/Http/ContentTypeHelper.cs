@@ -12,7 +12,7 @@ internal static class ContentTypeHelper
         if (MediaTypeHeaderValue.TryParse(contentType, out var mt))
             return allowed.Contains(mt.MediaType.Value ?? string.Empty);
 
-        var semi = contentType.IndexOf(';');
+        var semi = contentType.IndexOf(';', StringComparison.Ordinal);
         var type = semi >= 0 ? contentType[..semi] : contentType;
         return allowed.Contains(type.Trim());
     }

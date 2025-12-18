@@ -29,7 +29,7 @@ public sealed class JsonMaskingService : IAuditMaskingService
         }
     }
 
-    private void MaskNode(JsonNode node)
+    private static void MaskNode(JsonNode node)
     {
         if (node is JsonObject obj)
         {
