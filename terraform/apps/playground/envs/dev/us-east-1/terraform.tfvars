@@ -68,7 +68,7 @@ db_manage_master_user_password = true
 ################################################################################
 
 # Single tag for all container images (typically a git commit SHA or version)
-container_image_tag = "47150d19d7f890555292d14a0464c57fbf1ffa84"
+container_image_tag = "7b4f36619225d50591a2308586ebad5fe463005e"
 
 # Optional: Override defaults if needed
 # container_registry = "ghcr.io/fullstackhero"

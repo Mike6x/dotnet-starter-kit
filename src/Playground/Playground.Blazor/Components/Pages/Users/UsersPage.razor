@@ -223,13 +223,7 @@
                     @if (_userRolesCache.TryGetValue(context.Item.Id ?? "", out var roles) && roles.Any())
                     {
                         <MudStack Row="true" Spacing="1">
-                            @foreach (var role in roles.Where(r => r.Enabled).Take(2))
-                            {
-                                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined"
-                                         Color="@GetRoleColor(role.RoleName)">
-                                    @role.RoleName
-                                </MudChip>
-                            }
+                            @RenderRoleChips(roles.Where(r => r.Enabled).Take(2))
                             @if (roles.Count(r => r.Enabled) > 2)
                             {
                                 <MudChip T="string" Size="Size.Small" Variant="Variant.Text">
@@ -484,7 +478,10 @@
             var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
             _currentUserId = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         }
-        catch { }
+        catch
+        {
+            // Authentication state unavailable - user remains null (not logged in)
+        }
     }
 
     private static string GetInitials(UserDto user)
@@ -502,6 +499,23 @@
         "user" => Color.Default,
         _ => Color.Default
     };
+
+    private static RenderFragment RenderRoleChips(IEnumerable<UserRoleDto> roles)
+    {
+        return builder =>
+        {
+            foreach (var (role, index) in roles.Select((r, i) => (r, i)))
+            {
+                var seq = index * 10;
+                builder.OpenComponent<MudChip<string>>(seq++);
+                builder.AddAttribute(seq++, "Size", Size.Small);
+                builder.AddAttribute(seq++, "Variant", Variant.Outlined);
+                builder.AddAttribute(seq++, "Color", GetRoleColor(role.RoleName));
+                builder.AddAttribute(seq, "ChildContent", (RenderFragment)(b => b.AddContent(0, role.RoleName)));
+                builder.CloseComponent();
+            }
+        };
+    }
 
     private bool IsCurrentUser(UserDto user) =>
         !string.IsNullOrWhiteSpace(_currentUserId) &&
@@ -644,17 +658,21 @@
         if (!confirmed) return;
 
         _bulkBusy = true;
-        var success = 0;
-        foreach (var user in users)
+        var results = await Task.WhenAll(users.Select(async user =>
         {
             try
             {
                 var command = new ToggleUserStatusCommand { ActivateUser = true, UserId = user.Id };
                 await IdentityClient.UsersPatchAsync(Guid.Parse(user.Id!), command);
-                success++;
+                return true;
             }
-            catch { }
-        }
+            catch
+            {
+                // Continue with remaining users - failures are reflected in the success count
+                return false;
+            }
+        }));
+        var success = results.Count(r => r);
         _bulkBusy = false;
         Snackbar.Add($"Activated {success} of {users.Count} users.", Severity.Success);
         ClearSelection();
@@ -680,18 +698,22 @@
         if (!confirmed) return;
 
         _bulkBusy = true;
-        var success = 0;
-        foreach (var user in users)
+        var results = await Task.WhenAll(users.Select(async user =>
         {
-            if (await IsUserAdminAsync(user.Id!)) continue;
+            if (await IsUserAdminAsync(user.Id!)) return false;
             try
             {
                 var command = new ToggleUserStatusCommand { ActivateUser = false, UserId = user.Id };
                 await IdentityClient.UsersPatchAsync(Guid.Parse(user.Id!), command);
-                success++;
+                return true;
             }
-            catch { }
-        }
+            catch
+            {
+                // Continue with remaining users - failures are reflected in the success count
+                return false;
+            }
+        }));
+        var success = results.Count(r => r);
         _bulkBusy = false;
         Snackbar.Add($"Deactivated {success} of {users.Count} users.", Severity.Success);
         ClearSelection();
@@ -727,7 +749,10 @@
                 await IdentityClient.UsersDeleteAsync(Guid.Parse(user.Id!));
                 success++;
             }
-            catch { }
+            catch
+            {
+                // Continue with remaining users - failures are reflected in the success count
+            }
         }
         _bulkBusy = false;
         Snackbar.Add($"Deleted {success} of {users.Count} users.", Severity.Success);

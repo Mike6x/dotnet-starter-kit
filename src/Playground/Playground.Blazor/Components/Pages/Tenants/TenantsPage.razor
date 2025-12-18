@@ -462,7 +462,7 @@ else
         _busyTenantId == tenant.Id ||
         IsRootTenant(tenant);
 
-    private string GetToggleTooltip(TenantDto tenant)
+    private static string GetToggleTooltip(TenantDto tenant)
     {
         if (IsRootTenant(tenant))
             return "Root tenant cannot be deactivated";

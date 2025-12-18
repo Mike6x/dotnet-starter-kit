@@ -7,7 +7,7 @@ namespace FSH.Playground.Blazor.Services;
 /// <summary>
 /// Factory for loading theme state, optimized for SSR scenarios.
 /// </summary>
-public interface IThemeStateFactory
+internal interface IThemeStateFactory
 {
     Task<TenantThemeSettings> GetThemeAsync(string tenantId, CancellationToken cancellationToken = default);
 }
@@ -16,8 +16,10 @@ public interface IThemeStateFactory
 /// Redis-cached implementation of theme state factory.
 /// Efficient for SSR pages that need theme data without full circuit.
 /// </summary>
-public sealed class CachedThemeStateFactory : IThemeStateFactory
+internal sealed class CachedThemeStateFactory : IThemeStateFactory
 {
+    private static readonly Uri ThemeEndpoint = new("/api/v1/tenants/theme", UriKind.Relative);
+
     private readonly IDistributedCache _cache;
     private readonly HttpClient _httpClient;
     private readonly ILogger<CachedThemeStateFactory> _logger;
@@ -65,7 +67,7 @@ public sealed class CachedThemeStateFactory : IThemeStateFactory
         // Cache miss or deserialization failed - fetch from API
         try
         {
-            var response = await _httpClient.GetAsync("/api/v1/tenants/theme", cancellationToken);
+            var response = await _httpClient.GetAsync(ThemeEndpoint, cancellationToken);
 
             if (response.IsSuccessStatusCode)
             {
@@ -106,7 +108,7 @@ public sealed class CachedThemeStateFactory : IThemeStateFactory
         return TenantThemeSettings.Default;
     }
 
-    private TenantThemeSettings MapFromDto(TenantThemeApiDto dto)
+    private static TenantThemeSettings MapFromDto(TenantThemeApiDto dto)
     {
         var defaultSettings = TenantThemeSettings.Default;
 

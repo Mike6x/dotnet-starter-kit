@@ -58,7 +58,7 @@
                         <MudIcon Icon="@Icons.Material.Filled.AdminPanelSettings" Color="Color.Error" Size="Size.Large" />
                         <MudChip T="string" Size="Size.Small" Color="Color.Error" Variant="Variant.Text">System</MudChip>
                     </MudStack>
-                    <MudText Typo="Typo.h4" Class="fw-700">@_stats.SystemRoles</MudText>
+                    <MudText Typo="Typo.h4" Class="fw-700">@_stats.SystemRolesCount</MudText>
                     <MudText Typo="Typo.body2" Class="text-muted">System Roles</MudText>
                 </MudStack>
             </MudCardContent>
@@ -72,7 +72,7 @@
                         <MudIcon Icon="@Icons.Material.Filled.Badge" Color="Color.Info" Size="Size.Large" />
                         <MudChip T="string" Size="Size.Small" Color="Color.Info" Variant="Variant.Text">Custom</MudChip>
                     </MudStack>
-                    <MudText Typo="Typo.h4" Class="fw-700">@_stats.CustomRoles</MudText>
+                    <MudText Typo="Typo.h4" Class="fw-700">@_stats.CustomRolesCount</MudText>
                     <MudText Typo="Typo.body2" Class="text-muted">Custom Roles</MudText>
                 </MudStack>
             </MudCardContent>
@@ -86,7 +86,7 @@
                         <MudIcon Icon="@Icons.Material.Filled.Lock" Color="Color.Warning" Size="Size.Large" />
                         <MudChip T="string" Size="Size.Small" Color="Color.Warning" Variant="Variant.Text">Protected</MudChip>
                     </MudStack>
-                    <MudText Typo="Typo.h4" Class="fw-700">@_stats.ProtectedRoles</MudText>
+                    <MudText Typo="Typo.h4" Class="fw-700">@_stats.ProtectedRolesCount</MudText>
                     <MudText Typo="Typo.body2" Class="text-muted">Protected Roles</MudText>
                 </MudStack>
             </MudCardContent>
@@ -266,9 +266,9 @@
     private class RoleStats
     {
         public int Total { get; set; }
-        public int SystemRoles { get; set; }
-        public int CustomRoles { get; set; }
-        public int ProtectedRoles { get; set; }
+        public int SystemRolesCount { get; set; }
+        public int CustomRolesCount { get; set; }
+        public int ProtectedRolesCount { get; set; }
     }
 
     private class FilterModel
@@ -306,9 +306,9 @@
         _stats = new RoleStats
         {
             Total = _roles.Count,
-            SystemRoles = _roles.Count(r => IsSystemRole(r.Name)),
-            CustomRoles = _roles.Count(r => !IsSystemRole(r.Name)),
-            ProtectedRoles = _roles.Count(r => IsProtectedRole(r.Name))
+            SystemRolesCount = _roles.Count(r => IsSystemRole(r.Name)),
+            CustomRolesCount = _roles.Count(r => !IsSystemRole(r.Name)),
+            ProtectedRolesCount = _roles.Count(r => IsProtectedRole(r.Name))
         };
     }
 
@@ -470,7 +470,10 @@
                 await IdentityClient.RolesDeleteAsync(Guid.Parse(role.Id!));
                 success++;
             }
-            catch { }
+            catch
+            {
+                // Continue with remaining roles - failures are reflected in the success count
+            }
         }
         _bulkBusy = false;
         Snackbar.Add($"Deleted {success} of {roles.Count} roles.", Severity.Success);

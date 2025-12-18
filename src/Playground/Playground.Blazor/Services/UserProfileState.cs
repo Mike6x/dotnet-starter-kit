@@ -5,7 +5,9 @@ namespace FSH.Playground.Blazor.Services;
 /// When the profile is updated (e.g., in ProfileSettings), other components
 /// like the layout header can subscribe to be notified of changes.
 /// </summary>
-public interface IUserProfileState
+#pragma warning disable CA1056, CA1054 // Avatar URLs are passed as strings from APIs
+#pragma warning disable CA1003 // Action is the idiomatic pattern for Blazor state change events
+internal interface IUserProfileState
 {
     string UserName { get; }
     string? UserEmail { get; }
@@ -27,6 +29,8 @@ public interface IUserProfileState
     /// </summary>
     void Clear();
 }
+#pragma warning restore CA1003
+#pragma warning restore CA1056, CA1054
 
 internal sealed class UserProfileState : IUserProfileState
 {

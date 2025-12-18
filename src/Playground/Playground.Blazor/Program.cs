@@ -99,7 +99,9 @@ builder.Services.Configure<Microsoft.AspNetCore.ResponseCompression.GzipCompress
 builder.Services.AddOutputCache(options =>
 {
     options.AddBasePolicy(builder => builder
+#pragma warning disable CA1307 // PathString.StartsWithSegments is case-insensitive by design
         .With(c => c.HttpContext.Request.Path.StartsWithSegments("/health"))
+#pragma warning restore CA1307
         .Expire(TimeSpan.FromSeconds(10)));
 });
 

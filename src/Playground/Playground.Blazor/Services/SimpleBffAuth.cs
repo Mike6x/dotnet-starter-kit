@@ -5,7 +5,9 @@ using System.Security.Claims;
 
 namespace FSH.Playground.Blazor.Services;
 
-public static class SimpleBffAuth
+#pragma warning disable CA1515 // Extension method classes must be public
+internal static class SimpleBffAuth
+#pragma warning restore CA1515
 {
     public static void MapSimpleBffAuthEndpoints(this WebApplication app)
     {
@@ -108,6 +110,4 @@ public static class SimpleBffAuth
         })
         .AllowAnonymous();
     }
-
-    public record LoginRequest(string Email, string Password, string? Tenant);
 }

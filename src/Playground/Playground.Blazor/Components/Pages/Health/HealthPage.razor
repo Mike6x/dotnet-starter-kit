@@ -141,7 +141,7 @@
 <MudGrid Class="mb-4">
     @if (_readyResult?.Results != null)
     {
-        @foreach (var entry in _readyResult.Results.OrderBy(r => r.Status == "Healthy" ? 2 : r.Status == "Degraded" ? 1 : 0))
+        @foreach (var entry in _readyResult.Results.OrderBy(GetStatusSortOrder))
         {
             <MudItem xs="12" sm="6" md="4">
                 <MudCard Elevation="2">
@@ -360,6 +360,17 @@
         "Unhealthy" => Color.Error,
         _ => Color.Default
     };
+
+    private static int GetStatusSortOrder(HealthEntry entry)
+    {
+        // Show unhealthy first (0), then degraded (1), then healthy (2)
+        return entry.Status switch
+        {
+            "Healthy" => 2,
+            "Degraded" => 1,
+            _ => 0
+        };
+    }
 
     private static string GetServiceIcon(string? name) => name?.ToLower() switch
     {

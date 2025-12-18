@@ -67,7 +67,7 @@
                    Color="Color.Primary"
                    OnClick="Submit"
                    Disabled="_busy"
-                   StartIcon="@(_busy ? null : (IsEditMode ? Icons.Material.Filled.Save : Icons.Material.Filled.Add))">
+                   StartIcon="@GetSubmitIcon()">
             @if (_busy)
             {
                 <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
@@ -114,6 +114,12 @@
 
     private static bool IsSystemRole(string? roleName) =>
         !string.IsNullOrEmpty(roleName) && SystemRoles.Contains(roleName);
+
+    private string? GetSubmitIcon()
+    {
+        if (_busy) return null;
+        return IsEditMode ? Icons.Material.Filled.Save : Icons.Material.Filled.Add;
+    }
 
     private void Cancel()
     {

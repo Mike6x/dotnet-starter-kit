@@ -1,5 +1,7 @@
 @using MudBlazor
 
+<PageTitle>@PageTitleText</PageTitle>
+
 <MudPaper Class="@CombinedClass" Elevation="@Elevation">
     <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="flex-wrap">
         <MudStack Spacing="2">
@@ -70,10 +72,21 @@
     public string? Class { get; set; }
 
     /// <summary>
+    /// Optional suffix for the browser page title (e.g., app name).
+    /// When set, displays as "Title | Suffix". When null, displays only the Title.
+    /// </summary>
+    [Parameter]
+    public string? PageTitleSuffix { get; set; }
+
+    /// <summary>
     /// Allows passing additional attributes
     /// </summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string PageTitleText => string.IsNullOrWhiteSpace(PageTitleSuffix)
+        ? Title
+        : $"{Title} | {PageTitleSuffix}";
 
     private string CombinedClass
     {

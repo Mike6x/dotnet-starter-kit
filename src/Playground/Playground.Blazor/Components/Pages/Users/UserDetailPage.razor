@@ -203,13 +203,7 @@ else
                 else
                 {
                     <MudStack Row="true" Wrap="Wrap.Wrap" Spacing="2">
-                        @foreach (var role in _roles.Where(r => r.Enabled))
-                        {
-                            <MudChip T="string" Color="@GetRoleColor(role.RoleName)" Variant="Variant.Filled" Size="Size.Medium"
-                                     Icon="@GetRoleIcon(role.RoleName)">
-                                @role.RoleName
-                            </MudChip>
-                        }
+                        @RenderRoleChips(_roles.Where(r => r.Enabled))
                     </MudStack>
                 }
             </MudPaper>
@@ -393,7 +387,10 @@ else
             var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
             _currentUserId = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         }
-        catch { }
+        catch
+        {
+            // Authentication state unavailable - user remains null (not logged in)
+        }
     }
 
     private bool IsCurrentUser =>
@@ -540,6 +537,24 @@ else
         "moderator" => Icons.Material.Filled.Shield,
         _ => Icons.Material.Filled.Badge
     };
+
+    private static RenderFragment RenderRoleChips(IEnumerable<UserRoleDto> roles)
+    {
+        return builder =>
+        {
+            foreach (var (role, index) in roles.Select((r, i) => (r, i)))
+            {
+                var seq = index * 10;
+                builder.OpenComponent<MudChip<string>>(seq++);
+                builder.AddAttribute(seq++, "Color", GetRoleColor(role.RoleName));
+                builder.AddAttribute(seq++, "Variant", Variant.Filled);
+                builder.AddAttribute(seq++, "Size", Size.Medium);
+                builder.AddAttribute(seq++, "Icon", GetRoleIcon(role.RoleName));
+                builder.AddAttribute(seq, "ChildContent", (RenderFragment)(b => b.AddContent(0, role.RoleName)));
+                builder.CloseComponent();
+            }
+        };
+    }
 
     private sealed class ConfirmEmailModel
     {

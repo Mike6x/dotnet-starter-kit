@@ -96,7 +96,7 @@ else
         if (_isAuthenticated)
         {
             // Extract user info from claims (available in SSR)
-            var user = authState.User;
+            var user = authState.User!;
             _userName = user.FindFirst(ClaimTypes.Name)?.Value ?? user.FindFirst(ClaimTypes.Email)?.Value ?? "User";
             _userEmail = user.FindFirst(ClaimTypes.Email)?.Value;
             _userRole = user.FindFirst(ClaimTypes.Role)?.Value;

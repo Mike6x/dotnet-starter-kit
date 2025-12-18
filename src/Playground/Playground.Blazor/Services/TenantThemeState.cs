@@ -7,8 +7,11 @@ namespace FSH.Playground.Blazor.Services;
 /// <summary>
 /// Implementation of ITenantThemeState that fetches/saves theme settings via the API.
 /// </summary>
-public sealed class TenantThemeState : ITenantThemeState
+internal sealed class TenantThemeState : ITenantThemeState
 {
+    private static readonly Uri ThemeEndpoint = new("/api/v1/tenants/theme", UriKind.Relative);
+    private static readonly Uri ThemeResetEndpoint = new("/api/v1/tenants/theme/reset", UriKind.Relative);
+
     private readonly HttpClient _httpClient;
     private readonly ILogger<TenantThemeState> _logger;
     private readonly string _apiBaseUrl;
@@ -19,6 +22,7 @@ public sealed class TenantThemeState : ITenantThemeState
 
     public TenantThemeState(HttpClient httpClient, ILogger<TenantThemeState> logger, IConfiguration configuration)
     {
+        ArgumentNullException.ThrowIfNull(configuration);
         _httpClient = httpClient;
         _logger = logger;
         _apiBaseUrl = configuration["Api:BaseUrl"]?.TrimEnd('/') ?? string.Empty;
@@ -48,7 +52,7 @@ public sealed class TenantThemeState : ITenantThemeState
     {
         try
         {
-            var response = await _httpClient.GetAsync("/api/v1/tenants/theme", cancellationToken);
+            var response = await _httpClient.GetAsync(ThemeEndpoint, cancellationToken);
 
             if (response.IsSuccessStatusCode)
             {
@@ -83,7 +87,7 @@ public sealed class TenantThemeState : ITenantThemeState
 
     public async Task ResetThemeAsync(CancellationToken cancellationToken = default)
     {
-        var response = await _httpClient.PostAsync("/api/v1/tenants/theme/reset", null, cancellationToken);
+        var response = await _httpClient.PostAsync(ThemeResetEndpoint, null, cancellationToken);
         response.EnsureSuccessStatusCode();
 
         _current = TenantThemeSettings.Default;
