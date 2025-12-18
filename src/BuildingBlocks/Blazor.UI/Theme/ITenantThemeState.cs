@@ -24,7 +24,9 @@ public interface ITenantThemeState
     /// <summary>
     /// Event fired when theme settings change.
     /// </summary>
+#pragma warning disable CA1003 // Action is the idiomatic pattern for Blazor state change events - EventHandler would require EventArgs which adds unnecessary ceremony for simple notifications
     event Action? OnThemeChanged;
+#pragma warning restore CA1003
 
     /// <summary>
     /// Loads theme settings from the API.

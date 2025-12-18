@@ -3,6 +3,8 @@
 	<PropertyGroup>
 		<RootNamespace>FSH.Framework.Blazor.UI</RootNamespace>
 		<AssemblyName>FSH.Framework.Blazor.UI</AssemblyName>
+		<!-- MUD0002: MudBlazor analyzer false positives for valid component parameter usage in RenderFragment/component contexts -->
+		<NoWarn>$(NoWarn);MUD0002</NoWarn>
 	</PropertyGroup>
 
 

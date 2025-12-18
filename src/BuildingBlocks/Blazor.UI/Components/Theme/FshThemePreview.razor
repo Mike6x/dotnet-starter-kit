@@ -58,19 +58,19 @@
                 <MudPaper Class="pa-4" Style="@GetCardStyle()" Elevation="@Settings.Layout.DefaultElevation">
                     <MudText Typo="Typo.h6" Style="@GetTextStyle()" Class="mb-3">Alerts</MudText>
                     <MudAlert Severity="Severity.Success" Dense="true" Class="mb-2"
-                             Style="@GetAlertStyle(CurrentPalette.Success)">
+                             Style="@GetAlertStyle()">
                         Success message
                     </MudAlert>
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mb-2"
-                             Style="@GetAlertStyle(CurrentPalette.Info)">
+                             Style="@GetAlertStyle()">
                         Info message
                     </MudAlert>
                     <MudAlert Severity="Severity.Warning" Dense="true" Class="mb-2"
-                             Style="@GetAlertStyle(CurrentPalette.Warning)">
+                             Style="@GetAlertStyle()">
                         Warning message
                     </MudAlert>
                     <MudAlert Severity="Severity.Error" Dense="true"
-                             Style="@GetAlertStyle(CurrentPalette.Error)">
+                             Style="@GetAlertStyle()">
                         Error message
                     </MudAlert>
                 </MudPaper>
@@ -155,7 +155,7 @@
         return $"border-color: {CurrentPalette.Primary}; color: {CurrentPalette.Primary}; border-radius: {Settings.Layout.BorderRadius};";
     }
 
-    private string GetAlertStyle(string color)
+    private string GetAlertStyle()
     {
         return $"border-radius: {Settings.Layout.BorderRadius};";
     }

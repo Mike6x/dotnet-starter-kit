@@ -1,3 +1,4 @@
+using System.Globalization;
 using MudBlazor;
 
 namespace FSH.Framework.Blazor.UI.Theme;
@@ -36,7 +37,7 @@ public sealed class TenantThemeSettings
                 {
                     FontFamily = bodyFontFamily,
                     FontSize = $"{Typography.FontSizeBase / 16.0:F4}rem",
-                    LineHeight = Typography.LineHeightBase.ToString("F2")
+                    LineHeight = Typography.LineHeightBase.ToString("F2", CultureInfo.InvariantCulture)
                 },
                 H1 = { FontFamily = headingFontFamily },
                 H2 = { FontFamily = headingFontFamily },
@@ -136,12 +137,14 @@ public sealed class PaletteSettings
     };
 }
 
+#pragma warning disable CA1056 // URLs are strings from API responses, used directly in HTML img src
 public sealed class BrandAssets
 {
     // Current URLs (returned from API)
     public string? LogoUrl { get; set; }
     public string? LogoDarkUrl { get; set; }
     public string? FaviconUrl { get; set; }
+#pragma warning restore CA1056
 
     // Pending file uploads (same pattern as profile picture: FileName, ContentType, Data as byte[])
     public FileUpload? Logo { get; set; }

@@ -148,7 +148,7 @@
     [Parameter] public PaletteSettings Palette { get; set; } = new();
     [Parameter] public EventCallback<PaletteSettings> PaletteChanged { get; set; }
 
-    private MudColor GetColor(string hexColor)
+    private static MudColor GetColor(string hexColor)
     {
         try
         {
@@ -156,6 +156,7 @@
         }
         catch
         {
+            // Invalid hex color format, return default black
             return new MudColor("#000000");
         }
     }

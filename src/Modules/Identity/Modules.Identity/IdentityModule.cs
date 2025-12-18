@@ -132,7 +132,7 @@ public class IdentityModule : IModule
         // users
         group.MapAssignUserRolesEndpoint();
         group.MapChangePasswordEndpoint();
-        group.MapConfirmEmailEndpoint();
+        group.MapConfirmEmailEndpoint().RequireRateLimiting("auth");
         group.MapDeleteUserEndpoint();
         group.MapGetUserByIdEndpoint();
         group.MapGetCurrentUserPermissionsEndpoint();

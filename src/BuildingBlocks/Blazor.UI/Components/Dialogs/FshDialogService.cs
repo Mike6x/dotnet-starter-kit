@@ -15,6 +15,8 @@ public static class FshDialogService
         string icon = Icons.Material.Outlined.Help,
         Color iconColor = Color.Primary)
     {
+        ArgumentNullException.ThrowIfNull(dialogService);
+
         var parameters = new DialogParameters<FshConfirmDialog>
         {
             { x => x.Title, title },
