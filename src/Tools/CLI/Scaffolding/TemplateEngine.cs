@@ -246,47 +246,171 @@ internal static class TemplateEngine
 
         var connectionString = options.Database switch
         {
-            DatabaseProvider.PostgreSQL => "Host=localhost;Database={{name}};Username=postgres;Password=postgres",
-            DatabaseProvider.SqlServer => "Server=localhost;Database={{name}};Trusted_Connection=True;TrustServerCertificate=True",
-            DatabaseProvider.SQLite => "Data Source={{name}}.db",
+            DatabaseProvider.PostgreSQL => $"Server=localhost;Database={options.Name.ToLowerInvariant()};User Id=postgres;Password=password",
+            DatabaseProvider.SqlServer => $"Server=localhost;Database={options.Name};Trusted_Connection=True;TrustServerCertificate=True",
+            DatabaseProvider.SQLite => $"Data Source={options.Name}.db",
             _ => string.Empty
         };
 
         var dbProvider = options.Database switch
         {
-            DatabaseProvider.PostgreSQL => "postgres",
-            DatabaseProvider.SqlServer => "mssql",
-            DatabaseProvider.SQLite => "sqlite",
-            _ => "postgres"
+            DatabaseProvider.PostgreSQL => "POSTGRESQL",
+            DatabaseProvider.SqlServer => "MSSQL",
+            DatabaseProvider.SQLite => "SQLITE",
+            _ => "POSTGRESQL"
         };
+
+        var migrationsAssembly = $"{options.Name}.Migrations";
+        var projectNameLower = options.Name.ToLowerInvariant();
 
         return $$"""
             {
-              "DatabaseOptions": {
-                "Provider": "{{dbProvider}}",
-                "ConnectionString": "{{connectionString.Replace("{{name}}", options.Name, StringComparison.Ordinal)}}"
-              },
-              "CachingOptions": {
-                "EnableDistributedCaching": true,
-                "Redis": "localhost:6379"
-              },
-              "JwtOptions": {
-                "Issuer": "{{options.Name}}",
-                "Audience": "{{options.Name}}",
-                "SigningKey": "CHANGE_THIS_TO_A_SECURE_KEY_IN_PRODUCTION_MIN_32_CHARS",
-                "ExpirationMinutes": 60
-              },
-              "MultitenancyOptions": {
+              "OpenTelemetryOptions": {
                 "Enabled": true,
-                "TenantIdHeaderName": "X-Tenant-Id"
+                "Tracing": {
+                  "Enabled": true
+                },
+                "Metrics": {
+                  "Enabled": true,
+                  "MeterNames": []
+                },
+                "Exporter": {
+                  "Otlp": {
+                    "Enabled": true,
+                    "Endpoint": "http://localhost:4317",
+                    "Protocol": "grpc"
+                  }
+                },
+                "Jobs": { "Enabled": true },
+                "Mediator": { "Enabled": true },
+                "Http": {
+                  "Histograms": {
+                    "Enabled": true
+                  }
+                },
+                "Data": {
+                  "FilterEfStatements": true,
+                  "FilterRedisCommands": true
+                }
+              },
+              "Serilog": {
+                "Using": [
+                  "Serilog.Sinks.Console",
+                  "Serilog.Sinks.OpenTelemetry"
+                ],
+                "Enrich": [ "FromLogContext", "WithMachineName", "WithThreadId", "WithCorrelationId", "WithProcessId", "WithProcessName" ],
+                "MinimumLevel": {
+                  "Default": "Debug"
+                },
+                "WriteTo": [
+                  {
+                    "Name": "Console",
+                    "Args": {
+                      "restrictedToMinimumLevel": "Information"
+                    }
+                  },
+                  {
+                    "Name": "OpenTelemetry",
+                    "Args": {
+                      "endpoint": "http://localhost:4317",
+                      "protocol": "grpc",
+                      "resourceAttributes": {
+                        "service.name": "{{options.Name}}.Api"
+                      }
+                    }
+                  }
+                ]
               },
               "Logging": {
                 "LogLevel": {
                   "Default": "Information",
-                  "Microsoft.AspNetCore": "Warning"
+                  "Microsoft.AspNetCore": "Warning",
+                  "Hangfire": "Warning",
+                  "Microsoft.EntityFrameworkCore": "Warning"
                 }
               },
-              "AllowedHosts": "*"
+              "DatabaseOptions": {
+                "Provider": "{{dbProvider}}",
+                "ConnectionString": "{{connectionString}}",
+                "MigrationsAssembly": "{{migrationsAssembly}}"
+              },
+              "OriginOptions": {
+                "OriginUrl": "https://localhost:7030"
+              },
+              "CachingOptions": {
+                "Redis": ""
+              },
+              "HangfireOptions": {
+                "Username": "admin",
+                "Password": "Secure1234!Me",
+                "Route": "/jobs"
+              },
+              "AllowedHosts": "*",
+              "OpenApiOptions": {
+                "Enabled": true,
+                "Title": "{{options.Name}} API",
+                "Version": "v1",
+                "Description": "{{options.Name}} API built with FullStackHero .NET Starter Kit.",
+                "Contact": {
+                  "Name": "Your Name",
+                  "Url": "https://yourwebsite.com",
+                  "Email": "your@email.com"
+                },
+                "License": {
+                  "Name": "MIT License",
+                  "Url": "https://opensource.org/licenses/MIT"
+                }
+              },
+              "CorsOptions": {
+                "AllowAll": false,
+                "AllowedOrigins": [
+                  "https://localhost:4200",
+                  "https://localhost:7140"
+                ],
+                "AllowedHeaders": [ "content-type", "authorization" ],
+                "AllowedMethods": [ "GET", "POST", "PUT", "DELETE" ]
+              },
+              "JwtOptions": {
+                "Issuer": "{{projectNameLower}}.local",
+                "Audience": "{{projectNameLower}}.clients",
+                "SigningKey": "replace-with-256-bit-secret-min-32-chars",
+                "AccessTokenMinutes": 2,
+                "RefreshTokenDays": 7
+              },
+              "SecurityHeadersOptions": {
+                "Enabled": true,
+                "ExcludedPaths": [ "/scalar", "/openapi" ],
+                "AllowInlineStyles": true,
+                "ScriptSources": [],
+                "StyleSources": []
+              },
+              "MailOptions": {
+                "From": "noreply@{{projectNameLower}}.com",
+                "Host": "smtp.ethereal.email",
+                "Port": 587,
+                "UserName": "your-smtp-user",
+                "Password": "your-smtp-password",
+                "DisplayName": "{{options.Name}}"
+              },
+              "RateLimitingOptions": {
+                "Enabled": false,
+                "Global": {
+                  "PermitLimit": 100,
+                  "WindowSeconds": 60,
+                  "QueueLimit": 0
+                },
+                "Auth": {
+                  "PermitLimit": 10,
+                  "WindowSeconds": 60,
+                  "QueueLimit": 0
+                }
+              },
+              "MultitenancyOptions": {
+                "RunTenantMigrationsOnStartup": true
+              },
+              "Storage": {
+                "Provider": "local"
+              }
             }
             """;
     }
@@ -451,7 +575,7 @@ internal static class TemplateEngine
         };
 
         return $$"""
-            <Project Sdk="Aspire.AppHost.Sdk/13.0.0">
+            <Project Sdk="Aspire.AppHost.Sdk/13.1.0">
 
               <PropertyGroup>
                 <OutputType>Exe</OutputType>
@@ -1200,26 +1324,27 @@ jobs:
               </ItemGroup>
 
               <ItemGroup Label="Aspire">
-                <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="13.0.1" />
-                <PackageVersion Include="Aspire.Hosting.SqlServer" Version="13.0.1" />
-                <PackageVersion Include="Aspire.Hosting.Redis" Version="13.0.1" />
+                <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="13.1.0" />
+                <PackageVersion Include="Aspire.Hosting.SqlServer" Version="13.1.0" />
+                <PackageVersion Include="Aspire.Hosting.Redis" Version="13.1.0" />
               </ItemGroup>
 
               <ItemGroup Label="Database">
-                <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.0" />
-                <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.0" />
+                <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.1" />
+                <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.1" />
                 <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
-                <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.0" />
-                <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.0" />
+                <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.1" />
+                <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.1" />
               </ItemGroup>
 
               <ItemGroup Label="Blazor">
-                <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.0" />
-                <PackageVersion Include="Microsoft.AspNetCore.Components.Authorization" Version="10.0.0" />
+                <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.1" />
+                <PackageVersion Include="Microsoft.AspNetCore.Components.Authorization" Version="10.0.1" />
                 <PackageVersion Include="MudBlazor" Version="8.15.0" />
               </ItemGroup>
 
               <ItemGroup Label="AWS">
+                <PackageVersion Include="AWSSDK.S3" Version="4.0.15.1" />
                 <PackageVersion Include="Amazon.Lambda.AspNetCoreServer.Hosting" Version="1.7.2" />
               </ItemGroup>
 
@@ -1229,7 +1354,7 @@ jobs:
               </ItemGroup>
 
               <ItemGroup Label="Code Quality">
-                <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.16.1.129956" />
+                <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.17.0.131074" />
               </ItemGroup>
             </Project>
             """;

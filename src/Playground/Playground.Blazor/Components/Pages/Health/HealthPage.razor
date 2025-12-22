@@ -25,57 +25,6 @@
     </ActionContent>
 </FshPageHeader>
 
-@* Overall Status Card *@
-<MudCard Class="mb-4" Elevation="2">
-    <MudCardContent Class="pa-6">
-        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="4">
-            <MudAvatar Size="Size.Large" Color="@GetStatusColor(_readyResult?.Status)" Variant="Variant.Filled">
-                @if (_loading)
-                {
-                    <MudProgressCircular Size="Size.Small" Indeterminate="true" Color="Color.Inherit" />
-                }
-                else
-                {
-                    <MudIcon Icon="@GetStatusIcon(_readyResult?.Status)" />
-                }
-            </MudAvatar>
-            <MudStack Spacing="0" Class="flex-grow-1">
-                <MudText Typo="Typo.h5" Class="fw-700">@GetStatusText(_readyResult?.Status)</MudText>
-                <MudText Typo="Typo.body2" Class="text-muted">
-                    @if (_loading)
-                    {
-                        <span>Checking system health...</span>
-                    }
-                    else if (_readyResult != null)
-                    {
-                        var healthyCount = _readyResult.Results?.Count(r => r.Status == "Healthy") ?? 0;
-                        var totalCount = _readyResult.Results?.Count ?? 0;
-                        <span>@healthyCount of @totalCount services operational</span>
-                    }
-                    else
-                    {
-                        <span>Unable to determine system status</span>
-                    }
-                </MudText>
-            </MudStack>
-            <MudStack Row="true" Spacing="4">
-                <MudStack AlignItems="AlignItems.Center" Spacing="0">
-                    <MudText Typo="Typo.h5" Class="fw-700">@(_readyResult?.Results?.Count ?? 0)</MudText>
-                    <MudText Typo="Typo.caption" Class="text-muted">Services</MudText>
-                </MudStack>
-                <MudStack AlignItems="AlignItems.Center" Spacing="0">
-                    <MudText Typo="Typo.h5" Class="fw-700">@GetTotalDuration()ms</MudText>
-                    <MudText Typo="Typo.caption" Class="text-muted">Response</MudText>
-                </MudStack>
-                <MudStack AlignItems="AlignItems.Center" Spacing="0">
-                    <MudText Typo="Typo.h5" Class="fw-700">@_uptimePercent%</MudText>
-                    <MudText Typo="Typo.caption" Class="text-muted">Uptime</MudText>
-                </MudStack>
-            </MudStack>
-        </MudStack>
-    </MudCardContent>
-</MudCard>
-
 @* Stats Cards *@
 <MudGrid Class="mb-4">
     <MudItem xs="6" sm="3">
@@ -143,29 +92,18 @@
     {
         @foreach (var entry in _readyResult.Results.OrderBy(GetStatusSortOrder))
         {
-            <MudItem xs="12" sm="6" md="4">
-                <MudCard Elevation="2">
+            <MudItem xs="6" sm="3">
+                <MudCard Class="stats-card" Elevation="2">
                     <MudCardContent Class="pa-4">
-                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2" Class="mb-3">
-                            <MudIcon Icon="@GetServiceIcon(entry.Name)" Color="@GetStatusColor(entry.Status)" />
-                            <MudText Typo="Typo.subtitle1" Class="fw-600 flex-grow-1">@FormatServiceName(entry.Name)</MudText>
-                            <MudChip T="string" Size="Size.Small" Variant="Variant.Filled" Color="@GetStatusColor(entry.Status)">
-                                @entry.Status
-                            </MudChip>
-                        </MudStack>
-                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
-                            <MudIcon Icon="@Icons.Material.Outlined.Timer" Size="Size.Small" Class="text-muted" />
-                            <MudText Typo="Typo.body2" Class="text-muted">@entry.DurationMs.ToString("F2")ms</MudText>
-                        </MudStack>
-                        @if (!string.IsNullOrEmpty(entry.Description))
-                        {
-                            <MudStack Row="true" AlignItems="AlignItems.Start" Spacing="2" Class="mt-2">
-                                <MudIcon Icon="@Icons.Material.Outlined.Info" Size="Size.Small" Class="text-muted" />
-                                <MudText Typo="Typo.caption" Class="text-muted">@entry.Description</MudText>
+                        <MudStack Spacing="2">
+                            <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Start">
+                                <MudIcon Icon="@GetServiceIcon(entry.Name)" Color="@GetStatusColor(entry.Status)" Size="Size.Large" />
+                                <MudChip T="string" Size="Size.Small" Color="@GetStatusColor(entry.Status)" Variant="Variant.Text">@entry.Status</MudChip>
                             </MudStack>
-                        }
+                            <MudText Typo="Typo.h4" Class="fw-700">@entry.DurationMs.ToString("F1")ms</MudText>
+                            <MudText Typo="Typo.body2" Class="text-muted">@FormatServiceName(entry.Name)</MudText>
+                        </MudStack>
                     </MudCardContent>
-                    <MudProgressLinear Value="100" Color="@GetStatusColor(entry.Status)" Size="Size.Small" />
                 </MudCard>
             </MudItem>
         }
@@ -174,8 +112,8 @@
     {
         @for (int i = 0; i < 6; i++)
         {
-            <MudItem xs="12" sm="6" md="4">
-                <MudCard Elevation="2">
+            <MudItem xs="6" sm="3">
+                <MudCard Class="stats-card" Elevation="2">
                     <MudCardContent Class="pa-4">
                         <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="80px" />
                     </MudCardContent>
@@ -254,6 +192,18 @@
         </MudStack>
     </MudPaper>
 }
+
+<style>
+    .stats-card {
+        border-radius: 12px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .stats-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    }
+</style>
 
 @code {
     private HealthResult? _liveResult;

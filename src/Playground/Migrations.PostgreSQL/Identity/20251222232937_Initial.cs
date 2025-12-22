@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FSH.Playground.Migrations.PostgreSQL.Identity
 {
     /// <inheritdoc />
-    public partial class AddIdentitySchema : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,13 +16,50 @@ namespace FSH.Playground.Migrations.PostgreSQL.Identity
                 name: "identity");
 
             migrationBuilder.CreateTable(
+                name: "InboxMessages",
+                schema: "identity",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    HandlerName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    EventType = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: false),
+                    ProcessedOnUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    TenantId = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InboxMessages", x => new { x.Id, x.HandlerName });
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OutboxMessages",
+                schema: "identity",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedOnUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Type = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: false),
+                    Payload = table.Column<string>(type: "text", nullable: false),
+                    TenantId = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
+                    CorrelationId = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
+                    ProcessedOnUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    RetryCount = table.Column<int>(type: "integer", nullable: false),
+                    LastError = table.Column<string>(type: "text", nullable: true),
+                    IsDead = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OutboxMessages", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Roles",
                 schema: "identity",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
-                    TenantId = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
+                    TenantId = table.Column<string>(type: "text", nullable: false),
                     Name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "text", nullable: true)
@@ -45,7 +82,8 @@ namespace FSH.Playground.Migrations.PostgreSQL.Identity
                     RefreshToken = table.Column<string>(type: "text", nullable: true),
                     RefreshTokenExpiryTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ObjectId = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
-                    TenantId = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
+                    LastPasswordChangeDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    TenantId = table.Column<string>(type: "text", nullable: false),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -75,7 +113,7 @@ namespace FSH.Playground.Migrations.PostgreSQL.Identity
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     CreatedBy = table.Column<string>(type: "text", nullable: true),
                     CreatedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    TenantId = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
+                    TenantId = table.Column<string>(type: "text", nullable: false),
                     RoleId = table.Column<string>(type: "text", nullable: false),
                     ClaimType = table.Column<string>(type: "text", nullable: true),
                     ClaimValue = table.Column<string>(type: "text", nullable: true)
@@ -93,6 +131,29 @@ namespace FSH.Playground.Migrations.PostgreSQL.Identity
                 });
 
             migrationBuilder.CreateTable(
+                name: "PasswordHistory",
+                schema: "identity",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    PasswordHash = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PasswordHistory", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PasswordHistory_Users_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserClaims",
                 schema: "identity",
                 columns: table => new
@@ -102,7 +163,7 @@ namespace FSH.Playground.Migrations.PostgreSQL.Identity
                     UserId = table.Column<string>(type: "text", nullable: false),
                     ClaimType = table.Column<string>(type: "text", nullable: true),
                     ClaimValue = table.Column<string>(type: "text", nullable: true),
-                    TenantId = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false)
+                    TenantId = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -125,7 +186,7 @@ namespace FSH.Playground.Migrations.PostgreSQL.Identity
                     ProviderKey = table.Column<string>(type: "text", nullable: false),
                     ProviderDisplayName = table.Column<string>(type: "text", nullable: true),
                     UserId = table.Column<string>(type: "text", nullable: false),
-                    TenantId = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false)
+                    TenantId = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -146,7 +207,7 @@ namespace FSH.Playground.Migrations.PostgreSQL.Identity
                 {
                     UserId = table.Column<string>(type: "text", nullable: false),
                     RoleId = table.Column<string>(type: "text", nullable: false),
-                    TenantId = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false)
+                    TenantId = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -176,7 +237,7 @@ namespace FSH.Playground.Migrations.PostgreSQL.Identity
                     LoginProvider = table.Column<string>(type: "text", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Value = table.Column<string>(type: "text", nullable: true),
-                    TenantId = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false)
+                    TenantId = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -189,6 +250,18 @@ namespace FSH.Playground.Migrations.PostgreSQL.Identity
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PasswordHistory_UserId",
+                schema: "identity",
+                table: "PasswordHistory",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PasswordHistory_UserId_CreatedAt",
+                schema: "identity",
+                table: "PasswordHistory",
+                columns: new[] { "UserId", "CreatedAt" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_RoleClaims_RoleId",
@@ -231,13 +304,25 @@ namespace FSH.Playground.Migrations.PostgreSQL.Identity
                 name: "UserNameIndex",
                 schema: "identity",
                 table: "Users",
-                column: "NormalizedUserName",
+                columns: new[] { "NormalizedUserName", "TenantId" },
                 unique: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "InboxMessages",
+                schema: "identity");
+
+            migrationBuilder.DropTable(
+                name: "OutboxMessages",
+                schema: "identity");
+
+            migrationBuilder.DropTable(
+                name: "PasswordHistory",
+                schema: "identity");
+
             migrationBuilder.DropTable(
                 name: "RoleClaims",
                 schema: "identity");

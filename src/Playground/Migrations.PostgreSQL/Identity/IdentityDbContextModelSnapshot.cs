@@ -17,7 +17,7 @@ namespace FSH.Playground.Migrations.PostgreSQL.Identity
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.0")
+                .HasAnnotation("ProductVersion", "10.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -117,8 +117,7 @@ namespace FSH.Playground.Migrations.PostgreSQL.Identity
 
                     b.Property<string>("TenantId")
                         .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -151,8 +150,7 @@ namespace FSH.Playground.Migrations.PostgreSQL.Identity
 
                     b.Property<string>("TenantId")
                         .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -196,6 +194,9 @@ namespace FSH.Playground.Migrations.PostgreSQL.Identity
                     b.Property<string>("LastName")
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("LastPasswordChangeDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
 
@@ -234,8 +235,7 @@ namespace FSH.Playground.Migrations.PostgreSQL.Identity
 
                     b.Property<string>("TenantId")
                         .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
+                        .HasColumnType("text");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
@@ -249,13 +249,44 @@ namespace FSH.Playground.Migrations.PostgreSQL.Identity
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
-                    b.HasIndex("NormalizedUserName")
+                    b.HasIndex("NormalizedUserName", "TenantId")
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("Users", "identity");
 
                     b.HasAnnotation("Finbuckle:MultiTenant", true);
+                });
+
+            modelBuilder.Entity("FSH.Modules.Identity.Features.v1.Users.PasswordHistory.PasswordHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("UserId", "CreatedAt");
+
+                    b.ToTable("PasswordHistory", "identity");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -274,8 +305,7 @@ namespace FSH.Playground.Migrations.PostgreSQL.Identity
 
                     b.Property<string>("TenantId")
                         .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
+                        .HasColumnType("text");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -303,8 +333,7 @@ namespace FSH.Playground.Migrations.PostgreSQL.Identity
 
                     b.Property<string>("TenantId")
                         .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
+                        .HasColumnType("text");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -329,8 +358,7 @@ namespace FSH.Playground.Migrations.PostgreSQL.Identity
 
                     b.Property<string>("TenantId")
                         .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
+                        .HasColumnType("text");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -354,8 +382,7 @@ namespace FSH.Playground.Migrations.PostgreSQL.Identity
 
                     b.Property<string>("TenantId")
                         .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Value")
                         .HasColumnType("text");
@@ -374,6 +401,17 @@ namespace FSH.Playground.Migrations.PostgreSQL.Identity
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("FSH.Modules.Identity.Features.v1.Users.PasswordHistory.PasswordHistory", b =>
+                {
+                    b.HasOne("FSH.Modules.Identity.Features.v1.Users.FshUser", "User")
+                        .WithMany("PasswordHistories")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -416,6 +454,11 @@ namespace FSH.Playground.Migrations.PostgreSQL.Identity
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("FSH.Modules.Identity.Features.v1.Users.FshUser", b =>
+                {
+                    b.Navigation("PasswordHistories");
                 });
 #pragma warning restore 612, 618
         }
