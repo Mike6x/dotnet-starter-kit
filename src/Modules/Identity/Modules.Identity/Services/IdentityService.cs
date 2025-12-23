@@ -17,15 +17,18 @@ public sealed class IdentityService : IIdentityService
     private readonly UserManager<FshUser> _userManager;
     private readonly ILogger<IdentityService> _logger;
     private readonly IMultiTenantContextAccessor<AppTenantInfo>? _multiTenantContextAccessor;
+    private readonly IGroupRoleService _groupRoleService;
 
     public IdentityService(
         UserManager<FshUser> userManager,
         IMultiTenantContextAccessor<AppTenantInfo>? multiTenantContextAccessor,
-        ILogger<IdentityService> logger)
+        ILogger<IdentityService> logger,
+        IGroupRoleService groupRoleService)
     {
         _userManager = userManager;
         _multiTenantContextAccessor = multiTenantContextAccessor;
         _logger = logger;
+        _groupRoleService = groupRoleService;
     }
 
     public async Task<(string Subject, IEnumerable<Claim> Claims)?>
@@ -81,9 +84,13 @@ public sealed class IdentityService : IIdentityService
             new(ClaimConstants.ImageUrl, user.ImageUrl == null ? string.Empty : user.ImageUrl.ToString())
         };
 
-        // Add roles as claims
-        var roles = await _userManager.GetRolesAsync(user);
-        claims.AddRange(roles.Select(r => new Claim(ClaimTypes.Role, r)));
+        // Add roles as claims (direct roles + group-derived roles)
+        var directRoles = await _userManager.GetRolesAsync(user);
+        var groupRoles = await _groupRoleService.GetUserGroupRolesAsync(user.Id, ct);
+
+        // Combine and deduplicate roles
+        var allRoles = directRoles.Union(groupRoles).Distinct();
+        claims.AddRange(allRoles.Select(r => new Claim(ClaimTypes.Role, r)));
 
         return (user.Id, claims);
     }
@@ -163,8 +170,13 @@ public sealed class IdentityService : IIdentityService
             new(ClaimConstants.ImageUrl, user.ImageUrl == null ? string.Empty : user.ImageUrl.ToString())
         };
 
-        var roles = await _userManager.GetRolesAsync(user);
-        claims.AddRange(roles.Select(r => new Claim(ClaimTypes.Role, r)));
+        // Add roles as claims (direct roles + group-derived roles)
+        var directRoles = await _userManager.GetRolesAsync(user);
+        var groupRoles = await _groupRoleService.GetUserGroupRolesAsync(user.Id, ct);
+
+        // Combine and deduplicate roles
+        var allRoles = directRoles.Union(groupRoles).Distinct();
+        claims.AddRange(allRoles.Select(r => new Claim(ClaimTypes.Role, r)));
 
         return (user.Id, claims);
     }

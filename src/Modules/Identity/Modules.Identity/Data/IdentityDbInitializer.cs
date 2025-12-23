@@ -3,6 +3,7 @@ using FSH.Framework.Persistence;
 using FSH.Framework.Shared.Constants;
 using FSH.Framework.Shared.Multitenancy;
 using FSH.Framework.Web.Origin;
+using FSH.Modules.Identity.Features.v1.Groups;
 using FSH.Modules.Identity.Features.v1.RoleClaims;
 using FSH.Modules.Identity.Features.v1.Roles;
 using FSH.Modules.Identity.Features.v1.Users;
@@ -34,6 +35,7 @@ internal sealed class IdentityDbInitializer(
     public async Task SeedAsync(CancellationToken cancellationToken)
     {
         await SeedRolesAsync();
+        await SeedSystemGroupsAsync();
         await SeedAdminUserAsync();
     }
 
@@ -93,6 +95,79 @@ internal sealed class IdentityDbInitializer(
             await dbContext.SaveChangesAsync();
         }
 
+    }
+
+    private async Task SeedSystemGroupsAsync()
+    {
+        var tenantId = multiTenantContextAccessor.MultiTenantContext.TenantInfo?.Id;
+        if (string.IsNullOrWhiteSpace(tenantId))
+        {
+            return;
+        }
+
+        // Seed "All Users" default group - all new users are automatically added to this group
+        const string allUsersGroupName = "All Users";
+        var allUsersGroup = await context.Groups
+            .FirstOrDefaultAsync(g => g.Name == allUsersGroupName && g.IsSystemGroup);
+
+        if (allUsersGroup is null)
+        {
+            allUsersGroup = new Group
+            {
+                Name = allUsersGroupName,
+                Description = "Default group for all users. New users are automatically added to this group.",
+                IsDefault = true,
+                IsSystemGroup = true,
+                CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
+                CreatedBy = "System"
+            };
+
+            await context.Groups.AddAsync(allUsersGroup);
+            logger.LogInformation("Seeding '{GroupName}' system group for '{TenantId}' Tenant.", allUsersGroupName, tenantId);
+        }
+
+        // Seed "Administrators" group with Admin role
+        const string administratorsGroupName = "Administrators";
+        var administratorsGroup = await context.Groups
+            .FirstOrDefaultAsync(g => g.Name == administratorsGroupName && g.IsSystemGroup);
+
+        if (administratorsGroup is null)
+        {
+            administratorsGroup = new Group
+            {
+                Name = administratorsGroupName,
+                Description = "System group for administrators with full administrative privileges.",
+                IsDefault = false,
+                IsSystemGroup = true,
+                CreatedAt = timeProvider.GetUtcNow().UtcDateTime,
+                CreatedBy = "System"
+            };
+
+            await context.Groups.AddAsync(administratorsGroup);
+            logger.LogInformation("Seeding '{GroupName}' system group for '{TenantId}' Tenant.", administratorsGroupName, tenantId);
+        }
+
+        await context.SaveChangesAsync();
+
+        // Assign Admin role to Administrators group
+        var adminRole = await roleManager.FindByNameAsync(RoleConstants.Admin);
+        if (adminRole is not null)
+        {
+            var existingGroupRole = await context.GroupRoles
+                .FirstOrDefaultAsync(gr => gr.GroupId == administratorsGroup.Id && gr.RoleId == adminRole.Id);
+
+            if (existingGroupRole is null)
+            {
+                context.GroupRoles.Add(new GroupRole
+                {
+                    GroupId = administratorsGroup.Id,
+                    RoleId = adminRole.Id
+                });
+
+                await context.SaveChangesAsync();
+                logger.LogInformation("Assigned Admin role to '{GroupName}' group for '{TenantId}' Tenant.", administratorsGroupName, tenantId);
+            }
+        }
     }
 
     private async Task SeedAdminUserAsync()

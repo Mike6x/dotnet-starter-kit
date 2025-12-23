@@ -43,6 +43,15 @@ using FSH.Modules.Identity.Features.v1.Sessions.RevokeAllSessions;
 using FSH.Modules.Identity.Features.v1.Sessions.GetUserSessions;
 using FSH.Modules.Identity.Features.v1.Sessions.AdminRevokeSession;
 using FSH.Modules.Identity.Features.v1.Sessions.AdminRevokeAllSessions;
+using FSH.Modules.Identity.Features.v1.Groups.CreateGroup;
+using FSH.Modules.Identity.Features.v1.Groups.UpdateGroup;
+using FSH.Modules.Identity.Features.v1.Groups.DeleteGroup;
+using FSH.Modules.Identity.Features.v1.Groups.GetGroups;
+using FSH.Modules.Identity.Features.v1.Groups.GetGroupById;
+using FSH.Modules.Identity.Features.v1.Groups.GetGroupMembers;
+using FSH.Modules.Identity.Features.v1.Groups.AddUsersToGroup;
+using FSH.Modules.Identity.Features.v1.Groups.RemoveUserFromGroup;
+using FSH.Modules.Identity.Features.v1.Users.GetUserGroups;
 using FSH.Modules.Identity.Services;
 using Hangfire;
 using Hangfire.Common;
@@ -93,6 +102,9 @@ public class IdentityModule : IModule
 
         // Register session service
         services.AddScoped<ISessionService, SessionService>();
+
+        // Register group role service for group-derived permissions
+        services.AddScoped<IGroupRoleService, GroupRoleService>();
 
         services.AddIdentity<FshUser, FshRole>(options =>
         {
@@ -175,5 +187,18 @@ public class IdentityModule : IModule
         group.MapGetUserSessionsEndpoint();
         group.MapAdminRevokeSessionEndpoint();
         group.MapAdminRevokeAllSessionsEndpoint();
+
+        // groups
+        group.MapGetGroupsEndpoint();
+        group.MapGetGroupByIdEndpoint();
+        group.MapCreateGroupEndpoint();
+        group.MapUpdateGroupEndpoint();
+        group.MapDeleteGroupEndpoint();
+        group.MapGetGroupMembersEndpoint();
+        group.MapAddUsersToGroupEndpoint();
+        group.MapRemoveUserFromGroupEndpoint();
+
+        // user groups
+        group.MapGetUserGroupsEndpoint();
     }
 }

@@ -41,6 +41,9 @@ internal static class ApiClientRegistration
         services.AddTransient<IUsersClient>(sp =>
             new UsersClient(ResolveClient(sp)));
 
+        services.AddTransient<IGroupsClient>(sp =>
+            new GroupsClient(ResolveClient(sp)));
+
         services.AddTransient<ISessionsClient>(sp =>
             new SessionsClient(ResolveClient(sp)));
 

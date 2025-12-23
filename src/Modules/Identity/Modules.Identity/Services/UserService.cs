@@ -17,6 +17,7 @@ using FSH.Modules.Identity.Contracts.DTOs;
 using FSH.Modules.Identity.Contracts.Events;
 using FSH.Modules.Identity.Contracts.Services;
 using FSH.Modules.Identity.Data;
+using FSH.Modules.Identity.Features.v1.Groups;
 using FSH.Modules.Identity.Features.v1.Roles;
 using FSH.Modules.Identity.Features.v1.Users;
 using FSH.Modules.Identity.Services;
@@ -185,6 +186,27 @@ internal sealed partial class UserService(
 
         // add basic role
         await userManager.AddToRoleAsync(user, RoleConstants.Basic);
+
+        // add user to default groups
+        var defaultGroups = await db.Groups
+            .Where(g => g.IsDefault && !g.IsDeleted)
+            .ToListAsync(cancellationToken);
+
+        foreach (var group in defaultGroups)
+        {
+            db.UserGroups.Add(new UserGroup
+            {
+                UserId = user.Id,
+                GroupId = group.Id,
+                AddedAt = DateTime.UtcNow,
+                AddedBy = "System"
+            });
+        }
+
+        if (defaultGroups.Count > 0)
+        {
+            await db.SaveChangesAsync(cancellationToken);
+        }
 
         // send confirmation mail
         if (!string.IsNullOrEmpty(user.Email))

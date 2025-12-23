@@ -25,4 +25,13 @@ public static class IdentityPermissionConstants
         public const string ViewAll = "Permissions.Sessions.ViewAll";
         public const string RevokeAll = "Permissions.Sessions.RevokeAll";
     }
+
+    public static class Groups
+    {
+        public const string View = "Permissions.Groups.View";
+        public const string Create = "Permissions.Groups.Create";
+        public const string Update = "Permissions.Groups.Update";
+        public const string Delete = "Permissions.Groups.Delete";
+        public const string ManageMembers = "Permissions.Groups.ManageMembers";
+    }
 }
