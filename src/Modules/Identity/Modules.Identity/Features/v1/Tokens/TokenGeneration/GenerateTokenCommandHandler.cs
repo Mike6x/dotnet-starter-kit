@@ -21,6 +21,7 @@ public sealed class GenerateTokenCommandHandler
     private readonly IHttpContextAccessor _http;
     private readonly IOutboxStore _outboxStore;
     private readonly IMultiTenantContextAccessor<AppTenantInfo> _multiTenantContextAccessor;
+    private readonly ISessionService _sessionService;
 
     public GenerateTokenCommandHandler(
         IIdentityService identityService,
@@ -28,7 +29,8 @@ public sealed class GenerateTokenCommandHandler
         ISecurityAudit securityAudit,
         IHttpContextAccessor http,
         IOutboxStore outboxStore,
-        IMultiTenantContextAccessor<AppTenantInfo> multiTenantContextAccessor)
+        IMultiTenantContextAccessor<AppTenantInfo> multiTenantContextAccessor,
+        ISessionService sessionService)
     {
         _identityService = identityService;
         _tokenService = tokenService;
@@ -36,6 +38,7 @@ public sealed class GenerateTokenCommandHandler
         _http = http;
         _outboxStore = outboxStore;
         _multiTenantContextAccessor = multiTenantContextAccessor;
+        _sessionService = sessionService;
     }
 
     public async ValueTask<TokenResponse> Handle(
@@ -85,6 +88,24 @@ public sealed class GenerateTokenCommandHandler
 
         // Persist refresh token (hashed) for this user
         await _identityService.StoreRefreshTokenAsync(subject, token.RefreshToken, token.RefreshTokenExpiresAt, cancellationToken);
+
+        // Create user session for session management (non-blocking, fail gracefully)
+        try
+        {
+            var refreshTokenHash = Sha256Short(token.RefreshToken);
+            await _sessionService.CreateSessionAsync(
+                subject,
+                refreshTokenHash,
+                ip,
+                ua,
+                token.RefreshTokenExpiresAt,
+                cancellationToken);
+        }
+        catch (Exception)
+        {
+            // Session creation is non-critical - don't fail the login
+            // This can happen if migrations haven't been applied yet
+        }
 
         // 3) Audit token issuance with a fingerprint (never raw token)
         var fingerprint = Sha256Short(token.AccessToken);

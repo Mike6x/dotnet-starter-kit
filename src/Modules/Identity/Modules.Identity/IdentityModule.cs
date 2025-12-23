@@ -37,6 +37,12 @@ using FSH.Modules.Identity.Features.v1.Users.SearchUsers;
 using FSH.Modules.Identity.Features.v1.Users.ResetPassword;
 using FSH.Modules.Identity.Features.v1.Users.ToggleUserStatus;
 using FSH.Modules.Identity.Features.v1.Users.UpdateUser;
+using FSH.Modules.Identity.Features.v1.Sessions.GetMySessions;
+using FSH.Modules.Identity.Features.v1.Sessions.RevokeSession;
+using FSH.Modules.Identity.Features.v1.Sessions.RevokeAllSessions;
+using FSH.Modules.Identity.Features.v1.Sessions.GetUserSessions;
+using FSH.Modules.Identity.Features.v1.Sessions.AdminRevokeSession;
+using FSH.Modules.Identity.Features.v1.Sessions.AdminRevokeAllSessions;
 using FSH.Modules.Identity.Services;
 using Hangfire;
 using Hangfire.Common;
@@ -84,6 +90,9 @@ public class IdentityModule : IModule
 
         // Register password expiry service
         services.AddScoped<IPasswordExpiryService, PasswordExpiryService>();
+
+        // Register session service
+        services.AddScoped<ISessionService, SessionService>();
 
         services.AddIdentity<FshUser, FshRole>(options =>
         {
@@ -156,5 +165,15 @@ public class IdentityModule : IModule
         group.MapSelfRegisterUserEndpoint();
         group.ToggleUserStatusEndpointEndpoint();
         group.MapUpdateUserEndpoint();
+
+        // sessions - user endpoints
+        group.MapGetMySessionsEndpoint();
+        group.MapRevokeSessionEndpoint();
+        group.MapRevokeAllSessionsEndpoint();
+
+        // sessions - admin endpoints
+        group.MapGetUserSessionsEndpoint();
+        group.MapAdminRevokeSessionEndpoint();
+        group.MapAdminRevokeAllSessionsEndpoint();
     }
 }

@@ -15,17 +15,20 @@ public sealed class RefreshTokenCommandHandler
     private readonly ITokenService _tokenService;
     private readonly ISecurityAudit _securityAudit;
     private readonly IHttpContextAccessor _http;
+    private readonly ISessionService _sessionService;
 
     public RefreshTokenCommandHandler(
         IIdentityService identityService,
         ITokenService tokenService,
         ISecurityAudit securityAudit,
-        IHttpContextAccessor http)
+        IHttpContextAccessor http,
+        ISessionService sessionService)
     {
         _identityService = identityService;
         _tokenService = tokenService;
         _securityAudit = securityAudit;
         _http = http;
+        _sessionService = sessionService;
     }
 
     public async ValueTask<RefreshTokenCommandResponse> Handle(
@@ -49,6 +52,15 @@ public sealed class RefreshTokenCommandHandler
         }
 
         var (subject, claims) = validated.Value;
+
+        // Check if the session associated with this refresh token is still valid
+        var refreshTokenHash = Sha256Short(request.RefreshToken);
+        var isSessionValid = await _sessionService.ValidateSessionAsync(refreshTokenHash, cancellationToken);
+        if (!isSessionValid)
+        {
+            await _securityAudit.TokenRevokedAsync(subject, clientId!, "SessionRevoked", cancellationToken);
+            throw new UnauthorizedAccessException("Session has been revoked.");
+        }
 
         // Optionally, cross-check the provided access token subject
         var handler = new JwtSecurityTokenHandler();
@@ -83,6 +95,14 @@ public sealed class RefreshTokenCommandHandler
 
         // Persist rotated refresh token for this user
         await _identityService.StoreRefreshTokenAsync(subject, newToken.RefreshToken, newToken.RefreshTokenExpiresAt, cancellationToken);
+
+        // Update the session with the new refresh token hash
+        var newRefreshTokenHash = Sha256Short(newToken.RefreshToken);
+        await _sessionService.UpdateSessionRefreshTokenAsync(
+            refreshTokenHash,
+            newRefreshTokenHash,
+            newToken.RefreshTokenExpiresAt,
+            cancellationToken);
 
         // Audit the newly issued token with a fingerprint
         var fingerprint = Sha256Short(newToken.AccessToken);

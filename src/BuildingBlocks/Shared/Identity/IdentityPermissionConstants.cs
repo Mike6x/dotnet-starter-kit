@@ -17,4 +17,12 @@ public static class IdentityPermissionConstants
         public const string Update = "Permissions.Roles.Update";
         public const string Delete = "Permissions.Roles.Delete";
     }
+
+    public static class Sessions
+    {
+        public const string View = "Permissions.Sessions.View";
+        public const string Revoke = "Permissions.Sessions.Revoke";
+        public const string ViewAll = "Permissions.Sessions.ViewAll";
+        public const string RevokeAll = "Permissions.Sessions.RevokeAll";
+    }
 }

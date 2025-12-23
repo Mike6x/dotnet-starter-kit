@@ -28,7 +28,7 @@ public sealed class TenantAutoProvisioningHostedService : IHostedService
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        if (!_options.AutoProvisionOnStartup)
+        if (!_options.AutoProvisionOnStartup && !_options.RunTenantMigrationsOnStartup)
         {
             return;
         }
@@ -54,7 +54,14 @@ public sealed class TenantAutoProvisioningHostedService : IHostedService
             try
             {
                 var latest = await provisioning.GetLatestAsync(tenant.Id, cancellationToken).ConfigureAwait(false);
-                if (latest is null || latest.Status != TenantProvisioningStatus.Completed)
+
+                // When RunTenantMigrationsOnStartup is enabled, always re-provision to apply any new migrations
+                // Otherwise, only provision if not completed yet
+                bool shouldProvision = _options.RunTenantMigrationsOnStartup ||
+                                       latest is null ||
+                                       latest.Status != TenantProvisioningStatus.Completed;
+
+                if (shouldProvision)
                 {
                     await provisioning.StartAsync(tenant.Id, cancellationToken).ConfigureAwait(false);
                     _logger.LogInformation("Enqueued provisioning for tenant {TenantId} on startup.", tenant.Id);
