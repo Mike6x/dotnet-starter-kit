@@ -4,7 +4,7 @@ using FSH.Framework.Storage.DTOs;
 
 namespace FSH.Modules.Identity.Features.v1.Users;
 
-public class UserImageValidator : AbstractValidator<FileUploadRequest>
+public sealed class UserImageValidator : AbstractValidator<FileUploadRequest>
 {
     public UserImageValidator() : this(FileType.Image) { }
     public UserImageValidator(FileType fileType)

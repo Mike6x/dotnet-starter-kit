@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace FSH.Modules.Identity.Features.v1.Users.ChangePassword;
 
-public class ChangePasswordValidator : AbstractValidator<ChangePasswordCommand>
+public sealed class ChangePasswordValidator : AbstractValidator<ChangePasswordCommand>
 {
     private readonly UserManager<FshUser> _userManager;
     private readonly IPasswordHistoryService _passwordHistoryService;

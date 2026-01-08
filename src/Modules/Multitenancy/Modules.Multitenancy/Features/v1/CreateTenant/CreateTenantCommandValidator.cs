@@ -5,7 +5,7 @@ using FSH.Modules.Multitenancy.Contracts.v1.CreateTenant;
 
 namespace FSH.Modules.Multitenancy.Features.v1.CreateTenant;
 
-public class CreateTenantCommandValidator : AbstractValidator<CreateTenantCommand>
+public sealed class CreateTenantCommandValidator : AbstractValidator<CreateTenantCommand>
 {
     public CreateTenantCommandValidator(ITenantService tenantService, IConnectionStringValidator connectionStringValidator)
     {
