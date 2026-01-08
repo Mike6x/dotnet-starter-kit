@@ -107,71 +107,8 @@ jobs:
           path: src
 
       - name: Run ${{ matrix.test-project.name }}
-        run: dotnet test ${{ matrix.test-project.path }} -c Release --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx"
+        run: dotnet test ${{ matrix.test-project.path }} -c Release --no-build --verbosity normal
 
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: test-results-${{ matrix.test-project.name }}
-          path: ${{ matrix.test-project.path }}/TestResults/test-results.trx
-          retention-days: 7
-
-  coverage:
-    name: Code Coverage
-    runs-on: ubuntu-latest
-    needs: build
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '10.0.x'
-
-      - name: Cache NuGet packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/Directory.Packages.props') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
-
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-output
-          path: src
-
-      - name: Run tests with coverage
-        run: |
-          dotnet test src/FSH.Framework.slnx -c Release --no-build \
-            --collect:"XPlat Code Coverage" \
-            --results-directory ./coverage
-
-      - name: Install ReportGenerator
-        run: dotnet tool install -g dotnet-reportgenerator-globaltool
-
-      - name: Generate coverage report
-        run: |
-          reportgenerator \
-            -reports:"./coverage/**/coverage.cobertura.xml" \
-            -targetdir:"./coverage/report" \
-            -reporttypes:"Cobertura;TextSummary"
-
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report
-          path: ./coverage/report
-          retention-days: 7
-
-      - name: Display coverage summary
-        run: cat ./coverage/report/Summary.txt
-
-  # Build and push dev containers on develop branch
   publish-dev-containers:
     name: Publish Dev Containers
     runs-on: ubuntu-latest
@@ -225,7 +162,6 @@ jobs:
           docker push ghcr.io/${{ github.repository_owner }}/fsh-playground-blazor:dev-${{ github.sha }}
           docker push ghcr.io/${{ github.repository_owner }}/fsh-playground-blazor:dev-latest
 
-  # Publish NuGet packages and release containers on main branch (tags or manual)
   publish-release:
     name: Publish Release (NuGet + Containers)
     runs-on: ubuntu-latest
@@ -294,9 +230,6 @@ jobs:
 
       - name: Pack CLI Tool
         run: dotnet pack src/Tools/CLI/FSH.CLI.csproj -c Release --no-build -o ./nupkgs -p:PackageVersion=${{ steps.version.outputs.version }}
-
-      - name: List packages
-        run: ls -la ./nupkgs
 
       - name: Push to NuGet.org
         run: dotnet nuget push "./nupkgs/*.nupkg" --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
