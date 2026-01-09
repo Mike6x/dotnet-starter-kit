@@ -86,9 +86,22 @@ internal sealed partial class UserService(
             : throw new CustomException(string.Format(CultureInfo.InvariantCulture, "An error occurred while confirming {0}", user.Email));
     }
 
-    public Task<string> ConfirmPhoneNumberAsync(string userId, string code)
+    public async Task<string> ConfirmPhoneNumberAsync(string userId, string code)
     {
-        throw new NotImplementedException();
+        EnsureValidTenant();
+
+        var user = await userManager.Users
+            .Where(u => u.Id == userId && !u.PhoneNumberConfirmed)
+            .FirstOrDefaultAsync();
+
+        _ = user ?? throw new CustomException("An error occurred while confirming phone number.");
+
+        code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
+        var result = await userManager.ChangePhoneNumberAsync(user, user.PhoneNumber!, code);
+
+        return result.Succeeded
+            ? string.Format(CultureInfo.InvariantCulture, "Phone number {0} confirmed successfully.", user.PhoneNumber)
+            : throw new CustomException(string.Format(CultureInfo.InvariantCulture, "An error occurred while confirming phone number {0}", user.PhoneNumber));
     }
 
     public async Task<bool> ExistsWithEmailAsync(string email, string? exceptId = null)
@@ -154,9 +167,100 @@ internal sealed partial class UserService(
         return result;
     }
 
-    public Task<string> GetOrCreateFromPrincipalAsync(ClaimsPrincipal principal)
+    public async Task<string> GetOrCreateFromPrincipalAsync(ClaimsPrincipal principal)
     {
-        throw new NotImplementedException();
+        EnsureValidTenant();
+        ArgumentNullException.ThrowIfNull(principal);
+
+        var email = principal.FindFirstValue(ClaimTypes.Email)
+            ?? principal.FindFirstValue("email")
+            ?? throw new CustomException("Email claim is required for external authentication.");
+
+        // Try to find existing user by email
+        var user = await userManager.FindByEmailAsync(email);
+        if (user is not null)
+        {
+            return user.Id;
+        }
+
+        // Extract claims for new user creation
+        var firstName = principal.FindFirstValue(ClaimTypes.GivenName)
+            ?? principal.FindFirstValue("given_name")
+            ?? string.Empty;
+
+        var lastName = principal.FindFirstValue(ClaimTypes.Surname)
+            ?? principal.FindFirstValue("family_name")
+            ?? string.Empty;
+
+        var userName = principal.FindFirstValue(ClaimTypes.Name)
+            ?? principal.FindFirstValue("preferred_username")
+            ?? email.Split('@')[0];
+
+        // Ensure unique username
+        if (await userManager.FindByNameAsync(userName) is not null)
+        {
+            userName = $"{userName}_{Guid.NewGuid():N}"[..20];
+        }
+
+        // Create new user from external principal
+        user = new FshUser
+        {
+            Email = email,
+            UserName = userName,
+            FirstName = firstName,
+            LastName = lastName,
+            EmailConfirmed = true, // External provider has verified the email
+            PhoneNumberConfirmed = false,
+            IsActive = true
+        };
+
+        var result = await userManager.CreateAsync(user);
+        if (!result.Succeeded)
+        {
+            var errors = result.Errors.Select(e => e.Description).ToList();
+            throw new CustomException("Failed to create user from external principal.", errors);
+        }
+
+        // Assign basic role
+        await userManager.AddToRoleAsync(user, RoleConstants.Basic);
+
+        // Add to default groups
+        var defaultGroups = await db.Groups
+            .Where(g => g.IsDefault && !g.IsDeleted)
+            .ToListAsync();
+
+        foreach (var group in defaultGroups)
+        {
+            db.UserGroups.Add(new UserGroup
+            {
+                UserId = user.Id,
+                GroupId = group.Id,
+                AddedAt = DateTime.UtcNow,
+                AddedBy = "ExternalAuth"
+            });
+        }
+
+        if (defaultGroups.Count > 0)
+        {
+            await db.SaveChangesAsync();
+        }
+
+        // Publish integration event
+        var tenantId = multiTenantContextAccessor.MultiTenantContext.TenantInfo?.Id;
+        var integrationEvent = new UserRegisteredIntegrationEvent(
+            Id: Guid.NewGuid(),
+            OccurredOnUtc: DateTime.UtcNow,
+            TenantId: tenantId,
+            CorrelationId: Guid.NewGuid().ToString(),
+            Source: "Identity.ExternalAuth",
+            UserId: user.Id,
+            Email: user.Email ?? string.Empty,
+            FirstName: user.FirstName ?? string.Empty,
+            LastName: user.LastName ?? string.Empty);
+
+        await outboxStore.AddAsync(integrationEvent).ConfigureAwait(false);
+
+        return user.Id;
     }
 
     public async Task<string> RegisterAsync(string firstName, string lastName, string email, string userName, string password, string confirmPassword, string phoneNumber, string origin, CancellationToken cancellationToken)
