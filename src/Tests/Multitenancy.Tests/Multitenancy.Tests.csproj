@@ -21,6 +21,7 @@
 		</PackageReference>
 		<PackageReference Include="Shouldly" />
 		<PackageReference Include="AutoFixture" />
+		<PackageReference Include="NSubstitute" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\..\Modules\Multitenancy\Modules.Multitenancy\Modules.Multitenancy.csproj" />

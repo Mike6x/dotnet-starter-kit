@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 
 namespace FSH.Modules.Identity.Authorization.Jwt;
 
-internal static class Extensions
+internal static class JwtAuthenticationExtensions
 {
     internal static IServiceCollection ConfigureJwtAuth(this IServiceCollection services)
     {

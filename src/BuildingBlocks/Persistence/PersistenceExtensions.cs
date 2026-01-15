@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 
 namespace FSH.Framework.Persistence;
 
-public static class Extensions
+public static class PersistenceExtensions
 {
     public static IServiceCollection AddHeroDatabaseOptions(this IServiceCollection services, IConfiguration configuration)
     {

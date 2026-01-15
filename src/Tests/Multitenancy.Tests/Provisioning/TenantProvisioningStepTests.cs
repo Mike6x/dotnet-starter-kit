@@ -250,6 +250,7 @@ public sealed class TenantProvisioningStepTests
 
         // Assert
         step.Status.ShouldBe(TenantProvisioningStatus.Failed);
+        step.Error.ShouldNotBeNull();
         step.Error.ShouldContain("unique constraint violation");
         step.CompletedUtc.ShouldNotBeNull();
     }
