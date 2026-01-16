@@ -13,6 +13,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\..\BuildingBlocks\Eventing\Eventing.csproj" />
+	  <ProjectReference Include="..\..\..\BuildingBlocks\Shared\Shared.csproj" />
 	  <ProjectReference Include="..\..\..\BuildingBlocks\Storage\Storage.csproj" />
 	</ItemGroup>
 
