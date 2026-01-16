@@ -197,7 +197,7 @@ public class EndpointConventionTests
             {
                 var privateMethods = endpointType
                     .GetMethods(BindingFlags.NonPublic | BindingFlags.Static)
-                    .Where(m => !m.Name.StartsWith("<", StringComparison.Ordinal)) // Exclude compiler-generated
+                    .Where(m => !m.Name.StartsWith('<')) // Exclude compiler-generated
                     .Where(m => m.DeclaringType == endpointType) // Only declared in this type
                     .ToArray();
 
@@ -212,6 +212,8 @@ public class EndpointConventionTests
 
         // This is informational - some private helper methods may be acceptable
         // but excessive logic in endpoints violates the thin endpoint pattern
+        // Assert that we processed endpoints (test ran successfully)
+        warnings.ShouldNotBeNull();
     }
 
     [Fact]

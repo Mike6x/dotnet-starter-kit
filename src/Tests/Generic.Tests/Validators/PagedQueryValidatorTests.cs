@@ -22,6 +22,7 @@ public sealed class PagedQueryValidatorTests
     public void PageNumber_Should_Pass_When_Null(IValidator validator, object query)
     {
         // Arrange - PageNumber is null by default
+        ArgumentNullException.ThrowIfNull(validator);
 
         // Act
         var result = validator.Validate(new ValidationContext<object>(query));

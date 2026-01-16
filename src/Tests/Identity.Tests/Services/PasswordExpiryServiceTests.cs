@@ -22,7 +22,7 @@ public sealed class PasswordExpiryServiceTests
             userStore, null!, null!, null!, null!, null!, null!, null!, null!);
     }
 
-    private IPasswordExpiryService CreateService(PasswordPolicyOptions options)
+    private PasswordExpiryService CreateService(PasswordPolicyOptions options)
     {
         return new PasswordExpiryService(_userManager, Options.Create(options));
     }

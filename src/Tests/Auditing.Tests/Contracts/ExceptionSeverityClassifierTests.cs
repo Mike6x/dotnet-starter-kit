@@ -74,6 +74,7 @@ public sealed class ExceptionSeverityClassifierTests
     }
 
     [Fact]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2201:Do not raise reserved exception types", Justification = "Testing exception classification requires specific exception types")]
     public void Classify_Should_ReturnError_For_NullReferenceException()
     {
         // Arrange
@@ -87,6 +88,7 @@ public sealed class ExceptionSeverityClassifierTests
     }
 
     [Fact]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2201:Do not raise reserved exception types", Justification = "Testing exception classification requires generic exception")]
     public void Classify_Should_ReturnError_For_GenericException()
     {
         // Arrange
@@ -138,6 +140,7 @@ public sealed class ExceptionSeverityClassifierTests
         result.ShouldBe(AuditSeverity.Information);
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1032:Implement standard exception constructors", Justification = "Test-only exception class")]
     private sealed class CustomCanceledException : OperationCanceledException
     {
     }

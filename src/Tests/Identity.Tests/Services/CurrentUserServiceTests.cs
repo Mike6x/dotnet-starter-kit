@@ -183,7 +183,8 @@ public sealed class CurrentUserServiceTests
         var service = new CurrentUserService();
         var principal = CreateAuthenticatedPrincipal(
             Guid.NewGuid().ToString(),
-            roles: ["Admin", "User"]);
+            null, null, null,
+            "Admin", "User");
         service.SetCurrentUser(principal);
 
         // Act
@@ -200,7 +201,8 @@ public sealed class CurrentUserServiceTests
         var service = new CurrentUserService();
         var principal = CreateAuthenticatedPrincipal(
             Guid.NewGuid().ToString(),
-            roles: ["User"]);
+            null, null, null,
+            "User");
         service.SetCurrentUser(principal);
 
         // Act

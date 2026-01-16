@@ -121,7 +121,7 @@ public class CircularReferenceTests
         }
 
         // Attempt topological sort - will fail if cycles exist
-        var sorted = TopologicalSort(dependencyGraph, out var hasCycle, out var cycleDescription);
+        _ = TopologicalSort(dependencyGraph, out var hasCycle, out var cycleDescription);
 
         hasCycle.ShouldBeFalse(
             $"Dependency graph is not acyclic. {cycleDescription}");
@@ -147,9 +147,13 @@ public class CircularReferenceTests
                 references.Add(reference!);
             }
         }
-        catch
+        catch (System.Xml.XmlException)
         {
-            // Ignore parse errors
+            // Ignore XML parse errors
+        }
+        catch (IOException)
+        {
+            // Ignore file IO errors
         }
 
         return references;
@@ -230,13 +234,11 @@ public class CircularReferenceTests
 
         foreach (var node in graph.Keys)
         {
-            if (!visited.Contains(node))
+            if (!visited.Contains(node) &&
+                !TopologicalSortVisit(node, graph, visited, temporaryMark, result, out cycleDescription))
             {
-                if (!TopologicalSortVisit(node, graph, visited, temporaryMark, result, out cycleDescription))
-                {
-                    hasCycle = true;
-                    return result;
-                }
+                hasCycle = true;
+                return result;
             }
         }
 

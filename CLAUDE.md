@@ -102,6 +102,7 @@ Key settings (appsettings or env vars):
 - API versioning in URL path (`/api/v1/...`)
 - Mediator library (not MediatR) for commands/queries
 - FluentValidation for request validation
+- **Zero warnings policy**: After making any code changes, always verify the build produces no warnings. Run `dotnet build src/FSH.Framework.slnx` and ensure "0 Warning(s)" in output. Fix any warnings before considering work complete.
 
 ## Blazor UI Components
 
@@ -172,3 +173,66 @@ Modern user profile dropdown for app bars/navbars with avatar, user info, and me
 - Gradient menu header with user info
 - Customizable menu items via RenderFragment
 - Scoped CSS for isolated styling
+
+### FshStatCard Component
+
+Statistics card for displaying metrics with icon, value, label, and optional badge:
+
+```razor
+@using FSH.Framework.Blazor.UI.Components.Cards
+
+<FshStatCard Icon="@Icons.Material.Filled.People"
+             IconColor="Color.Primary"
+             Value="42"
+             Label="Total Users"
+             Badge="Active"
+             BadgeColor="Color.Success" />
+```
+
+**Parameters:**
+- `Icon` (required): MudBlazor icon to display
+- `IconColor` (optional): Color theme for icon and accent (default: Primary)
+- `Value` (required): Main metric value to display
+- `Label` (required): Description of the metric
+- `Badge` (optional): Small badge text below label
+- `BadgeColor` (optional): Color for the badge (default: Primary)
+
+**Features:**
+- Light/dark mode support via CSS variables
+- Hover animations (lift, icon scale, badge slide)
+- Gradient icon backgrounds with colored shadows
+- Consistent styling using FSH design tokens
+
+### FSH Design Tokens
+
+The framework uses CSS custom properties for consistent styling across all components. These are defined in `fsh-theme.css`:
+
+```css
+:root {
+  /* Border Radius */
+  --fsh-radius: 10px;
+  --fsh-radius-sm: 8px;
+  --fsh-radius-lg: 16px;
+  --fsh-radius-xl: 20px;
+  --fsh-radius-full: 9999px;
+
+  /* Shadows */
+  --fsh-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --fsh-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --fsh-shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.1);
+
+  /* Card Styling */
+  --fsh-card-bg: #ffffff;
+  --fsh-card-border: rgba(0, 0, 0, 0.08);
+  --fsh-card-shadow: var(--fsh-shadow-md);
+
+  /* Text Colors */
+  --fsh-text-primary: #1a1a2e;
+  --fsh-text-secondary: #64748b;
+
+  /* Transitions */
+  --fsh-transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+```
+
+Dark mode overrides are automatically applied when `.mud-theme-dark` is present. Use these tokens in custom components to ensure consistent styling.

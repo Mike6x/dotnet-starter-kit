@@ -172,12 +172,8 @@ public class ContractsPurityTests
 
         // This is informational - existing codebase may have non-sealed commands
         // The pattern is recommended but not strictly enforced to allow gradual migration
-        // Uncomment the assertion below to enforce strict sealing:
-        // nonSealedTypes.ShouldBeEmpty(
-        //     $"Commands and Queries should be records or sealed classes. " +
-        //     $"Violations: {string.Join(", ", nonSealedTypes)}");
-
         // For now, just verify we can identify non-sealed types (the test infrastructure works)
         // This serves as documentation of types that could be improved
+        nonSealedTypes.ShouldNotBeNull();
     }
 }

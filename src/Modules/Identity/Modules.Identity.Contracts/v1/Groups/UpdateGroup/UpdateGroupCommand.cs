@@ -8,4 +8,4 @@ public sealed record UpdateGroupCommand(
     string Name,
     string? Description,
     bool IsDefault,
-    List<string>? RoleIds) : ICommand<GroupDto>;
+    IReadOnlyList<string>? RoleIds) : ICommand<GroupDto>;
