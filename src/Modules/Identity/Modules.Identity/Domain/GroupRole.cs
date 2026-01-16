@@ -1,6 +1,4 @@
-using FSH.Modules.Identity.Features.v1.Roles;
-
-namespace FSH.Modules.Identity.Features.v1.Groups;
+namespace FSH.Modules.Identity.Domain;
 
 public class GroupRole
 {

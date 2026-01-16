@@ -1,4 +1,4 @@
-namespace FSH.Modules.Identity.Features.v1.Users.PasswordHistory;
+namespace FSH.Modules.Identity.Domain;
 
 public class PasswordHistory
 {

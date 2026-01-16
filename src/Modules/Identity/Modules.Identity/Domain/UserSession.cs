@@ -1,4 +1,4 @@
-namespace FSH.Modules.Identity.Features.v1.Sessions;
+namespace FSH.Modules.Identity.Domain;
 
 public class UserSession
 {
@@ -21,5 +21,5 @@ public class UserSession
     public string? RevokedReason { get; set; }
 
     // Navigation property
-    public virtual Users.FshUser? User { get; set; }
+    public virtual FshUser? User { get; set; }
 }

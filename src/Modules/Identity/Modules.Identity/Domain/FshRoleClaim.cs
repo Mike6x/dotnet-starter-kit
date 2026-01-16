@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 
-namespace FSH.Modules.Identity.Features.v1.RoleClaims;
+namespace FSH.Modules.Identity.Domain;
 
 public class FshRoleClaim : IdentityRoleClaim<string>
 {

@@ -3,6 +3,7 @@ using FSH.Framework.Core.Exceptions;
 using FSH.Modules.Identity.Contracts.DTOs;
 using FSH.Modules.Identity.Contracts.v1.Groups.CreateGroup;
 using FSH.Modules.Identity.Data;
+using FSH.Modules.Identity.Domain;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 

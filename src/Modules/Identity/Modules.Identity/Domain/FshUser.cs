@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
-using FSH.Modules.Identity.Features.v1.Users.PasswordHistory;
+using Microsoft.AspNetCore.Identity;
 
-namespace FSH.Modules.Identity.Features.v1.Users;
+namespace FSH.Modules.Identity.Domain;
 
 public class FshUser : IdentityUser
 {
@@ -18,5 +17,5 @@ public class FshUser : IdentityUser
     public DateTime LastPasswordChangeDate { get; set; } = DateTime.UtcNow;
 
     // Navigation property for password history
-    public virtual ICollection<global::FSH.Modules.Identity.Features.v1.Users.PasswordHistory.PasswordHistory> PasswordHistories { get; set; } = new List<global::FSH.Modules.Identity.Features.v1.Users.PasswordHistory.PasswordHistory>();
+    public virtual ICollection<PasswordHistory> PasswordHistories { get; set; } = new List<PasswordHistory>();
 }

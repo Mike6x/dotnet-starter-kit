@@ -2,6 +2,7 @@ using FSH.Framework.Core.Context;
 using FSH.Framework.Core.Exceptions;
 using FSH.Modules.Identity.Contracts.v1.Groups.AddUsersToGroup;
 using FSH.Modules.Identity.Data;
+using FSH.Modules.Identity.Domain;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 
