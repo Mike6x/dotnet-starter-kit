@@ -81,7 +81,7 @@ jobs:
           - name: Identity.Tests
             path: src/Tests/Identity.Tests
           - name: Multitenancy.Tests
-            path: src/Tests/Multitenacy.Tests
+            path: src/Tests/Multitenancy.Tests
 
     steps:
       - name: Checkout
