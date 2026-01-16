@@ -26,4 +26,4 @@ public sealed record UpdateGroupRequest(
     string Name,
     string? Description,
     bool IsDefault,
-    List<string>? RoleIds);
+    IReadOnlyList<string>? RoleIds);

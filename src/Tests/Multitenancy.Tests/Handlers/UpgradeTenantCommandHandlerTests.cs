@@ -76,7 +76,7 @@ public sealed class UpgradeTenantCommandHandlerTests
         var tenantId = "tenant-1";
         var extendedExpiryDate = DateTime.UtcNow.AddYears(1);
         var command = new UpgradeTenantCommand(tenantId, extendedExpiryDate);
-        var cts = new CancellationTokenSource();
+        using var cts = new CancellationTokenSource();
         var token = cts.Token;
 
         _tenantService.UpgradeSubscriptionAsync(tenantId, extendedExpiryDate, token)

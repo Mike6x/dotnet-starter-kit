@@ -22,4 +22,4 @@ public static class AddUsersToGroupEndpoint
     }
 }
 
-public sealed record AddUsersRequest(List<string> UserIds);
+public sealed record AddUsersRequest(IReadOnlyList<string> UserIds);

@@ -349,13 +349,16 @@ public sealed class SessionService : ISessionService
             return "Desktop";
         }
 
-        var lower = deviceFamily.ToLowerInvariant();
-        if (lower.Contains("mobile") || lower.Contains("phone") || lower.Contains("iphone") || lower.Contains("android"))
+        if (deviceFamily.Contains("mobile", StringComparison.OrdinalIgnoreCase) ||
+            deviceFamily.Contains("phone", StringComparison.OrdinalIgnoreCase) ||
+            deviceFamily.Contains("iphone", StringComparison.OrdinalIgnoreCase) ||
+            deviceFamily.Contains("android", StringComparison.OrdinalIgnoreCase))
         {
             return "Mobile";
         }
 
-        if (lower.Contains("tablet") || lower.Contains("ipad"))
+        if (deviceFamily.Contains("tablet", StringComparison.OrdinalIgnoreCase) ||
+            deviceFamily.Contains("ipad", StringComparison.OrdinalIgnoreCase))
         {
             return "Tablet";
         }

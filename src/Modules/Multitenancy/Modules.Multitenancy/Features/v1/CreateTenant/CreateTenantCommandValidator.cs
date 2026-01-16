@@ -11,12 +11,12 @@ public sealed class CreateTenantCommandValidator : AbstractValidator<CreateTenan
     {
         RuleFor(t => t.Id).Cascade(CascadeMode.Stop)
             .NotEmpty()
-            .MustAsync(async (id, _) => !await tenantService.ExistsWithIdAsync(id).ConfigureAwait(false))
+            .MustAsync(async (id, ct) => !await tenantService.ExistsWithIdAsync(id, ct).ConfigureAwait(false))
             .WithMessage((_, id) => $"Tenant {id} already exists.");
 
         RuleFor(t => t.Name).Cascade(CascadeMode.Stop)
             .NotEmpty()
-            .MustAsync(async (name, _) => !await tenantService.ExistsWithNameAsync(name!).ConfigureAwait(false))
+            .MustAsync(async (name, ct) => !await tenantService.ExistsWithNameAsync(name!, ct).ConfigureAwait(false))
             .WithMessage((_, name) => $"Tenant {name} already exists.");
 
         RuleFor(t => t.ConnectionString).Cascade(CascadeMode.Stop)

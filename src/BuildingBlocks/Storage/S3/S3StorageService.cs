@@ -121,7 +121,7 @@ internal sealed class S3StorageService : IStorageService
         }
         catch (AmazonS3Exception ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
         {
-            _logger.LogDebug("S3 object not found: {Path}", path);
+            _logger.LogDebug(ex, "S3 object not found: {Path}", path);
             return null;
         }
         catch (Exception ex)

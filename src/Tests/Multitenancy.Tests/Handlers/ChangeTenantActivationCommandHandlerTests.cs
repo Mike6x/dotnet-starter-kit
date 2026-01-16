@@ -170,7 +170,7 @@ public sealed class ChangeTenantActivationCommandHandlerTests
         // Arrange
         var tenantId = "tenant-1";
         var command = new ChangeTenantActivationCommand(tenantId, true);
-        var cts = new CancellationTokenSource();
+        using var cts = new CancellationTokenSource();
         var token = cts.Token;
 
         _tenantService.ActivateAsync(tenantId, token)
@@ -198,7 +198,7 @@ public sealed class ChangeTenantActivationCommandHandlerTests
         // Arrange
         var tenantId = "tenant-1";
         var command = new ChangeTenantActivationCommand(tenantId, false);
-        var cts = new CancellationTokenSource();
+        using var cts = new CancellationTokenSource();
         var token = cts.Token;
 
         _tenantService.DeactivateAsync(tenantId, token)
