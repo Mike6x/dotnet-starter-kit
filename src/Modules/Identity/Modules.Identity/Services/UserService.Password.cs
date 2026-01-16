@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using System.Collections.ObjectModel;
 using System.Text;
 
-namespace FSH.Framework.Infrastructure.Identity.Users.Services;
+namespace FSH.Modules.Identity.Services;
 
 internal sealed partial class UserService
 {

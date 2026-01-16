@@ -1,10 +1,9 @@
-﻿using FluentValidation;
-using FSH.Framework.Shared.Identity.Claims;
+using FluentValidation;
+using FSH.Framework.Core.Context;
 using FSH.Modules.Identity.Contracts.v1.Users.ChangePassword;
 using FSH.Modules.Identity.Features.v1.Users;
 using FSH.Modules.Identity.Services;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Http;
 
 namespace FSH.Modules.Identity.Features.v1.Users.ChangePassword;
 
@@ -12,16 +11,16 @@ public sealed class ChangePasswordValidator : AbstractValidator<ChangePasswordCo
 {
     private readonly UserManager<FshUser> _userManager;
     private readonly IPasswordHistoryService _passwordHistoryService;
-    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly ICurrentUser _currentUser;
 
     public ChangePasswordValidator(
         UserManager<FshUser> userManager,
         IPasswordHistoryService passwordHistoryService,
-        IHttpContextAccessor httpContextAccessor)
+        ICurrentUser currentUser)
     {
         _userManager = userManager;
         _passwordHistoryService = passwordHistoryService;
-        _httpContextAccessor = httpContextAccessor;
+        _currentUser = currentUser;
 
         RuleFor(p => p.Password)
             .NotEmpty()
@@ -42,12 +41,12 @@ public sealed class ChangePasswordValidator : AbstractValidator<ChangePasswordCo
 
     private async Task<bool> NotBeInPasswordHistoryAsync(string newPassword, CancellationToken cancellationToken)
     {
-        var userId = _httpContextAccessor.HttpContext?.User.GetUserId();
-        if (string.IsNullOrEmpty(userId))
+        if (!_currentUser.IsAuthenticated())
         {
             return true; // Let other validation handle unauthorized access
         }
 
+        var userId = _currentUser.GetUserId().ToString();
         var user = await _userManager.FindByIdAsync(userId);
         if (user is null)
         {

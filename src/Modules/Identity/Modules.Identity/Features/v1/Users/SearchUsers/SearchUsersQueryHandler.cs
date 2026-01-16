@@ -1,3 +1,4 @@
+using FSH.Framework.Core.Context;
 using FSH.Framework.Persistence;
 using FSH.Framework.Shared.Persistence;
 using FSH.Modules.Identity.Contracts.DTOs;
@@ -5,11 +6,8 @@ using FSH.Modules.Identity.Contracts.v1.Users.SearchUsers;
 using FSH.Modules.Identity.Data;
 using FSH.Modules.Identity.Features.v1.Users;
 using Mediator;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using FSH.Framework.Web.Origin;
 
 namespace FSH.Modules.Identity.Features.v1.Users.SearchUsers;
 
@@ -17,19 +15,16 @@ public sealed class SearchUsersQueryHandler : IQueryHandler<SearchUsersQuery, Pa
 {
     private readonly UserManager<FshUser> _userManager;
     private readonly IdentityDbContext _dbContext;
-    private readonly Uri? _originUrl;
-    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IRequestContext _requestContext;
 
     public SearchUsersQueryHandler(
         UserManager<FshUser> userManager,
         IdentityDbContext dbContext,
-        IOptions<OriginOptions> originOptions,
-        IHttpContextAccessor httpContextAccessor)
+        IRequestContext requestContext)
     {
         _userManager = userManager;
         _dbContext = dbContext;
-        _originUrl = originOptions.Value.OriginUrl;
-        _httpContextAccessor = httpContextAccessor;
+        _requestContext = requestContext;
     }
 
     public async ValueTask<PagedResponse<UserDto>> Handle(SearchUsersQuery query, CancellationToken cancellationToken)
@@ -160,20 +155,13 @@ public sealed class SearchUsersQueryHandler : IQueryHandler<SearchUsersQuery, Pa
             return imageUrl;
         }
 
-        if (_originUrl is null)
+        var origin = _requestContext.Origin;
+        if (string.IsNullOrEmpty(origin))
         {
-            var request = _httpContextAccessor.HttpContext?.Request;
-            if (request is not null && !string.IsNullOrWhiteSpace(request.Scheme) && request.Host.HasValue)
-            {
-                var baseUri = $"{request.Scheme}://{request.Host.Value}{request.PathBase}";
-                var relativePath = imageUrl.TrimStart('/');
-                return $"{baseUri.TrimEnd('/')}/{relativePath}";
-            }
-
             return imageUrl;
         }
 
-        var originRelativePath = imageUrl.TrimStart('/');
-        return $"{_originUrl.AbsoluteUri.TrimEnd('/')}/{originRelativePath}";
+        var relativePath = imageUrl.TrimStart('/');
+        return $"{origin}/{relativePath}";
     }
 }

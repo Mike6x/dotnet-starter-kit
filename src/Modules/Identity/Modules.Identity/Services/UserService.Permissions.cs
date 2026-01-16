@@ -3,7 +3,7 @@ using FSH.Framework.Core.Exceptions;
 using FSH.Framework.Shared.Constants;
 using Microsoft.EntityFrameworkCore;
 
-namespace FSH.Framework.Infrastructure.Identity.Users.Services;
+namespace FSH.Modules.Identity.Services;
 
 internal sealed partial class UserService
 {

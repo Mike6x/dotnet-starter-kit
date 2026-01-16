@@ -11,7 +11,7 @@ namespace FSH.Modules.Identity.Features.v1.Users.ToggleUserStatus;
 
 public static class ToggleUserStatusEndpoint
 {
-    internal static RouteHandlerBuilder ToggleUserStatusEndpointEndpoint(this IEndpointRouteBuilder endpoints)
+    internal static RouteHandlerBuilder MapToggleUserStatusEndpoint(this IEndpointRouteBuilder endpoints)
     {
         return endpoints.MapPatch("/users/{id:guid}", async (
             string id,

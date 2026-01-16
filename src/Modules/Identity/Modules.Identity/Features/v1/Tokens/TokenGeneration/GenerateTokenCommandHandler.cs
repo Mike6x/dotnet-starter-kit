@@ -1,9 +1,9 @@
-﻿using FSH.Modules.Auditing.Contracts;
+using FSH.Framework.Core.Context;
+using FSH.Modules.Auditing.Contracts;
 using FSH.Modules.Identity.Contracts.DTOs;
 using FSH.Modules.Identity.Contracts.Services;
 using FSH.Modules.Identity.Contracts.v1.Tokens.TokenGeneration;
 using Mediator;
-using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using Finbuckle.MultiTenant.Abstractions;
 using FSH.Framework.Eventing.Outbox;
@@ -18,7 +18,7 @@ public sealed class GenerateTokenCommandHandler
     private readonly IIdentityService _identityService;
     private readonly ITokenService _tokenService;
     private readonly ISecurityAudit _securityAudit;
-    private readonly IHttpContextAccessor _http;
+    private readonly IRequestContext _requestContext;
     private readonly IOutboxStore _outboxStore;
     private readonly IMultiTenantContextAccessor<AppTenantInfo> _multiTenantContextAccessor;
     private readonly ISessionService _sessionService;
@@ -27,7 +27,7 @@ public sealed class GenerateTokenCommandHandler
         IIdentityService identityService,
         ITokenService tokenService,
         ISecurityAudit securityAudit,
-        IHttpContextAccessor http,
+        IRequestContext requestContext,
         IOutboxStore outboxStore,
         IMultiTenantContextAccessor<AppTenantInfo> multiTenantContextAccessor,
         ISessionService sessionService)
@@ -35,7 +35,7 @@ public sealed class GenerateTokenCommandHandler
         _identityService = identityService;
         _tokenService = tokenService;
         _securityAudit = securityAudit;
-        _http = http;
+        _requestContext = requestContext;
         _outboxStore = outboxStore;
         _multiTenantContextAccessor = multiTenantContextAccessor;
         _sessionService = sessionService;
@@ -48,11 +48,9 @@ public sealed class GenerateTokenCommandHandler
         ArgumentNullException.ThrowIfNull(request);
 
         // Gather context for auditing
-        var http = _http.HttpContext;
-        var ip = http?.Connection.RemoteIpAddress?.ToString() ?? "unknown";
-        var ua = http?.Request.Headers.UserAgent.ToString() ?? "unknown";
-        var clientId = http?.Request.Headers["X-Client-Id"].ToString();
-        if (string.IsNullOrWhiteSpace(clientId)) clientId = "web";
+        var ip = _requestContext.IpAddress ?? "unknown";
+        var ua = _requestContext.UserAgent ?? "unknown";
+        var clientId = _requestContext.ClientId;
 
         // Validate credentials
         var identityResult = await _identityService

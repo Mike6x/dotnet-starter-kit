@@ -2,10 +2,9 @@
 using FSH.Framework.Core.Context;
 using FSH.Framework.Eventing;
 using FSH.Framework.Eventing.Outbox;
-using FSH.Framework.Identity.v1.Tokens.RefreshToken;
-using FSH.Framework.Identity.v1.Tokens.TokenGeneration;
-using FSH.Framework.Infrastructure.Identity.Users.Endpoints;
-using FSH.Framework.Infrastructure.Identity.Users.Services;
+using FSH.Modules.Identity.Features.v1.Tokens.RefreshToken;
+using FSH.Modules.Identity.Features.v1.Tokens.TokenGeneration;
+using FSH.Modules.Identity.Features.v1.Users.SelfRegistration;
 using FSH.Framework.Persistence;
 using FSH.Framework.Storage.Local;
 using FSH.Framework.Storage.Services;
@@ -75,6 +74,7 @@ public class IdentityModule : IModule
         var services = builder.Services;
         services.AddSingleton<IAuthorizationMiddlewareResultHandler, PathAwareAuthorizationHandler>();
         services.AddScoped<ICurrentUser, CurrentUserService>();
+        services.AddScoped<IRequestContext, RequestContextService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped(sp => (ICurrentUserInitializer)sp.GetRequiredService<ICurrentUser>());
         services.AddTransient<IUserService, UserService>();
@@ -175,7 +175,7 @@ public class IdentityModule : IModule
         group.MapRegisterUserEndpoint();
         group.MapResetPasswordEndpoint();
         group.MapSelfRegisterUserEndpoint();
-        group.ToggleUserStatusEndpointEndpoint();
+        group.MapToggleUserStatusEndpoint();
         group.MapUpdateUserEndpoint();
 
         // sessions - user endpoints

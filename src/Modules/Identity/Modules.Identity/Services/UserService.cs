@@ -32,7 +32,7 @@ using System.Globalization;
 using System.Security.Claims;
 using System.Text;
 
-namespace FSH.Framework.Infrastructure.Identity.Users.Services;
+namespace FSH.Modules.Identity.Services;
 
 internal sealed partial class UserService(
     UserManager<FshUser> userManager,
