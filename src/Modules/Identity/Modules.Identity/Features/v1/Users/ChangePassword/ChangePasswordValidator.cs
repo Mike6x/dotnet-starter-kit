@@ -1,24 +1,19 @@
 using FluentValidation;
 using FSH.Framework.Core.Context;
+using FSH.Modules.Identity.Contracts.Services;
 using FSH.Modules.Identity.Contracts.v1.Users.ChangePassword;
-using FSH.Modules.Identity.Features.v1.Users;
-using FSH.Modules.Identity.Services;
-using Microsoft.AspNetCore.Identity;
 
 namespace FSH.Modules.Identity.Features.v1.Users.ChangePassword;
 
 public sealed class ChangePasswordValidator : AbstractValidator<ChangePasswordCommand>
 {
-    private readonly UserManager<FshUser> _userManager;
     private readonly IPasswordHistoryService _passwordHistoryService;
     private readonly ICurrentUser _currentUser;
 
     public ChangePasswordValidator(
-        UserManager<FshUser> userManager,
         IPasswordHistoryService passwordHistoryService,
         ICurrentUser currentUser)
     {
-        _userManager = userManager;
         _passwordHistoryService = passwordHistoryService;
         _currentUser = currentUser;
 
@@ -47,14 +42,9 @@ public sealed class ChangePasswordValidator : AbstractValidator<ChangePasswordCo
         }
 
         var userId = _currentUser.GetUserId().ToString();
-        var user = await _userManager.FindByIdAsync(userId);
-        if (user is null)
-        {
-            return true; // Let other validation handle user not found
-        }
 
         // Check if password is in history
-        var isInHistory = await _passwordHistoryService.IsPasswordInHistoryAsync(user, newPassword, cancellationToken);
+        var isInHistory = await _passwordHistoryService.IsPasswordInHistoryAsync(userId, newPassword, cancellationToken);
         return !isInHistory; // Return true if NOT in history (validation passes)
     }
 }

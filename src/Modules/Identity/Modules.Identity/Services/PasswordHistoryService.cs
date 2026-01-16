@@ -1,3 +1,4 @@
+using FSH.Modules.Identity.Contracts.Services;
 using FSH.Modules.Identity.Data;
 using FSH.Modules.Identity.Features.v1.Users;
 using FSH.Modules.Identity.Features.v1.Users.PasswordHistory;
@@ -6,13 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace FSH.Modules.Identity.Services;
-
-public interface IPasswordHistoryService
-{
-    Task<bool> IsPasswordInHistoryAsync(FshUser user, string newPassword, CancellationToken cancellationToken = default);
-    Task SavePasswordHistoryAsync(FshUser user, CancellationToken cancellationToken = default);
-    Task CleanupOldPasswordHistoryAsync(string userId, CancellationToken cancellationToken = default);
-}
 
 internal sealed class PasswordHistoryService : IPasswordHistoryService
 {
@@ -30,10 +24,16 @@ internal sealed class PasswordHistoryService : IPasswordHistoryService
         _passwordPolicyOptions = passwordPolicyOptions.Value;
     }
 
-    public async Task<bool> IsPasswordInHistoryAsync(FshUser user, string newPassword, CancellationToken cancellationToken = default)
+    public async Task<bool> IsPasswordInHistoryAsync(string userId, string newPassword, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(user);
+        ArgumentNullException.ThrowIfNull(userId);
         ArgumentNullException.ThrowIfNull(newPassword);
+
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user is null)
+        {
+            return false;
+        }
 
         // Get the last N passwords from history (where N = PasswordHistoryCount)
         var passwordHistoryCount = _passwordPolicyOptions.PasswordHistoryCount;
@@ -43,7 +43,7 @@ internal sealed class PasswordHistoryService : IPasswordHistoryService
         }
 
         var recentPasswordHashes = await _db.Set<PasswordHistory>()
-            .Where(ph => ph.UserId == user.Id)
+            .Where(ph => ph.UserId == userId)
             .OrderByDescending(ph => ph.CreatedAt)
             .Take(passwordHistoryCount)
             .Select(ph => ph.PasswordHash)
@@ -64,14 +64,20 @@ internal sealed class PasswordHistoryService : IPasswordHistoryService
         return false; // Password is not in history
     }
 
-    public async Task SavePasswordHistoryAsync(FshUser user, CancellationToken cancellationToken = default)
+    public async Task SavePasswordHistoryAsync(string userId, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(user);
+        ArgumentNullException.ThrowIfNull(userId);
+
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user is null || string.IsNullOrEmpty(user.PasswordHash))
+        {
+            return;
+        }
 
         var passwordHistoryEntry = new PasswordHistory
         {
-            UserId = user.Id,
-            PasswordHash = user.PasswordHash!,
+            UserId = userId,
+            PasswordHash = user.PasswordHash,
             CreatedAt = DateTime.UtcNow
         };
 
@@ -79,7 +85,7 @@ internal sealed class PasswordHistoryService : IPasswordHistoryService
         await _db.SaveChangesAsync(cancellationToken);
 
         // Clean up old password history entries
-        await CleanupOldPasswordHistoryAsync(user.Id, cancellationToken);
+        await CleanupOldPasswordHistoryAsync(userId, cancellationToken);
     }
 
     public async Task CleanupOldPasswordHistoryAsync(string userId, CancellationToken cancellationToken = default)

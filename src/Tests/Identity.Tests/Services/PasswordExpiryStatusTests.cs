@@ -1,9 +1,9 @@
-using FSH.Modules.Identity.Services;
+using FSH.Modules.Identity.Contracts.DTOs;
 
 namespace Identity.Tests.Services;
 
 /// <summary>
-/// Tests for PasswordExpiryStatus - the status object returned by PasswordExpiryService.
+/// Tests for PasswordExpiryStatusDto - the status object returned by PasswordExpiryService.
 /// </summary>
 public sealed class PasswordExpiryStatusTests
 {
@@ -11,7 +11,7 @@ public sealed class PasswordExpiryStatusTests
     public void Status_Should_ReturnExpired_When_IsExpiredTrue()
     {
         // Arrange
-        var status = new PasswordExpiryStatus
+        var status = new PasswordExpiryStatusDto
         {
             IsExpired = true,
             IsExpiringWithinWarningPeriod = false,
@@ -30,7 +30,7 @@ public sealed class PasswordExpiryStatusTests
     public void Status_Should_ReturnExpiringSoon_When_WithinWarningPeriod()
     {
         // Arrange
-        var status = new PasswordExpiryStatus
+        var status = new PasswordExpiryStatusDto
         {
             IsExpired = false,
             IsExpiringWithinWarningPeriod = true,
@@ -49,7 +49,7 @@ public sealed class PasswordExpiryStatusTests
     public void Status_Should_ReturnValid_When_NotExpiredAndNotExpiringSoon()
     {
         // Arrange
-        var status = new PasswordExpiryStatus
+        var status = new PasswordExpiryStatusDto
         {
             IsExpired = false,
             IsExpiringWithinWarningPeriod = false,
@@ -68,7 +68,7 @@ public sealed class PasswordExpiryStatusTests
     public void Status_Should_PrioritizeExpired_Over_ExpiringSoon()
     {
         // Arrange - Both flags set (edge case)
-        var status = new PasswordExpiryStatus
+        var status = new PasswordExpiryStatusDto
         {
             IsExpired = true,
             IsExpiringWithinWarningPeriod = true, // Should be ignored
@@ -90,7 +90,7 @@ public sealed class PasswordExpiryStatusTests
         var expiryDate = new DateTime(2024, 12, 31, 12, 0, 0, DateTimeKind.Utc);
 
         // Act
-        var status = new PasswordExpiryStatus
+        var status = new PasswordExpiryStatusDto
         {
             IsExpired = true,
             IsExpiringWithinWarningPeriod = false,
@@ -109,7 +109,7 @@ public sealed class PasswordExpiryStatusTests
     public void ExpiryDate_Should_AllowNull()
     {
         // Arrange & Act
-        var status = new PasswordExpiryStatus
+        var status = new PasswordExpiryStatusDto
         {
             IsExpired = false,
             IsExpiringWithinWarningPeriod = false,
@@ -126,7 +126,7 @@ public sealed class PasswordExpiryStatusTests
     public void DefaultValues_Should_BeDefaults()
     {
         // Arrange & Act
-        var status = new PasswordExpiryStatus();
+        var status = new PasswordExpiryStatusDto();
 
         // Assert
         status.IsExpired.ShouldBeFalse();
