@@ -187,14 +187,20 @@ public class BuildingBlocksIndependenceTests
         // Mailing should only depend on Core
         CheckBuildingBlockDependencies("Mailing", ["Core"], layerViolations);
 
-        // Storage should only depend on Core
-        CheckBuildingBlockDependencies("Storage", ["Core"], layerViolations);
+        // Storage should depend on Core and Shared (FileUploadRequest moved to Shared)
+        CheckBuildingBlockDependencies("Storage", ["Core", "Shared"], layerViolations);
 
         // Persistence should depend on Core, Shared
         CheckBuildingBlockDependencies("Persistence", ["Core", "Shared"], layerViolations);
 
         // Jobs should depend on Core, Shared
         CheckBuildingBlockDependencies("Jobs", ["Core", "Shared"], layerViolations);
+
+        // Eventing.Abstractions should have no dependencies (lightweight interfaces)
+        CheckBuildingBlockDependencies("Eventing.Abstractions", [], layerViolations);
+
+        // Eventing should depend on Core and Eventing.Abstractions
+        CheckBuildingBlockDependencies("Eventing", ["Core", "Eventing.Abstractions"], layerViolations);
 
         layerViolations.ShouldBeEmpty(
             $"BuildingBlocks should follow layered dependency rules. " +

@@ -1,3 +1,4 @@
+using FSH.Framework.Shared.Storage;
 using FSH.Framework.Storage.DTOs;
 
 namespace FSH.Framework.Storage.Services;

@@ -10,7 +10,7 @@ using FSH.Framework.Mailing.Services;
 using FSH.Framework.Shared.Constants;
 using FSH.Framework.Shared.Multitenancy;
 using FSH.Framework.Storage;
-using FSH.Framework.Storage.DTOs;
+using FSH.Framework.Shared.Storage;
 using FSH.Framework.Storage.Services;
 using FSH.Framework.Web.Origin;
 using FSH.Modules.Identity.Contracts.DTOs;

@@ -4,7 +4,7 @@ using FSH.Framework.Core.Context;
 using FSH.Framework.Core.Exceptions;
 using FSH.Framework.Shared.Multitenancy;
 using FSH.Framework.Storage;
-using FSH.Framework.Storage.DTOs;
+using FSH.Framework.Shared.Storage;
 using FSH.Framework.Storage.Services;
 using FSH.Modules.Multitenancy.Contracts;
 using FSH.Modules.Multitenancy.Contracts.Dtos;

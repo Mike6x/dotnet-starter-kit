@@ -24,4 +24,3 @@ public interface IIntegrationEvent
     /// </summary>
     string Source { get; }
 }
-

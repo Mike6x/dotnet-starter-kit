@@ -22,6 +22,7 @@
 	  <ProjectReference Include="..\..\..\BuildingBlocks\Jobs\Jobs.csproj" />
 	  <ProjectReference Include="..\..\..\BuildingBlocks\Mailing\Mailing.csproj" />
 	  <ProjectReference Include="..\..\..\BuildingBlocks\Persistence\Persistence.csproj" />
+	  <ProjectReference Include="..\..\..\BuildingBlocks\Storage\Storage.csproj" />
 	  <ProjectReference Include="..\..\..\BuildingBlocks\Web\Web.csproj" />
 	  <ProjectReference Include="..\..\Auditing\Modules.Auditing.Contracts\Modules.Auditing.Contracts.csproj" />
 	  <ProjectReference Include="..\Modules.Identity.Contracts\Modules.Identity.Contracts.csproj" />

@@ -9,4 +9,3 @@ public interface IEventSerializer
 
     IIntegrationEvent? Deserialize(string payload, string eventTypeName);
 }
-

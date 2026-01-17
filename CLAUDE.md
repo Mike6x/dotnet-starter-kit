@@ -113,7 +113,7 @@ The framework provides reusable Blazor components in `BuildingBlocks/Blazor.UI/C
 Use `FshPageHeader` for consistent page headers across Playground.Blazor:
 
 ```razor
-@using FSH.BuildingBlocks.Blazor.UI.Components.Page
+@using FSH.Framework.Blazor.UI.Components.Page
 
 <FshPageHeader Title="Page Title"
                Description="Optional description text">
@@ -129,14 +129,15 @@ Use `FshPageHeader` for consistent page headers across Playground.Blazor:
 - `Description` (optional): Description text below title
 - `DescriptionContent` (optional): RenderFragment for complex descriptions
 - `ActionContent` (optional): RenderFragment for action buttons on the right
-- `TitleTypo` (optional): Typography style (default: Typo.h4)
-- `Elevation` (optional): Paper elevation (default: 0)
+- `TitleTypo` (optional): Typography style (default: Typo.h5)
 - `Class` (optional): Additional CSS classes
+- `PageTitleSuffix` (optional): Suffix for browser tab title
 
-**Styling:**
-- Uses `.hero-card` class from `fsh-theme.css`
-- Gradient background with primary color accent border
-- Shared utility classes: `.fw-600`, `.fw-700` for font weights
+**Features:**
+- Modern card design with MudPaper Elevation="2"
+- Subtle gradient background with primary color accent
+- Left border accent in primary color
+- Dark mode support
 
 ### FshUserProfile Component
 
@@ -198,10 +199,10 @@ Statistics card for displaying metrics with icon, value, label, and optional bad
 - `BadgeColor` (optional): Color for the badge (default: Primary)
 
 **Features:**
-- Light/dark mode support via CSS variables
-- Hover animations (lift, icon scale, badge slide)
-- Gradient icon backgrounds with colored shadows
-- Consistent styling using FSH design tokens
+- Hover animation with lift effect (`translateY(-4px)`) and enhanced shadow
+- Uses MudCard with Elevation="2" for consistent Material Design styling
+- Scoped CSS with `::deep` for proper Blazor CSS isolation
+- Consistent structure matching the original stats-card pattern used throughout the app
 
 ### FSH Design Tokens
 

@@ -10,4 +10,3 @@ public interface IEventBus
 
     Task PublishAsync(IEnumerable<IIntegrationEvent> events, CancellationToken ct = default);
 }
-
