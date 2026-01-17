@@ -496,3 +496,6 @@ spec-os/
 /agent_docs/blazor.md
 /.claude/settings.local.json
 tmpclaude**
+
+# Auto Claude data directory
+.auto-claude/
