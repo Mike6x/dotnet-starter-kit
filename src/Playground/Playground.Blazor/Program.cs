@@ -35,6 +35,12 @@ builder.Services.AddAuthentication("Cookies")
         options.LogoutPath = "/auth/logout";
         options.ExpireTimeSpan = TimeSpan.FromDays(7);
         options.SlidingExpiration = true;
+
+        // Security: Explicit cookie security settings
+        options.Cookie.HttpOnly = true; // Prevent JavaScript access (XSS protection)
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // HTTPS only
+        options.Cookie.SameSite = SameSiteMode.Strict; // CSRF protection
+        options.Cookie.Name = ".FSH.Auth"; // Custom cookie name
     });
 
 builder.Services.AddAuthorization();
@@ -51,6 +57,13 @@ builder.Services.AddScoped<IThemeStateFactory, CachedThemeStateFactory>(); // Fo
 
 // User profile state for syncing across components
 builder.Services.AddScoped<IUserProfileState, UserProfileState>();
+
+// Auth state notifier for session expiration (Blazor-compatible)
+builder.Services.AddScoped<IAuthStateNotifier, AuthStateNotifier>();
+
+// Circuit-scoped token cache for storing refreshed tokens
+// Critical: httpContext.User claims are cached per circuit and don't update after SignInAsync
+builder.Services.AddScoped<ICircuitTokenCache, CircuitTokenCache>();
 
 // Authorization header handler for API calls
 builder.Services.AddScoped<AuthorizationHeaderHandler>();

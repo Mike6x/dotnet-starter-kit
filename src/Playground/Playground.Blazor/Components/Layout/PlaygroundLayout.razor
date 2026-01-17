@@ -21,6 +21,7 @@
 @inject FSH.Playground.Blazor.ApiClient.IIdentityClient IdentityClient
 @inject IUserProfileState UserProfileState
 @inject IDialogService DialogService
+@inject IAuthStateNotifier AuthStateNotifier
 
 <MudThemeProvider Theme="@_theme" IsDarkMode="_isDarkMode" />
 <MudPopoverProvider />
@@ -125,7 +126,17 @@ else
         // Subscribe to profile changes (for syncing across components)
         UserProfileState.OnProfileChanged += HandleProfileChanged;
 
+        // Subscribe to session expiration (for token refresh failures)
+        AuthStateNotifier.SessionExpired += HandleSessionExpired;
+
         _authStatusLoaded = true;
+    }
+
+    private void HandleSessionExpired(object? sender, EventArgs e)
+    {
+        // Navigate to login with session expired message
+        // Use forceLoad to ensure a full page refresh and cookie clearing
+        InvokeAsync(() => Navigation.NavigateTo("/login?toast=session_expired", forceLoad: true));
     }
 
     private void HandleThemeChanged()
@@ -148,6 +159,7 @@ else
     {
         TenantThemeState.OnThemeChanged -= HandleThemeChanged;
         UserProfileState.OnProfileChanged -= HandleProfileChanged;
+        AuthStateNotifier.SessionExpired -= HandleSessionExpired;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
