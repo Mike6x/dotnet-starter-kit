@@ -33,6 +33,12 @@ public static class Extensions
             var config = ConfigurationOptions.Parse(cacheOptions.Redis);
             config.AbortOnConnectFail = true;
 
+            // Only override SSL if explicitly configured
+            if (cacheOptions.EnableSsl.HasValue)
+            {
+                config.Ssl = cacheOptions.EnableSsl.Value;
+            }
+
             options.ConfigurationOptions = config;
         });
 

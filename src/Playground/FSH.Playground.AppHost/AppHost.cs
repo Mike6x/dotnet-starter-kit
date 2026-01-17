@@ -17,6 +17,7 @@ builder.AddProject<Projects.Playground_Api>("playground-api")
     .WaitFor(postgres)
     .WithReference(redis)
     .WithEnvironment("CachingOptions__Redis", redis.Resource.ConnectionStringExpression)
+    .WithEnvironment("CachingOptions__EnableSsl", "true")
     .WaitFor(redis);
 
 builder.AddProject<Projects.Playground_Blazor>("playground-blazor");
